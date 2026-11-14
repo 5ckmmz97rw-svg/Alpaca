@@ -606,7 +606,7 @@ const INFO = [
     desc: "The selected motif is highlighted on the NDLR screen. Panic releases the notes played by the panel." },
   null, null, null, null, null, null, null,   /* chords: filled in when drawn */
   { name: "NDLR SCREEN",
-    rows: [[IM_VIEW, "The tempo blinks blue on the downbeat and red on the other beats."], [IM_VIEW, "Side markers: selected encoder."]],
+    rows: [[IM_VIEW, "Side markers: selected encoder."], [IM_VIEW, "Bottom dots: the four parts, lit while they play."]],
     desc: "Shows key and mode, BPM, chord degree + name + type, and the four play indicators. The larger sub screen on the right follows the dial you are using: Pad, Drone, T-K-M or Motif." },
   { name: "MENU (Shift: Editors)",
     rows: [[IM_NORMAL, "Toggle Menu mode: the eight encoder buttons then open menus."], [IM_SHIFT, "Toggle Editor mode. The last editor used is shown."], [IM_BOOT, "At power-on, Shift+Menu opens the Boot Menu."]],
@@ -701,16 +701,11 @@ function toast(msg, recordingMessage) {
    The firmware counts 48 pulses per beat. Here every pulse is given a time on
    the audio clock a little ahead of now, so notes land exactly on the grid. */
 const trk = { running: false, run: 0, pulse: 0, startStep: 0, tempo: 120, nextT: 0 };
-let ndlrNextT = 0, lastPulseT = 0, audioOff = 0, curT = 0, lastLamp = 0;
+let ndlrNextT = 0, lastPulseT = 0, audioOff = 0, curT = 0;
 function wallNow() { return performance.now() / 1000; }
 function actionTime() {
   const ctx = audio.ctx();
   curT = ctx ? Math.max(ctx.currentTime, lastPulseT + audioOff) : 0;
-}
-/* the tempo blinks on each beat: 2 on the downbeat, 1 on the other beats, 0 between them */
-function beatLamp() {
-  if (s.barPulse % PPB >= PPB / 2) return 0;
-  return s.barPulse < PPB ? 2 : 1;
 }
 
 /* ---------- sound ---------- */
@@ -1098,8 +1093,6 @@ function pump() {
     }
   }
   if (s.toast && now >= s.toastUntil) { s.toast = ""; s.dirty = 1; }
-  const lamp = beatLamp();
-  if (lamp !== lastLamp) { lastLamp = lamp; s.dirty = 1; }
   if (s.dirty) render();
 }
 
@@ -1565,8 +1558,7 @@ function buildView() {
     detailText: s.menuMode === 2 ? ED_TITLE[s.editor].replace("Sequencer", "Seq") : encoderValue(s.activeEnc),
     chordText: cl.roman + " " + cl.name,
     typeText: s.pendingType >= 0 ? TYPE_NAME[s.pendingType] : TYPE_NAME[resolvedType()],
-    bpmText: s.trackerClock ? s.trackerTempo + " BPM TRK" : s.tempo + " BPM",
-    lamp: beatLamp()
+    bpmText: s.trackerClock ? s.trackerTempo + " BPM TRK" : s.tempo + " BPM"
   };
 }
 
@@ -1904,8 +1896,7 @@ function drawPanel(v) {
         }
         o.push(frameRect(x0 + 11, y0 + 18, x1 - 11, y0 + 57, COL.text));
         o.push(drawText(x, y0 + 29, FONT_SMALL, "middle", COL.dim, v.detailText, false, 76));
-        /* the tempo blinks blue on the downbeat and red on the other beats */
-        o.push(drawText(x, y0 + 46, FONT_SMALL, "middle", v.lamp === 2 ? COL.blueLight : v.lamp === 1 ? COL.red : COL.text, v.bpmText, false, 76));
+        o.push(drawText(x, y0 + 46, FONT_SMALL, "middle", COL.text, v.bpmText, false, 76));
         o.push(drawText(x0 + 4, y0 + 69, FONT_NORMAL, "start", COL.text, v.chordText));
         o.push(drawText(x1 - 4, y0 + 69, FONT_SMALL, "end", s.pendingType >= 0 ? COL.blueLight : COL.text, v.typeText));
         for (let p = 0; p < 4; p++) {                               /* play indicators: pad, drone, motif 1, motif 2 */
