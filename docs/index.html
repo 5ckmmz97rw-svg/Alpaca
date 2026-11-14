@@ -94,6 +94,11 @@ footer p{max-width:78ch;margin:0 0 12px}
 footer a{color:var(--dim)}
 footer a:hover{color:var(--accent)}
 .src{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:14px}
+.paths{display:flex;flex-wrap:wrap;gap:24px}
+.paths .card{flex:1 1 400px;min-width:0}
+.card-lead{margin:0 0 12px;color:var(--dim);font-size:15px}
+.paths ol.steps{padding-left:20px}
+.paths ol.steps b{color:var(--text);font-weight:600}
 .support{margin:22px 0 0;color:var(--dim);max-width:62ch}
 .small-note{display:none;font-size:14px;color:var(--dim);margin:0 0 14px}
 @media (max-width:860px){.grid3{grid-template-columns:minmax(0,1fr)}section{padding:52px 0}}
@@ -370,16 +375,34 @@ footer a:hover{color:var(--accent)}
 <section id="install">
 <div class="wrap">
 <h2>Install</h2>
-<p class="sub">Built from the Tracker CE source. Back up your SD card first.</p>
+<p class="sub">Most people only need the first path: download one file and copy it to the SD card. No coding or compiler needed.</p>
+<div class="btns" style="margin:0 0 36px"><a class="btn primary" href="https://github.com/5ckmmz97rw-svg/Alpaca/releases/latest">Download Alpaca</a></div>
+<div class="paths">
+<div class="card">
+<h3>Just install it</h3>
 <ol class="steps">
-<li>Download Alpaca and unzip it over the root of your <code>tracker-ce</code> checkout.</li>
-<li>Build for the Mini: <code>make mini TOOLCHAIN=arm-none-eabi- BUILD_TAG=alpaca</code></li>
-<li>Copy the <code>.ptf</code> file to <code>/Firmware</code> on the SD card.</li>
-<li>On the Mini, open Config and choose Firmware update.</li>
+<li><b>Back up your SD card.</b> Copy everything on it to a folder on your computer.</li>
+<li><b>Download the <code>.ptf</code> file</b> from the Releases page (the button above).</li>
+<li><b>Copy it to the SD card.</b> Plug the card into your computer and put the file in a folder called <code>Firmware</code>. Create the folder if it isn't there.</li>
+<li><b>Put the card back in the Mini</b> and switch it on.</li>
+<li><b>On the Mini, open Config and choose Firmware update.</b> Pick the Alpaca file and confirm. Keep the Mini powered until it finishes and restarts.</li>
+<li><b>Open the panel:</b> Config, then Info, then NDLR Panel.</li>
 </ol>
-<div class="btns" style="margin-top:28px"><a class="btn primary" href="https://github.com/5ckmmz97rw-svg/Alpaca/releases/latest">Download Alpaca</a></div>
+</div>
+<div class="card">
+<h3>Build it yourself</h3>
+<p class="card-lead">For people who want to change the code. You need the Tracker CE source and the ARM toolchain it asks for.</p>
+<ol class="steps">
+<li>Get the <code>tracker-ce</code> source from Polyend's GitHub.</li>
+<li>Copy the <code>firmware</code> folder from the Alpaca repo over the root of that checkout.</li>
+<li>Build for the Mini: <code>make mini TOOLCHAIN=arm-none-eabi- BUILD_TAG=alpaca</code></li>
+<li>Copy the new <code>.ptf</code> to <code>/Firmware</code> on the SD card and run Firmware update, as in "Just install it".</li>
+</ol>
+</div>
+</div>
+<p class="support">If Firmware update doesn't list the file, check that it sits directly inside <code>Firmware</code> on the card and still ends in <code>.ptf</code>. Alpaca is a complete firmware, so installing it replaces what is on the Mini now. Tracker CE's recovery system and Polyend's own firmware are the way back if you want to switch.</p>
 <p class="support">Alpaca is free. If it makes your music better, you can <a href="https://ko-fi.com/alpacamaraca">leave a tip on Ko-fi</a>.</p>
-<p class="note">Fan-made and unofficial. It uses the same licence as Tracker CE, PolyForm Noncommercial, so it is free to use but not to sell. Tracker CE's recovery system is there if a build misbehaves.</p>
+<p class="note">Fan-made and unofficial, and flashing firmware is at your own risk. It uses the same licence as Tracker CE, PolyForm Noncommercial, so it is free to use but not to sell.</p>
 </div>
 </section>
 
