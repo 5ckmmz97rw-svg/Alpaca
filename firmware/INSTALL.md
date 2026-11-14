@@ -1,22 +1,9 @@
-# NDLR Panel for Tracker CE (Mini)
+# Installing Alpaca on a Polyend Tracker Mini
 
-Unzip over the root of your tracker-ce-main checkout (files keep their paths; 3 new files in
-core/interface/ndlrPanel/, 2 in core/libs/NewDisplay/, 6 existing files modified).
-Everything is wrapped in `#ifdef TRACKER_MINI`.
+1. Copy `TrackerMini_CE_1.0.0_NDLR7F.ptf` (in this folder) to the `/Firmware` folder on the Mini's SD card.
+2. On the Mini, go to Config > Firmware update and choose the file.
+3. Once it has restarted, open Alpaca via Config > Info > NDLR Panel. Hold Mini Menu for the module popup to leave.
 
-Build (MSYS2 as in the repo docs): `make mini TOOLCHAIN=arm-none-eabi- BUILD_TAG=ndlr`
-Copy the .ptf to /Firmware on the SD card, then Config > Firmware update.
-Open it via Config > Info > NDLR Panel. Hold Mini Menu for the module popup to leave.
+Controls: dpad moves the highlight, Middle presses, +1/-1/+10/-10 turn the highlighted encoder, Play = ALL, Shift = NDLR Shift (hold, or highlight SHIFT and press Middle to latch).
 
-Controls: dpad = move highlight, Middle = press, +1/-1/+10/-10 = turn highlighted encoder,
-Play = ALL, Shift = NDLR Shift (hold, or highlight SHIFT and press Middle to latch).
-
-Works: chord buttons I-VII (+ Shift types), Pad/Drone/Motif 1/2 play, ALL, PANIC, Menu/Editor mode
-display, tempo/key/mode (E4), Pad/Drone/Motif octave (E1/E3/E5), live NDLR screen.
-Sound: Pad->synth ch1, Drone->ch2, Motif 1 (up arp) and Motif 2 (down arp)->ch3.
-Not implemented: strum/spread/range, pattern/rhythm/variation, mod matrix, LFOs, editors,
-the Tonic 2nd/3rd/4th/6th modes (set those synths' MIDI channel mapping/instruments yourself).
-
-UNTESTED: written without an ARM toolchain or hardware. Syntax-checked on host only (no errors in
-the new files). Possible first-build issues: display-list budget in ndlrPanelControl.cpp (8 KB/slot
-- if the screen is blank or truncated, trim drawing), and exact API names in fNdlrPanel.cpp.
+Alpaca is a complete firmware, so installing it replaces what is on the Mini now. Tracker CE's recovery system and Polyend's own firmware are the way back.
