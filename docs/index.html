@@ -921,8 +921,12 @@ window.__test = {st, BY, CTRL, neighbour, DIRS, act, render};
    from the tempo. It is an approximation of the idea, not the Mini's
    own synth engine. Nothing plays until Sound is switched on.
 ---------------------------------------------------------------- */
+/* alt1 / alt2 resolve to a fixed chord type per degree, as in the firmware (NDLR manual p.13) */
+const ALT1=['triad','7th','triad','triad','7th','7th','6th'], ALT2=['7th','7th','triad','7th','7th','6th','7th'];
+function resolvedType(){ return st.type==='alt1'?ALT1[st.deg]: st.type==='alt2'?ALT2[st.deg]: st.type; }
+const _chordInfo=chordInfo; chordInfo=function(){ const r=_chordInfo(); r.type=resolvedType(); return r; };
 const AUDIO_SCALES = { // modes the panel lists without intervals get a stand-in scale for sound
-  'Gypsy Min':[0,2,3,6,7,8,11], 'Min Penta':[0,3,5,7,10,12,15], 'Whole Tone':[0,2,4,6,8,10,12],
+  'Gypsy Min':[0,2,3,6,7,8,11], 'Min Penta':[0,3,5,7,10], 'Whole Tone':[0,2,4,6,8,10],
   'Tonic 2nds':[0,2,4,6,8,10,12], 'Tonic 3rds':[0,4,8,12,16,20,24], 'Tonic 4ths':[0,5,10,15,20,25,30], 'Tonic 6ths':[0,9,18,27,36,45,54]
 };
 const AUDIO_PRESETS = {
@@ -936,6 +940,7 @@ const audio = (() => {
   let nextStep=0, stepNo=0, droneOsc=null, droneGain=null, droneKey='';
   const live=new Set();
   const mtof = m => 440*Math.pow(2,(m-69)/12);
+  const fold = (m,lo=36,hi=96) => { while(m>hi) m-=12; while(m<lo) m+=12; return m; };   // keep every note audible and safe
   function rng(seed){ let s=(seed*2654435761)>>>0||1; return ()=>{ s^=s<<13; s>>>=0; s^=s>>>17; s^=s<<5; s>>>=0; return s/4294967296; }; }
   function scale(){ const m=MODES[st.mode]; return m[1] || AUDIO_SCALES[m[0]] || [0,2,4,5,7,9,11]; }
   function degNote(iv,d){ const n=iv.length, o=Math.floor(d/n), i=((d%n)+n)%n; return iv[i]+12*o; }
@@ -944,7 +949,7 @@ const audio = (() => {
   /* chord as a list of semitones above the key root */
   function chordNotes(){
     const iv=scale(), d=st.deg;
-    const shape={triad:[0,2,4],'7th':[0,2,4,6],sus2:[0,1,4],sus4:[0,3,4],'6th':[0,2,4,5],alt1:[2,4,7],alt2:[4,7,9]}[st.type]||[0,2,4];
+    const shape={triad:[0,2,4],'7th':[0,2,4,6],sus2:[0,1,4],sus4:[0,3,4],'6th':[0,2,4,5]}[resolvedType()]||[0,2,4];
     let degs=shape.slice();
     const want=Math.max(1,V('E2')[0]);               // Range
     while(degs.length<want) degs.push(degs[degs.length-shape.length]+7);
@@ -981,7 +986,7 @@ const audio = (() => {
     if(c.spread===3){ notes=notes.filter(()=>r()<0.7); if(!notes.length) notes=[c.notes[0]]; }
     const sd = strum===0 ? 0 : (strum===6 ? beat()/2/notes.length : 0.03*(strum+1));
     const g=0.17/Math.sqrt(notes.length);
-    notes.forEach((n,i)=>voice([mtof(24+oct+c.base+n)],t+i*sd,dur,g,P));
+    notes.forEach((n,i)=>voice([mtof(fold(24+oct+c.base+n))],t+i*sd,dur,g,P));
   }
   function setDrone(){
     if(!ctx) return;
@@ -996,7 +1001,7 @@ const audio = (() => {
     if(!want) return;
     droneGain=ctx.createGain(); droneGain.gain.value=0.0001; droneGain.connect(out());
     droneGain.gain.setTargetAtTime(0.06,ctx.currentTime,0.2);
-    droneOsc=notes.map(n=>{ const o=ctx.createOscillator(); o.type=P.drone; o.frequency.value=mtof(12+octv+rn+n); o.connect(droneGain); o.start(); return o; });
+    droneOsc=notes.map(n=>{ const o=ctx.createOscillator(); o.type=P.drone; o.frequency.value=mtof(fold(12+octv+rn+n,28,60)); o.connect(droneGain); o.start(); return o; });
   }
   /* motif: arpeggio over chord tones. Pattern and Rhythm numbers seed the sequence. */
   function motifStep(mi,t,sn){
@@ -1021,7 +1026,7 @@ const audio = (() => {
     let vel=0.075;
     if(acc===1) vel*=0.6+rng(k+7)()*0.8; else if(acc>=3) vel*=((acc*3+pos)%4===0)?1.5:0.7; else if(acc===0) vel*=(pos%4===0)?1.4:0.8;
     const P=AUDIO_PRESETS[preset]; const dur=Math.max(0.05,gate*cdiv*beat()*0.98);
-    voice([mtof(36+oct+c.base+seq[idx%n])],t+off,dur,vel,{wave:P.wave,det:P.det,atk:0.005,rel:0.12,cut:P.cut},P.wave[0]);
+    voice([mtof(fold(36+oct+c.base+seq[idx%n],48,96))],t+off,dur,vel,{wave:P.wave,det:P.det,atk:0.005,rel:0.12,cut:P.cut},P.wave[0]);
   }
   /* scheduler: 1/16-note ticks, with a short look-ahead */
   function tick(){
