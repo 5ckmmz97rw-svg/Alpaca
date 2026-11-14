@@ -43,7 +43,8 @@ a:focus-visible,button:focus-visible{outline:3px solid var(--accent);outline-off
 .sw{width:12px;height:12px;border-radius:50%;border:1px solid var(--line);flex:none}
 .hero{display:flex;flex-wrap:wrap;gap:40px;align-items:center;padding:32px 0 72px}
 .hero-copy{flex:1 1 400px;min-width:0}
-.hero-art{flex:0 1 340px;min-width:0;margin:0 auto}
+.hero-art{flex:0 1 360px;min-width:0;margin:0 auto}
+.hero-img{display:block;width:100%;height:auto;border-radius:14px;border:1px solid var(--line);box-shadow:0 18px 50px rgba(0,0,0,.45)}
 .eyebrow{font-family:var(--mono);font-size:13px;color:var(--accent2);letter-spacing:.12em;text-transform:uppercase;margin:0 0 14px}
 h1{font-family:var(--display);font-weight:700;font-size:clamp(34px,6vw,60px);line-height:1.05;margin:0 0 20px;text-wrap:balance}
 h1 em{font-style:normal;color:var(--accent)}
@@ -173,42 +174,8 @@ footer a:hover{color:var(--accent)}
 <div class="btns"><a class="btn primary" href="#try">Try the panel</a><a class="btn ghost" href="#install">Get the firmware</a></div>
 </div>
 <div class="hero-art">
-<svg viewBox="0 0 300 410" class="art" role="img" aria-label="Schematic of a Tracker Mini showing the Alpaca NDLR panel on its screen, with the top-left encoder highlighted" xmlns="http://www.w3.org/2000/svg">
-<rect x="4" y="4" width="292" height="402" rx="16" fill="#121316" stroke="#34363d" stroke-width="3"/>
-<rect x="22" y="22" width="256" height="157" rx="6" fill="#050309" stroke="#34363d" stroke-width="2"/>
-<g transform="translate(51 26) scale(0.497)"><rect x="2" y="2" width="396" height="296" rx="14" fill="#17121f" stroke="#2d2440" stroke-width="3"/>
-<circle cx="40" cy="45" r="15" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/><circle cx="40" cy="45" r="4" fill="#6d5f8a"/>
-<circle cx="40" cy="110" r="15" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/><circle cx="40" cy="110" r="4" fill="#6d5f8a"/>
-<circle cx="40" cy="175" r="15" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/><circle cx="40" cy="175" r="4" fill="#6d5f8a"/>
-<circle cx="40" cy="240" r="15" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/><circle cx="40" cy="240" r="4" fill="#6d5f8a"/>
-<circle cx="360" cy="45" r="15" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/><circle cx="360" cy="45" r="4" fill="#6d5f8a"/>
-<circle cx="360" cy="110" r="15" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/><circle cx="360" cy="110" r="4" fill="#6d5f8a"/>
-<circle cx="360" cy="175" r="15" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/><circle cx="360" cy="175" r="4" fill="#6d5f8a"/>
-<circle cx="360" cy="240" r="15" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/><circle cx="360" cy="240" r="4" fill="#6d5f8a"/>
-<circle cx="200" cy="140" r="86" fill="none" stroke="#2d2440" stroke-width="2" stroke-dasharray="2 5"/>
-<circle cx="200.0" cy="54.0" r="14" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/><text x="200.0" y="57.5" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" font-weight="500" fill="#b9b3c9">I</text>
-<circle cx="267.2" cy="86.4" r="14" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/><text x="267.2" y="89.9" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" font-weight="500" fill="#b9b3c9">II</text>
-<circle cx="283.8" cy="159.1" r="14" fill="#3ddc84" stroke="#6d5f8a" stroke-width="2"/><text x="283.8" y="162.6" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" font-weight="500" fill="#07050b">III</text>
-<circle cx="237.3" cy="217.5" r="14" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/><text x="237.3" y="221.0" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" font-weight="500" fill="#b9b3c9">IV</text>
-<circle cx="162.7" cy="217.5" r="14" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/><text x="162.7" y="221.0" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" font-weight="500" fill="#b9b3c9">V</text>
-<circle cx="116.2" cy="159.1" r="14" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/><text x="116.2" y="162.6" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" font-weight="500" fill="#b9b3c9">VI</text>
-<circle cx="132.8" cy="86.4" r="14" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/><text x="132.8" y="89.9" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" font-weight="500" fill="#b9b3c9">VII</text>
-<rect x="79" y="19" width="32" height="18" rx="6" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/>
-<rect x="289" y="19" width="32" height="18" rx="6" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/>
-<circle cx="118" cy="272" r="11" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/>
-<circle cx="156" cy="272" r="11" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/>
-<circle cx="244" cy="272" r="11" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/>
-<circle cx="282" cy="272" r="11" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/>
-<rect x="164" y="114" width="72" height="52" rx="4" fill="#07050b" stroke="#2d2440" stroke-width="2"/>
-<text x="200" y="130" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="7" fill="#b794f6">C - MAJOR</text><text x="200" y="146" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11" font-weight="500" fill="#efe9f7">iii E</text><text x="200" y="159" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="7" fill="#a99dbd">90 BPM</text>
-<circle class="hl" cx="40" cy="45" r="22" fill="none" stroke-width="3"/></g>
-<rect x="26.0" y="186" width="24" height="14" rx="3" fill="#2a2c33"/><rect x="56.6" y="186" width="24" height="14" rx="3" fill="#2a2c33"/><rect x="87.2" y="186" width="24" height="14" rx="3" fill="#2a2c33"/><rect x="117.8" y="186" width="24" height="14" rx="3" fill="#2a2c33"/><rect x="148.4" y="186" width="24" height="14" rx="3" fill="#2a2c33"/><rect x="179.0" y="186" width="24" height="14" rx="3" fill="#2a2c33"/><rect x="209.6" y="186" width="24" height="14" rx="3" fill="#2a2c33"/><rect x="240.2" y="186" width="24" height="14" rx="3" fill="#2a2c33"/><rect x="118" y="222" width="26" height="12" rx="3" fill="#3fd6c6"/><rect x="150" y="222" width="26" height="12" rx="3" fill="#f2d64b"/><rect x="182" y="222" width="26" height="12" rx="3" fill="#b77ee8"/><rect x="214" y="222" width="26" height="12" rx="3" fill="#4fe0a0"/><rect x="118" y="246" width="26" height="12" rx="3" fill="#2a2c33"/><rect x="150" y="246" width="26" height="12" rx="3" fill="#2a2c33"/><rect x="118" y="266" width="26" height="12" rx="3" fill="#2a2c33"/><rect x="150" y="266" width="26" height="12" rx="3" fill="#2a2c33"/><rect x="118" y="286" width="26" height="12" rx="3" fill="#2a2c33"/><rect x="150" y="286" width="26" height="12" rx="3" fill="#2a2c33"/><rect x="150" y="246" width="26" height="12" rx="3" fill="#d4343c"/><rect x="118" y="316" width="26" height="12" rx="3" fill="#2a2c33"/><rect x="150" y="316" width="26" height="12" rx="3" fill="#2a2c33"/><rect x="182" y="316" width="26" height="12" rx="3" fill="#2a2c33"/><rect x="214" y="316" width="26" height="12" rx="3" fill="#2a2c33"/>
-<rect x="118" y="346" width="122" height="14" rx="3" fill="#2a2c33"/>
-<rect x="30" y="236" width="22" height="64" rx="3" fill="#2a2c33"/><rect x="9" y="257" width="64" height="22" rx="3" fill="#2a2c33"/><circle cx="41" cy="268" r="8" fill="#1d1e23"/>
-<rect x="262" y="222" width="22" height="22" rx="3" fill="#2a2c33"/><rect x="262" y="250" width="22" height="22" rx="3" fill="#2a2c33"/><rect x="262" y="278" width="22" height="22" rx="3" fill="#2a2c33"/><rect x="262" y="306" width="22" height="22" rx="3" fill="#2a2c33"/>
-<rect x="70" y="378" width="160" height="22" rx="4" fill="#1d1e23"/>
-</svg>
-<p class="cap">Schematic of the Mini with Alpaca running. The coloured ring is the dpad highlight.</p>
+<img class="hero-img" src="img/alpaca-on-mini.jpg" width="900" height="1200" alt="Alpaca running on a Polyend Tracker Mini. The screen shows the NDLR panel with eight encoders, a ring of seven chord buttons and a side column of help text.">
+<p class="cap">Alpaca running on a Polyend Tracker Mini.</p>
 </div>
 </header>
 </div>
@@ -301,41 +268,12 @@ footer a:hover{color:var(--accent)}
 <p>Polyend's compact tracker: a colour screen, a dpad, soft keys and internal synths.</p>
 </figure>
 <figure>
-<div class="shot dark">
-<svg viewBox="0 0 400 300" class="art" role="img" aria-label="The Alpaca NDLR panel drawn for the Tracker Mini screen, with the third chord button lit green" xmlns="http://www.w3.org/2000/svg">
-<rect x="2" y="2" width="396" height="296" rx="14" fill="#17121f" stroke="#2d2440" stroke-width="3"/>
-<circle cx="40" cy="45" r="15" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/><circle cx="40" cy="45" r="4" fill="#6d5f8a"/>
-<circle cx="40" cy="110" r="15" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/><circle cx="40" cy="110" r="4" fill="#6d5f8a"/>
-<circle cx="40" cy="175" r="15" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/><circle cx="40" cy="175" r="4" fill="#6d5f8a"/>
-<circle cx="40" cy="240" r="15" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/><circle cx="40" cy="240" r="4" fill="#6d5f8a"/>
-<circle cx="360" cy="45" r="15" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/><circle cx="360" cy="45" r="4" fill="#6d5f8a"/>
-<circle cx="360" cy="110" r="15" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/><circle cx="360" cy="110" r="4" fill="#6d5f8a"/>
-<circle cx="360" cy="175" r="15" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/><circle cx="360" cy="175" r="4" fill="#6d5f8a"/>
-<circle cx="360" cy="240" r="15" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/><circle cx="360" cy="240" r="4" fill="#6d5f8a"/>
-<circle cx="200" cy="140" r="86" fill="none" stroke="#2d2440" stroke-width="2" stroke-dasharray="2 5"/>
-<circle cx="200.0" cy="54.0" r="14" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/><text x="200.0" y="57.5" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" font-weight="500" fill="#b9b3c9">I</text>
-<circle cx="267.2" cy="86.4" r="14" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/><text x="267.2" y="89.9" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" font-weight="500" fill="#b9b3c9">II</text>
-<circle cx="283.8" cy="159.1" r="14" fill="#3ddc84" stroke="#6d5f8a" stroke-width="2"/><text x="283.8" y="162.6" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" font-weight="500" fill="#07050b">III</text>
-<circle cx="237.3" cy="217.5" r="14" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/><text x="237.3" y="221.0" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" font-weight="500" fill="#b9b3c9">IV</text>
-<circle cx="162.7" cy="217.5" r="14" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/><text x="162.7" y="221.0" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" font-weight="500" fill="#b9b3c9">V</text>
-<circle cx="116.2" cy="159.1" r="14" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/><text x="116.2" y="162.6" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" font-weight="500" fill="#b9b3c9">VI</text>
-<circle cx="132.8" cy="86.4" r="14" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/><text x="132.8" y="89.9" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" font-weight="500" fill="#b9b3c9">VII</text>
-<rect x="79" y="19" width="32" height="18" rx="6" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/>
-<rect x="289" y="19" width="32" height="18" rx="6" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/>
-<circle cx="118" cy="272" r="11" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/>
-<circle cx="156" cy="272" r="11" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/>
-<circle cx="244" cy="272" r="11" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/>
-<circle cx="282" cy="272" r="11" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/>
-<rect x="164" y="114" width="72" height="52" rx="4" fill="#07050b" stroke="#2d2440" stroke-width="2"/>
-<text x="200" y="130" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="7" fill="#b794f6">C - MAJOR</text><text x="200" y="146" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11" font-weight="500" fill="#efe9f7">iii E</text><text x="200" y="159" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="7" fill="#a99dbd">90 BPM</text>
-<circle class="hl" cx="40" cy="45" r="22" fill="none" stroke-width="3"/>
-</svg>
-</div>
+<div class="shot dark"><img src="img/alpaca-screen.jpg" width="1000" height="599" alt="Close-up of the Mini's screen running Alpaca: the NDLR panel with the third chord button lit green and a yellow ring on the 1/2 button, with help text in a side column"></div>
 <h3>Alpaca on the Mini</h3>
-<p>The NDLR's controls on the Mini's screen. The green button is the current chord and the coloured ring follows the dpad.</p>
+<p>The NDLR's controls on the Mini's screen. The green button is the current chord and the yellow ring follows the dpad.</p>
 </figure>
 </div>
-<p class="cap">The first two images show the original hardware and belong to Conductive Labs and Polyend. The third is a simplified drawing.</p>
+<p class="cap">The first two images show the original hardware and belong to Conductive Labs and Polyend. The third shows Alpaca running on the Mini.</p>
 </div>
 </section>
 
