@@ -221,7 +221,7 @@ footer a:hover{color:var(--accent)}
   </div>
 </div>
 <p class="demo-help">Keyboard, once the panel has focus: <kbd>&larr;</kbd><kbd>&uarr;</kbd><kbd>&darr;</kbd><kbd>&rarr;</kbd> dpad, <kbd>Enter</kbd> Middle, <kbd>-</kbd><kbd>=</kbd> turn by 1, <kbd>[</kbd><kbd>]</kbd> turn by 10, <kbd>P</kbd> Play, hold <kbd>Shift</kbd> for Shift. On a touch screen, tap once to highlight and again to press. Holding Shift while you turn changes the master volume, as on the Mini.</p>
-<p class="demo-help">Things to try: turn the bottom-left dial to see the notes of the key and mode on the keyboard, with the current chord in green. Turn a right-hand dial to see the motif screen: its pattern, its rhythm and the notes to beats ratio. Set QNT to Next Bar, then press a chord button and watch it wait, lit blue, for the bar line. Start the Tracker pattern and the panel follows its tempo, with TRK on the screen. Tap SHIFT four times in time to set the tempo.</p>
+<p class="demo-help">Things to try: turn the bottom-left dial to see the notes of the key and mode on the keyboard, with the current chord in green. Turn a right-hand dial to see the motif screen: its pattern, its rhythm and the notes to beats ratio. Set QNT to Next Bar, then press a chord button and watch it wait, lit blue, for the bar line. Start the Tracker pattern and the panel follows its tempo, with TRK on the screen. Click the blue SHIFT on the panel four times in time to set the tempo.</p>
 <p class="demo-help">The editors: latch SHIFT and press MENU for Editor mode. The Pattern Editor opens first; press the top-right dial for it, the dial below for the Rhythm Editor, and the top-left dial for the Chord Sequencer. In an editor each dial has one job, shown beside it. In the Chord Sequencer, turn the third dial on the right to ARM, then press PLAY and the chords change by themselves. REC lights up as it does on the Mini, but the demo does not save a file, and patterns you save last until the page is reloaded.</p>
 <p class="demo-help">The sound here is a simple browser synth, and the drum loop stands in for a Tracker pattern. On the Tracker, Alpaca plays the built-in synths (ACD, FAT, VAP, WTFM, PERC, DIRT and CHIP), so it sounds much better.</p>
 </div>
@@ -1139,7 +1139,7 @@ function toggleRecording() {
     toast("Recording stereo mix", true);
   }
 }
-/* four taps on Shift set the tempo, 40 to 300 BPM */
+/* four presses on the panel's SHIFT set the tempo, 40 to 300 BPM */
 const taps = [];
 function tapShift() {
   const now = wallNow();
@@ -1964,7 +1964,7 @@ function act(k) {
     case "m10": turn(-10); break;
     case "p10": turn(10); break;
     case "play": if (shiftOn()) toggleAllMods(); else toggleAll(); break;
-    case "shift": s.physShift = !s.physShift; if (s.physShift) tapShift(); break;
+    case "shift": s.physShift = !s.physShift; break;
     case "menu": toast("On the Mini, hold Menu to change screen"); break;
     default: return;
   }
@@ -1981,7 +1981,7 @@ function boot() {
   const KEYMAP = { ArrowLeft: "left", ArrowRight: "right", ArrowUp: "up", ArrowDown: "down", Enter: "mid", " ": "mid",
     "-": "m1", "=": "p1", "+": "p1", "[": "m10", "]": "p10", m: "menu", M: "menu", p: "play", P: "play" };
   dev.addEventListener("keydown", e => {
-    if (e.key === "Shift") { if (!s.physShift) { s.physShift = true; tapShift(); render(); } return; }
+    if (e.key === "Shift") { if (!s.physShift) { s.physShift = true; render(); } return; }
     const m = KEYMAP[e.key];
     if (!m) return;
     if (e.target.closest("button,select,input") && (e.key === "Enter" || e.key === " " || e.key.startsWith("Arrow"))) return;
