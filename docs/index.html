@@ -238,14 +238,14 @@ footer a:hover{color:var(--accent)}
 <article class="card"><h3>Your whole NDLR on screen</h3><p>All eight encoders, the seven chord buttons, ALL, 1/2, Menu, Shift and the four part buttons sit where they do on the hardware, drawn across the Mini's 800 by 480 display.</p></article>
 <article class="card"><h3>The dpad is your finger</h3><p>Move a highlight from control to control with the dpad. Middle presses what is highlighted, and the plus and minus buttons turn the highlighted encoder by 1 or by 10.</p></article>
 <article class="card"><h3>Chords, keys and modes</h3><p>Chord buttons I to VII, with Shift chord types: triad, 7th, sus2, alt2, alt1, sus4 and 6th. Fifteen modes, keys stepped around the circle of fifths, and tempo from 10 to 300 BPM.</p></article>
-<article class="card"><h3>Straight to the synths</h3><p>Pad, Drone and both motifs play the Mini's internal synths over virtual MIDI channels 1 to 3. Load WTFM, ACD or VAP on a part and Alpaca drives it.</p></article>
+<article class="card"><h3>Straight to the synths</h3><p>Pad, Drone and both motifs play the Mini's internal synths over virtual MIDI. Load WTFM, ACD or VAP on a synth and Alpaca drives it.</p></article>
 <article class="card"><h3>Pad and Drone</h3><p>Pad position, strum, range up to 22 notes and six spread voicings. Drone position, notes and trigger, with root and chord modes.</p></article>
 <article class="card"><h3>Two motifs</h3><p>Position and pattern length, six variations, forty patterns and forty rhythms, clock divisions, rhythm length of 4 to 32 beats, accent and offset. The 1/2 button picks which motif you edit.</p></article>
 <article class="card"><h3>Mod matrix and LFOs</h3><p>Menu mode opens the four Mod Matrix pages, LFO Config and the three Settings pages from the encoder buttons, as on the hardware.</p></article>
 <article class="card"><h3>The five editors</h3><p>Editor mode opens the Chord Sequencer, MIDI Controller, Pattern Editor, Rhythm Editor and Perlin noise generator.</p></article>
 <article class="card"><h3>Played by the Tracker's own synths</h3><p>Alpaca has no sounds of its own. It plays the synths already built into your Tracker (ACD, FAT, UAP, WTFM, PERC, DIRT and CHIP), so the pad, drone and motifs sound as good as the Mini itself does.</p></article>
-<article class="card"><h3>Pick a sustaining sound for the Drone</h3><p>The Drone holds its notes for as long as it plays, so give Synth 2 a preset that sustains. A sound that decays on its own will fade away while the Drone is still running, and it will seem to have stopped.</p></article>
-<article class="card"><h3>Four synths, polyphony permitting</h3><p>Alpaca can play through up to four of the Tracker's synths at once: the Pad on Synth 1, the Drone on Synth 2, Motif 1 on Synth 3 and Motif 2 on Synth 4. All four are available as long as there is enough polyphony across them, and Motif 2 can share Synth 3 when there isn't.</p></article>
+<article class="card"><h3>Pick a sustaining sound for the Drone</h3><p>The Drone holds its notes for as long as it plays, so give its synth a preset that sustains. A sound that decays on its own will fade away while the Drone is still running, and it will seem to have stopped.</p></article>
+<article class="card"><h3>Four synths, polyphony permitting</h3><p>Alpaca can play through up to four of the Tracker's synths at once, and you choose which synth each part plays on: the Pad, the Drone, Motif 1 and Motif 2 can each use any of them. By default they sit on Synths 1 to 4. All four are available as long as there is enough polyphony across them, and parts can share a synth when there isn't.</p></article>
 <article class="card"><h3>Change presets while it plays</h3><p>Swap synth presets on the fly. The chords, drone and motifs keep playing while you audition new sounds.</p></article>
 <article class="card"><h3>Record everything you hear</h3><p>Press record in the bottom right of the screen and it captures all the sound playing, Alpaca and your Tracker pattern together, into the Recordings folder. Each take is saved with a prefix and an incrementing number, such as NDLR0003, so nothing gets overwritten.</p></article>
 <article class="card"><h3>Play over a normal Tracker pattern</h3><p>Alpaca does not take over the Tracker. Start it while an ordinary pattern is already running and play over the top, with your chords, drone and motifs layered on what you have written.</p></article>
@@ -455,7 +455,7 @@ const INFO = {
   E2:{n:'Encoder 2 - PAD', rows:[
     ['normal','Turn: Pad RANGE / SPREAD. Press: switch between the two.'],
     ['menu','Mod Matrix menu 3&4.']],
-    d:'<em>Range</em> sets the note count, limited by available Synth 1 voices. Auto follows the chord. <em>Spread</em> changes the voicing.'},
+    d:'<em>Range</em> sets the note count, limited by the voices available on the Pad's synth. Auto follows the chord. <em>Spread</em> changes the voicing.'},
   E3:{n:'Encoder 3 - DRONE', rows:[
     ['normal','Turn: Drone POSITION / NOTES / TRIGGER. Press: cycle the three.'],
     ['menu','Mod Matrix menu 5&6.']],
@@ -517,7 +517,7 @@ const INFO = {
   M2:{n:'MOTIF 2 ||/>', rows:[
     ['normal','Play / pause Motif 2.'],
     ['shift','MOD: toggle modulations that target Motif 2 (red ring).']],
-    d:'Defaults to a descending quarter-note arpeggio. Plays on Synth 4, or shares Synth 3 with Motif 1; the 1/2 button chooses which motif the right-hand encoders edit.'},
+    d:'Defaults to a descending quarter-note arpeggio. Plays on Synth 4 by default, and you can choose any synth; the 1/2 button chooses which motif the right-hand encoders edit.'},
   SCREEN:{n:'SCREEN', rows:[
     ['view','Top stripes: Motif 1, Pad, Motif 2 (width = notes, height = octave).'],
     ['view','Side arrows: selected encoder and which of its labels.']],
