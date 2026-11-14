@@ -625,6 +625,7 @@ function pText(id){ const lab=st.enc[id], p=PARAMS[id][lab], v=st.val[id][lab];
 function pStep(id,n){ const lab=st.enc[id], p=PARAMS[id][lab]; let v=st.val[id][lab];
   if(p.list){ const len=p.list.length; v=((v+(n>0?1:-1))%len+len)%len; } else v=Math.max(p.min,Math.min(p.max,v+n));
   st.val[id][lab]=v; }
+st.ang = {};
 st.mval = {1:{},2:{}};
 for(const id of ['E5','E6','E7','E8']){ st.mval[1][id]=st.val[id].slice(); st.mval[2][id]=st.val[id].slice(); }
 st.mval[2].E7[0]=2; st.mval[2].E6[0]=1;   /* defaults: Motif 1 ascending eighths, Motif 2 descending quarters */
@@ -712,7 +713,7 @@ function drawControl(c){
   if(c.k==='enc'){
     g += `<circle cx="${x}" cy="${y}" r="${r+2}" fill="#0a0c10" stroke="#3b4458" stroke-width="1.5"/>`;
     g += `<circle cx="${x}" cy="${y}" r="${r-2}" fill="#111419"/>`;
-    g += `<line x1="${x}" y1="${y-r+4}" x2="${x}" y2="${y-3}" stroke="#aeb7c9" stroke-width="2.2" stroke-linecap="round"/>`;
+    g += `<line x1="${x}" y1="${y-r+4}" x2="${x}" y2="${y-3}" stroke="#aeb7c9" stroke-width="2.2" stroke-linecap="round" transform="rotate(${(st.ang[c.id]||0)%360} ${x} ${y})"/>`;
     if(st.turn && st.turn.id===c.id) g += T(x,y+4,st.turn.dir>0?'↻':'↺',16,'#ffd23f');
   } else if(c.k==='chord'){
     const act = c.deg===st.deg;
@@ -870,7 +871,7 @@ function menuKey(){
 }
 function turn(n){
   const c = BY[st.sel]; if(c.k!=='enc'){ toast('Select an encoder to turn it'); return; }
-  st.activeEnc = c.id; st.turn={id:c.id,dir:n}; setTimeout(()=>{st.turn=null;render();},500);
+  st.activeEnc = c.id; st.ang[c.id]=(st.ang[c.id]||0)+n*15; st.turn={id:c.id,dir:n}; setTimeout(()=>{st.turn=null;render();},500);
   if(c.id==='E4'){
     const lab=st.enc.E4;
     if(lab===0) st.tempo = Math.max(10,Math.min(300,st.tempo+n));
