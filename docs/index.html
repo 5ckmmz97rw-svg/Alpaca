@@ -216,7 +216,7 @@ footer a:hover{color:var(--accent)}
 <section id="try">
 <div class="wrap">
 <h2>Try the panel</h2>
-<p class="sub">This is the screen Alpaca draws on the Mini. Roll the mouse over any control to see what it does, click to press it, and use the buttons underneath as the Mini's dpad and keys. Switch Sound on to hear it: the Pad plays on Synth 1, the Drone on Synth 2 and both Motifs share Synth 3, as on the Tracker, and each synth has its own preset menu. and the encoders, tempo, key and mode change what you hear.</p>
+<p class="sub">This is the screen Alpaca draws on the Mini. Roll the mouse over any control to see what it does, click to press it, click and drag a dial up or down to turn it, and use the buttons underneath as the Mini's dpad and keys. Switch Sound on to hear it: the Pad plays on Synth 1, the Drone on Synth 2 and both Motifs share Synth 3, as on the Tracker, and each synth has its own preset menu. and the encoders, tempo, key and mode change what you hear.</p>
 <p class="small-note">The panel is drawn for an 800 by 480 screen, so it reads best on a tablet or computer.</p>
 <div class="demo">
 <div class="device" id="device" tabindex="0" aria-label="Interactive Alpaca panel. Arrow keys move the highlight, Enter presses.">
@@ -257,7 +257,7 @@ footer a:hover{color:var(--accent)}
     </div>
   </div>
 </div>
-<p class="demo-help">Keyboard, once the panel has focus: <kbd>&larr;</kbd><kbd>&uarr;</kbd><kbd>&darr;</kbd><kbd>&rarr;</kbd> dpad, <kbd>Enter</kbd> Middle, <kbd>-</kbd><kbd>=</kbd> turn by 1, <kbd>[</kbd><kbd>]</kbd> turn by 10, <kbd>M</kbd> Menu, <kbd>P</kbd> Play, hold <kbd>Shift</kbd> for NDLR Shift. On a touch screen, tap once to highlight and again to press. Hold <kbd>Shift</kbd> and press the turn keys to change the master volume, as on the Mini. The sound here is a simple browser synth that shows the idea. On the Tracker, Alpaca plays the bundled synths (ACD, FAT, UAP, WTFM, PERC, DIRT and CHIP), so it sounds much better.</p>
+<p class="demo-help">With a mouse, drag a dial up or down to turn it. Keyboard, once the panel has focus: <kbd>&larr;</kbd><kbd>&uarr;</kbd><kbd>&darr;</kbd><kbd>&rarr;</kbd> dpad, <kbd>Enter</kbd> Middle, <kbd>-</kbd><kbd>=</kbd> turn by 1, <kbd>[</kbd><kbd>]</kbd> turn by 10, <kbd>M</kbd> Menu, <kbd>P</kbd> Play, hold <kbd>Shift</kbd> for NDLR Shift. On a touch screen, tap once to highlight and again to press. Hold <kbd>Shift</kbd> and press the turn keys to change the master volume, as on the Mini. The sound here is a simple browser synth that shows the idea. On the Tracker, Alpaca plays the bundled synths (ACD, FAT, UAP, WTFM, PERC, DIRT and CHIP), so it sounds much better.</p>
 </div>
 </div>
 </section>
@@ -908,17 +908,47 @@ function pick(ev){
 }
 /* rollover: a mouse pointer highlights what it is over; clicking presses it.
    Touch has no hover, so a first tap highlights and a second tap presses. */
+let drag=null, suppressClick=false;
 psvg.addEventListener('pointermove',ev=>{
-  if(ev.pointerType!=='mouse') return;
-  const b=pick(ev); psvg.style.cursor=b?'pointer':'default';
+  if(ev.pointerType!=='mouse' || drag) return;
+  const b=pick(ev); psvg.style.cursor=b?(BY[b].k==='enc'?'ns-resize':'pointer'):'default';
   if(b && b!==st.sel){ st.sel=b; render(); }
 });
 psvg.addEventListener('click',ev=>{
+  if(suppressClick){ suppressClick=false; return; }
   const b=pick(ev); if(!b) return;
   dev.focus({preventScroll:true});
   if(b===st.sel) press(); else st.sel=b;
   render();
 });
+/* click and drag an encoder: up turns it up, down turns it down, one step per few pixels */
+const DRAG_PX=7;
+psvg.addEventListener('pointerdown',ev=>{
+  suppressClick=false;
+  if(ev.pointerType!=='mouse' || ev.button!==0) return;
+  const b=pick(ev); if(!b || BY[b].k!=='enc') return;
+  st.sel=b; render();
+  drag={id:b,y:ev.clientY,acc:0,moved:false};
+  try{ psvg.setPointerCapture(ev.pointerId); }catch(e){}
+  psvg.style.cursor='ns-resize';
+  dev.focus({preventScroll:true});
+  ev.preventDefault();
+});
+psvg.addEventListener('pointermove',ev=>{
+  if(!drag) return;
+  drag.acc += drag.y-ev.clientY; drag.y=ev.clientY;
+  while(drag.acc>=DRAG_PX){ drag.acc-=DRAG_PX; drag.moved=true; turn(1); }
+  while(drag.acc<=-DRAG_PX){ drag.acc+=DRAG_PX; drag.moved=true; turn(-1); }
+  if(drag.moved) render();
+});
+function endDrag(ev){
+  if(!drag) return;
+  if(drag.moved) suppressClick=true;
+  drag=null;
+  try{ psvg.releasePointerCapture(ev.pointerId); }catch(e){}
+}
+psvg.addEventListener('pointerup',endDrag);
+psvg.addEventListener('pointercancel',endDrag);
 
 /* ---------- scale the 800x480 "screen" to fit its container ---------- */
 function fit(){
