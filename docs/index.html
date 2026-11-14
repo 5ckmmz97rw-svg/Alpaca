@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Alpaca for Tracker Mini</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Layout idea: one dark console page, a live front panel as the centrepiece, history as two columns.
+   Colour is five token sets switched by data-scheme on <html>; keys is the default. */
+:root{
+  --bg:#0c0e11;--surface:#15181d;--line:#2a2f38;--text:#eef0f2;--dim:#a8aeb9;
+  --accent:#3fd6c6;--ink:#06201d;--accent2:#f2d64b;--photo:#ffffff;
+  --display:"Silkscreen",ui-monospace,monospace;--body:"IBM Plex Sans",system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,monospace;
+  color-scheme:dark;
+}
+:root[data-scheme="mono"]{--bg:#0a0a0a;--surface:#141414;--line:#2e2e2e;--text:#f5f5f2;--dim:#adada8;--accent:#f5f5f2;--ink:#0a0a0a;--accent2:#cfcfc8;--photo:#ffffff;color-scheme:dark}
+:root[data-scheme="red"]{--bg:#110809;--surface:#1b0e0f;--line:#3d1f21;--text:#f6eeec;--dim:#c3aeab;--accent:#ff5a5f;--ink:#1a0507;--accent2:#ffb454;--photo:#ffffff;color-scheme:dark}
+:root[data-scheme="violet"]{--bg:#0f0b17;--surface:#191324;--line:#2f2543;--text:#f0eaf8;--dim:#b8accc;--accent:#ff4fa3;--ink:#14091a;--accent2:#b794f6;--photo:#ffffff;color-scheme:dark}
+:root[data-scheme="paper"]{--bg:#f5f2ea;--surface:#ffffff;--line:#d9d3c4;--text:#17140f;--dim:#585347;--accent:#c4262e;--ink:#ffffff;--accent2:#6a3fb5;--photo:#ffffff;color-scheme:light}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--body);line-height:1.6}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+a{color:var(--accent)}
+a:focus-visible,button:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.banner{background:var(--accent);color:var(--ink);font-family:var(--mono);font-size:14px;text-align:center;padding:10px 16px}
+.nav{display:flex;flex-wrap:wrap;gap:12px 28px;align-items:center;justify-content:space-between;padding:20px 0}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--text);font-family:var(--display);font-size:22px;font-weight:700;letter-spacing:.5px}
+.logo{width:46px;height:46px;border-radius:50%;overflow:hidden;border:1px solid var(--line);flex:none;background:#000}
+.logo img{display:block;width:100%;height:100%;object-fit:cover;transform:scale(1.06)}
+.links{display:flex;flex-wrap:wrap;gap:4px 22px}
+.links a{color:var(--dim);text-decoration:none;font-size:15px;padding:10px 0}
+.links a:hover{color:var(--accent)}
+.schemes{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-family:var(--mono);font-size:12px;color:var(--dim)}
+.schemes button{font:inherit;color:var(--text);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:0 12px;min-height:36px;cursor:pointer;display:inline-flex;align-items:center;gap:7px}
+.schemes button:hover{border-color:var(--accent)}
+.schemes button[aria-pressed="true"]{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.sw{width:12px;height:12px;border-radius:50%;border:1px solid var(--line);flex:none}
+.hero{display:flex;flex-wrap:wrap;gap:40px;align-items:center;padding:32px 0 72px}
+.hero-copy{flex:1 1 400px;min-width:0}
+.hero-art{flex:0 1 340px;min-width:0;margin:0 auto}
+.eyebrow{font-family:var(--mono);font-size:13px;color:var(--accent2);letter-spacing:.12em;text-transform:uppercase;margin:0 0 14px}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(34px,6vw,60px);line-height:1.05;margin:0 0 20px;text-wrap:balance}
+h1 em{font-style:normal;color:var(--accent)}
+.lede{font-size:19px;color:var(--dim);max-width:52ch;margin:0 0 28px}
+.btns{display:flex;flex-wrap:wrap;gap:14px}
+.btn{display:inline-flex;align-items:center;min-height:48px;padding:0 22px;border-radius:6px;font-weight:600;font-size:16px;text-decoration:none;border:2px solid var(--accent)}
+.btn.primary{background:var(--accent);color:var(--ink)}
+.btn.primary:hover{filter:brightness(1.1)}
+.btn.ghost{color:var(--accent);background:transparent}
+.btn.ghost:hover{background:var(--surface)}
+.art{display:block;width:100%;height:auto}
+.hl{stroke:var(--accent)}
+.cap{font-family:var(--mono);font-size:12.5px;color:var(--dim);margin:12px 0 0}
+section{padding:72px 0;border-top:1px solid var(--line)}
+h2{font-family:var(--display);font-weight:700;font-size:clamp(26px,4vw,38px);margin:0 0 12px;text-wrap:balance}
+.sub{color:var(--dim);font-size:18px;max-width:62ch;margin:0 0 36px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:24px}
+.card h3{font-size:19px;margin:0 0 8px}
+.card p{margin:0;color:var(--dim);font-size:16px}
+.trio{display:flex;flex-wrap:wrap;gap:24px}
+.trio figure{flex:1 1 280px;min-width:0;margin:0;display:flex;flex-direction:column;gap:12px}
+.shot{background:var(--photo);border:1px solid var(--line);border-radius:10px;padding:16px;display:flex;align-items:center;justify-content:center;aspect-ratio:1/1}
+.shot img{display:block;max-width:100%;max-height:100%;height:auto;width:auto;object-fit:contain}
+.shot.dark{background:#0d0b12}
+.shot.dark svg{width:100%;height:auto}
+.trio h3{font-family:var(--display);font-size:18px;margin:0}
+.trio p{margin:0;color:var(--dim);font-size:15px}
+.hist{display:flex;flex-wrap:wrap;gap:40px}
+.hist>div{flex:1 1 440px;min-width:0}
+.hist h3{font-family:var(--display);font-size:22px;margin:0 0 4px}
+.hist .tag{font-family:var(--mono);font-size:13px;color:var(--accent2);margin:0 0 18px}
+.hist p{color:var(--dim);margin:0 0 14px;max-width:62ch}
+.timeline{list-style:none;margin:22px 0 0;padding:0;border-left:2px solid var(--line)}
+.timeline li{padding:0 0 16px 18px;position:relative;color:var(--dim);font-size:15px}
+.timeline li::before{content:"";position:absolute;left:-7px;top:8px;width:12px;height:12px;border-radius:50%;background:var(--accent)}
+.timeline b{font-family:var(--mono);color:var(--text);font-weight:500;margin-right:8px}
+table{border-collapse:collapse;width:100%;max-width:640px}
+th,td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--line);font-size:16px;vertical-align:top}
+th{font-family:var(--mono);font-weight:500;color:var(--accent);width:150px;white-space:nowrap}
+td{color:var(--dim)}
+ol.steps{margin:0;padding-left:22px;color:var(--dim);max-width:62ch}
+ol.steps li{margin:10px 0}
+code{font-family:var(--mono);font-size:14px;background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:2px 6px;color:var(--text)}
+.note{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--accent2);border-radius:6px;padding:16px 18px;color:var(--dim);margin:28px 0 0;max-width:62ch}
+footer{border-top:1px solid var(--line);padding:40px 0 56px;color:var(--dim);font-size:14px}
+footer p{max-width:78ch;margin:0 0 12px}
+footer a{color:var(--dim)}
+footer a:hover{color:var(--accent)}
+.src{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:14px}
+.support{margin:22px 0 0;color:var(--dim);max-width:62ch}
+.small-note{display:none;font-size:14px;color:var(--dim);margin:0 0 14px}
+@media (max-width:860px){.grid3{grid-template-columns:minmax(0,1fr)}section{padding:52px 0}}
+@media (max-width:640px){.small-note{display:block}}
+
+.demo{--d-bg:#0c1017;--d-panel:#151a22;--d-panel2:#1b212b;--d-line:#2b3342;--d-txt:#d5dcea;--d-dim:#8b96ab;--d-hi:#ffd23f;--d-on:#3ddc84;--d-blue:#2f6bff;--d-red:#ff4d4d;--d-mono:ui-monospace,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;font-family:var(--d-mono);color:var(--d-txt)}
+.demo *{box-sizing:border-box}
+.device{width:100%;max-width:980px;margin:0 auto;background:#10141b;border:1px solid #232b39;border-radius:18px;padding:14px;box-shadow:0 14px 40px rgba(0,0,0,.45)}
+.device:focus-visible{outline:3px solid var(--accent);outline-offset:4px}
+.scrwrap{width:100%;background:#000;border-radius:6px;overflow:hidden;border:2px solid #1d2431;position:relative}
+#screen{width:800px;height:480px;position:relative;background:var(--d-bg);transform-origin:0 0;overflow:hidden}
+#panelsvg{position:absolute;left:0;top:0;width:800px;height:480px}
+#info{position:absolute;left:614px;top:6px;width:180px;height:390px;background:var(--d-panel);border:1px solid var(--d-line);border-radius:6px;padding:8px;display:flex;flex-direction:column;gap:6px;overflow:hidden}
+#info .nm{font-size:15px;font-weight:700;color:var(--d-hi);line-height:1.15}
+#info .row{font-size:11px;line-height:1.25;padding:3px 5px;border-left:3px solid var(--d-line);color:#98a3b8;border-radius:2px}
+#info .row b{display:block;font-size:9.5px;letter-spacing:.08em;color:var(--d-dim);font-weight:600}
+#info .row.act{border-left-color:var(--d-hi);background:#232a37;color:var(--d-txt)}
+#info .row.act b{color:var(--d-hi)}
+#info .now{font-size:11px;color:var(--d-on);margin-top:auto}
+#info svg{display:block;margin:0 auto}
+#desc{position:absolute;left:6px;top:402px;width:788px;height:72px;background:var(--d-panel);border:1px solid var(--d-line);border-radius:6px;padding:7px 10px;font-size:13px;line-height:1.35;color:var(--d-txt);overflow:hidden}
+#desc em{color:var(--d-hi);font-style:normal}
+.chips{display:flex;gap:4px;flex-wrap:wrap}
+.chip{font-size:9.5px;padding:1px 5px;border-radius:9px;border:1px solid var(--d-line);color:var(--d-dim)}
+.chip.on{color:#000;background:var(--d-hi);border-color:var(--d-hi);font-weight:700}
+.chip.blue.on{background:var(--d-blue);border-color:var(--d-blue);color:#fff}
+.keys{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;margin-top:12px}
+.grp{display:flex;gap:6px;align-items:center;background:#0b0e14;border:1px solid #202838;border-radius:12px;padding:6px 8px}
+.grp small{color:var(--d-dim);font-size:10px;margin-right:2px}
+.device button.k{font-family:var(--d-mono);font-size:13px;min-width:44px;height:44px;border-radius:9px;border:1px solid #2c3648;background:#1a212d;color:var(--d-txt);cursor:pointer;padding:0 8px}
+.device button.k:hover{background:#232c3b}
+.device button.k:active{background:#34425a;transform:translateY(1px)}
+.device button.k:focus-visible{outline:3px solid var(--d-hi);outline-offset:2px}
+.device button.k.on{background:var(--d-blue);border-color:var(--d-blue);color:#fff}
+.pad{display:grid;grid-template-columns:repeat(3,44px);grid-template-rows:repeat(3,44px);gap:4px}
+.pad .u{grid-column:2;grid-row:1}.pad .l{grid-column:1;grid-row:2}.pad .m{grid-column:2;grid-row:2;border-radius:50%}
+.pad .r{grid-column:3;grid-row:2}.pad .d{grid-column:2;grid-row:3}
+.demo svg text{font-family:var(--d-mono)}
+.selring{animation:pulse 1.1s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.55}}
+@media (prefers-reduced-motion:reduce){.selring{animation:none}}
+.demo-help{max-width:980px;margin:16px auto 0;font-size:14px;color:var(--dim);line-height:1.7;text-align:center}
+.demo-help kbd{background:var(--surface);border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;padding:0 6px;font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--text)}
+
+</style>
+</head>
+<body>
+<div class="banner">Alpaca: the NDLR's panel, menus and editors on the Polyend Tracker Mini, as firmware for Tracker CE</div>
+
+<div class="wrap">
+<nav class="nav" aria-label="Main">
+<a class="brand" href="#top"><span class="logo"><img src="img/alpaca-logo.png" alt=""></span>ALPACA</a>
+<div class="links"><a href="#try">Try it</a><a href="#features">Features</a><a href="#hardware">The hardware</a><a href="#history">History</a><a href="#install">Install</a><a href="https://ko-fi.com/alpacamaraca">Tip jar</a></div>
+<div class="schemes" role="group" aria-label="Colour scheme"><span>Colour</span>
+<button type="button" data-scheme="keys" aria-pressed="true"><i class="sw" style="background:#3fd6c6"></i>Keys</button>
+<button type="button" data-scheme="mono" aria-pressed="false"><i class="sw" style="background:#f5f5f2"></i>Mono</button>
+<button type="button" data-scheme="red" aria-pressed="false"><i class="sw" style="background:#ff5a5f"></i>Red</button>
+<button type="button" data-scheme="violet" aria-pressed="false"><i class="sw" style="background:#ff4fa3"></i>Violet</button>
+<button type="button" data-scheme="paper" aria-pressed="false"><i class="sw" style="background:#c4262e"></i>Paper</button>
+</div>
+</nav>
+
+<header class="hero" id="top">
+<div class="hero-copy">
+<p class="eyebrow">Chord machine meets tracker</p>
+<h1><em>Alpaca</em> turns your Tracker Mini into an NDLR</h1>
+<p class="lede">Eight encoders, a ring of seven chord buttons and four parts, drawn on the Mini's screen and played with its dpad. Chords, a drone and two motifs drive the internal synths, with the NDLR's menus and editors behind them.</p>
+<div class="btns"><a class="btn primary" href="#try">Try the panel</a><a class="btn ghost" href="#install">Get the firmware</a></div>
+</div>
+<div class="hero-art">
+<svg viewBox="0 0 300 410" class="art" role="img" aria-label="Schematic of a Tracker Mini showing the Alpaca NDLR panel on its screen, with the top-left encoder highlighted" xmlns="http://www.w3.org/2000/svg">
+<rect x="4" y="4" width="292" height="402" rx="16" fill="#121316" stroke="#34363d" stroke-width="3"/>
+<rect x="22" y="22" width="256" height="157" rx="6" fill="#050309" stroke="#34363d" stroke-width="2"/>
+<g transform="translate(51 26) scale(0.497)"><rect x="2" y="2" width="396" height="296" rx="14" fill="#17121f" stroke="#2d2440" stroke-width="3"/>
+<circle cx="40" cy="45" r="15" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/><circle cx="40" cy="45" r="4" fill="#6d5f8a"/>
+<circle cx="40" cy="110" r="15" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/><circle cx="40" cy="110" r="4" fill="#6d5f8a"/>
+<circle cx="40" cy="175" r="15" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/><circle cx="40" cy="175" r="4" fill="#6d5f8a"/>
+<circle cx="40" cy="240" r="15" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/><circle cx="40" cy="240" r="4" fill="#6d5f8a"/>
+<circle cx="360" cy="45" r="15" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/><circle cx="360" cy="45" r="4" fill="#6d5f8a"/>
+<circle cx="360" cy="110" r="15" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/><circle cx="360" cy="110" r="4" fill="#6d5f8a"/>
+<circle cx="360" cy="175" r="15" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/><circle cx="360" cy="175" r="4" fill="#6d5f8a"/>
+<circle cx="360" cy="240" r="15" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/><circle cx="360" cy="240" r="4" fill="#6d5f8a"/>
+<circle cx="200" cy="140" r="86" fill="none" stroke="#2d2440" stroke-width="2" stroke-dasharray="2 5"/>
+<circle cx="200.0" cy="54.0" r="14" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/><text x="200.0" y="57.5" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" font-weight="500" fill="#b9b3c9">I</text>
+<circle cx="267.2" cy="86.4" r="14" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/><text x="267.2" y="89.9" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" font-weight="500" fill="#b9b3c9">II</text>
+<circle cx="283.8" cy="159.1" r="14" fill="#3ddc84" stroke="#6d5f8a" stroke-width="2"/><text x="283.8" y="162.6" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" font-weight="500" fill="#07050b">III</text>
+<circle cx="237.3" cy="217.5" r="14" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/><text x="237.3" y="221.0" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" font-weight="500" fill="#b9b3c9">IV</text>
+<circle cx="162.7" cy="217.5" r="14" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/><text x="162.7" y="221.0" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" font-weight="500" fill="#b9b3c9">V</text>
+<circle cx="116.2" cy="159.1" r="14" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/><text x="116.2" y="162.6" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" font-weight="500" fill="#b9b3c9">VI</text>
+<circle cx="132.8" cy="86.4" r="14" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/><text x="132.8" y="89.9" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" font-weight="500" fill="#b9b3c9">VII</text>
+<rect x="79" y="19" width="32" height="18" rx="6" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/>
+<rect x="289" y="19" width="32" height="18" rx="6" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/>
+<circle cx="118" cy="272" r="11" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/>
+<circle cx="156" cy="272" r="11" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/>
+<circle cx="244" cy="272" r="11" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/>
+<circle cx="282" cy="272" r="11" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/>
+<rect x="164" y="114" width="72" height="52" rx="4" fill="#07050b" stroke="#2d2440" stroke-width="2"/>
+<text x="200" y="130" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="7" fill="#b794f6">C - MAJOR</text><text x="200" y="146" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11" font-weight="500" fill="#efe9f7">iii E</text><text x="200" y="159" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="7" fill="#a99dbd">90 BPM</text>
+<circle class="hl" cx="40" cy="45" r="22" fill="none" stroke-width="3"/></g>
+<rect x="26.0" y="186" width="24" height="14" rx="3" fill="#2a2c33"/><rect x="56.6" y="186" width="24" height="14" rx="3" fill="#2a2c33"/><rect x="87.2" y="186" width="24" height="14" rx="3" fill="#2a2c33"/><rect x="117.8" y="186" width="24" height="14" rx="3" fill="#2a2c33"/><rect x="148.4" y="186" width="24" height="14" rx="3" fill="#2a2c33"/><rect x="179.0" y="186" width="24" height="14" rx="3" fill="#2a2c33"/><rect x="209.6" y="186" width="24" height="14" rx="3" fill="#2a2c33"/><rect x="240.2" y="186" width="24" height="14" rx="3" fill="#2a2c33"/><rect x="118" y="222" width="26" height="12" rx="3" fill="#3fd6c6"/><rect x="150" y="222" width="26" height="12" rx="3" fill="#f2d64b"/><rect x="182" y="222" width="26" height="12" rx="3" fill="#b77ee8"/><rect x="214" y="222" width="26" height="12" rx="3" fill="#4fe0a0"/><rect x="118" y="246" width="26" height="12" rx="3" fill="#2a2c33"/><rect x="150" y="246" width="26" height="12" rx="3" fill="#2a2c33"/><rect x="118" y="266" width="26" height="12" rx="3" fill="#2a2c33"/><rect x="150" y="266" width="26" height="12" rx="3" fill="#2a2c33"/><rect x="118" y="286" width="26" height="12" rx="3" fill="#2a2c33"/><rect x="150" y="286" width="26" height="12" rx="3" fill="#2a2c33"/><rect x="150" y="246" width="26" height="12" rx="3" fill="#d4343c"/><rect x="118" y="316" width="26" height="12" rx="3" fill="#2a2c33"/><rect x="150" y="316" width="26" height="12" rx="3" fill="#2a2c33"/><rect x="182" y="316" width="26" height="12" rx="3" fill="#2a2c33"/><rect x="214" y="316" width="26" height="12" rx="3" fill="#2a2c33"/>
+<rect x="118" y="346" width="122" height="14" rx="3" fill="#2a2c33"/>
+<rect x="30" y="236" width="22" height="64" rx="3" fill="#2a2c33"/><rect x="9" y="257" width="64" height="22" rx="3" fill="#2a2c33"/><circle cx="41" cy="268" r="8" fill="#1d1e23"/>
+<rect x="262" y="222" width="22" height="22" rx="3" fill="#2a2c33"/><rect x="262" y="250" width="22" height="22" rx="3" fill="#2a2c33"/><rect x="262" y="278" width="22" height="22" rx="3" fill="#2a2c33"/><rect x="262" y="306" width="22" height="22" rx="3" fill="#2a2c33"/>
+<rect x="70" y="378" width="160" height="22" rx="4" fill="#1d1e23"/>
+</svg>
+<p class="cap">Schematic of the Mini with Alpaca running. The coloured ring is the dpad highlight.</p>
+</div>
+</header>
+</div>
+
+<section id="try">
+<div class="wrap">
+<h2>Try the panel</h2>
+<p class="sub">This is the screen Alpaca draws on the Mini. Roll the mouse over any control to see what it does, click to press it, and use the buttons underneath as the Mini's dpad and keys.</p>
+<p class="small-note">The panel is drawn for an 800 by 480 screen, so it reads best on a tablet or computer.</p>
+<div class="demo">
+<div class="device" id="device" tabindex="0" aria-label="Interactive Alpaca panel. Arrow keys move the highlight, Enter presses.">
+  <div class="scrwrap" id="wrap">
+    <div id="screen">
+      <svg id="panelsvg" viewBox="0 0 800 480" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="NDLR front panel as drawn on the Tracker Mini screen"></svg>
+      <div id="info"></div>
+      <div id="desc"></div>
+    </div>
+  </div>
+  <div class="keys">
+    <div class="grp"><small>DPAD</small>
+      <div class="pad">
+        <button type="button" class="k u" data-k="up" aria-label="Dpad up">&#9650;</button>
+        <button type="button" class="k l" data-k="left" aria-label="Dpad left">&#9664;</button>
+        <button type="button" class="k m" data-k="mid" aria-label="Middle, press the highlighted control">&#9679;</button>
+        <button type="button" class="k r" data-k="right" aria-label="Dpad right">&#9654;</button>
+        <button type="button" class="k d" data-k="down" aria-label="Dpad down">&#9660;</button>
+      </div>
+    </div>
+    <div class="grp"><small>TURN</small>
+      <button type="button" class="k" data-k="m10">&minus;10</button><button type="button" class="k" data-k="m1">&minus;1</button>
+      <button type="button" class="k" data-k="p1">+1</button><button type="button" class="k" data-k="p10">+10</button>
+    </div>
+    <div class="grp"><small>MINI</small>
+      <button type="button" class="k" data-k="menu">MENU</button>
+      <button type="button" class="k" data-k="shift" id="shiftbtn">SHIFT</button>
+      <button type="button" class="k" data-k="play">PLAY</button>
+    </div>
+  </div>
+</div>
+<p class="demo-help">Keyboard, once the panel has focus: <kbd>&larr;</kbd><kbd>&uarr;</kbd><kbd>&darr;</kbd><kbd>&rarr;</kbd> dpad, <kbd>Enter</kbd> Middle, <kbd>-</kbd><kbd>=</kbd> turn by 1, <kbd>[</kbd><kbd>]</kbd> turn by 10, <kbd>M</kbd> Menu, <kbd>P</kbd> Play, hold <kbd>Shift</kbd> for NDLR Shift. On a touch screen, tap once to highlight and again to press.</p>
+</div>
+</div>
+</section>
+
+<section id="features">
+<div class="wrap">
+<h2>What it does</h2>
+<p class="sub">An NDLR is a box you play with chords and encoders. Alpaca keeps that layout and puts all of it on hardware you may already own.</p>
+<div class="grid3">
+<article class="card"><h3>Your whole NDLR on screen</h3><p>All eight encoders, the seven chord buttons, ALL, 1/2, Menu, Shift and the four part buttons sit where they do on the hardware, drawn across the Mini's 800 by 480 display.</p></article>
+<article class="card"><h3>The dpad is your finger</h3><p>Move a highlight from control to control with the dpad. Middle presses what is highlighted, and the plus and minus buttons turn the highlighted encoder by 1 or by 10.</p></article>
+<article class="card"><h3>Chords, keys and modes</h3><p>Chord buttons I to VII, with Shift chord types: triad, 7th, sus2, alt2, alt1, sus4 and 6th. Fifteen modes, keys stepped around the circle of fifths, and tempo from 10 to 300 BPM.</p></article>
+<article class="card"><h3>Straight to the synths</h3><p>Pad, Drone and both motifs play the Mini's internal synths over virtual MIDI channels 1 to 3. Load WTFM, ACD or VAP on a part and Alpaca drives it.</p></article>
+<article class="card"><h3>Pad and Drone</h3><p>Pad position, strum, range up to 22 notes and six spread voicings. Drone position, notes and trigger, with root and chord modes.</p></article>
+<article class="card"><h3>Two motifs</h3><p>Position and pattern length, six variations, forty patterns and forty rhythms, clock divisions, rhythm length of 4 to 32 beats, accent and offset. The 1/2 button picks which motif you edit.</p></article>
+<article class="card"><h3>Mod matrix and LFOs</h3><p>Menu mode opens the four Mod Matrix pages, LFO Config and the three Settings pages from the encoder buttons, as on the hardware.</p></article>
+<article class="card"><h3>The five editors</h3><p>Editor mode opens the Chord Sequencer, MIDI Controller, Pattern Editor, Rhythm Editor and Perlin noise generator.</p></article>
+<article class="card"><h3>The manual in the margin</h3><p>A side column explains whatever is highlighted: what it does alone, with Shift, and in Menu or Editor mode, with a live readout of its value.</p></article>
+</div>
+</div>
+</section>
+
+<section id="hardware">
+<div class="wrap">
+<h2>Two boxes, one layout</h2>
+<p class="sub">Alpaca follows the NDLR's front plate: the same encoders either side, the same ring of chord buttons around a small screen, the same four part buttons along the bottom. The Mini supplies the screen, the dpad and the synths.</p>
+<div class="trio">
+<figure>
+<div class="shot"><img src="img/ndlr.png" alt="The NDLR hardware, a black panel with eight encoders and a ring of seven chord buttons around a small screen"></div>
+<h3>The NDLR</h3>
+<p>A chord and arpeggio machine from Conductive Labs: eight push encoders, seven chord buttons and a small display.</p>
+</figure>
+<figure>
+<div class="shot"><img src="img/tracker-mini.png" alt="The Polyend Tracker Mini, a black portrait device with a screen, eight soft keys, a dpad and coloured keys"></div>
+<h3>The Tracker Mini</h3>
+<p>Polyend's compact tracker: a colour screen, a dpad, soft keys and internal synths.</p>
+</figure>
+<figure>
+<div class="shot dark">
+<svg viewBox="0 0 400 300" class="art" role="img" aria-label="The Alpaca NDLR panel drawn for the Tracker Mini screen, with the third chord button lit green" xmlns="http://www.w3.org/2000/svg">
+<rect x="2" y="2" width="396" height="296" rx="14" fill="#17121f" stroke="#2d2440" stroke-width="3"/>
+<circle cx="40" cy="45" r="15" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/><circle cx="40" cy="45" r="4" fill="#6d5f8a"/>
+<circle cx="40" cy="110" r="15" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/><circle cx="40" cy="110" r="4" fill="#6d5f8a"/>
+<circle cx="40" cy="175" r="15" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/><circle cx="40" cy="175" r="4" fill="#6d5f8a"/>
+<circle cx="40" cy="240" r="15" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/><circle cx="40" cy="240" r="4" fill="#6d5f8a"/>
+<circle cx="360" cy="45" r="15" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/><circle cx="360" cy="45" r="4" fill="#6d5f8a"/>
+<circle cx="360" cy="110" r="15" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/><circle cx="360" cy="110" r="4" fill="#6d5f8a"/>
+<circle cx="360" cy="175" r="15" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/><circle cx="360" cy="175" r="4" fill="#6d5f8a"/>
+<circle cx="360" cy="240" r="15" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/><circle cx="360" cy="240" r="4" fill="#6d5f8a"/>
+<circle cx="200" cy="140" r="86" fill="none" stroke="#2d2440" stroke-width="2" stroke-dasharray="2 5"/>
+<circle cx="200.0" cy="54.0" r="14" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/><text x="200.0" y="57.5" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" font-weight="500" fill="#b9b3c9">I</text>
+<circle cx="267.2" cy="86.4" r="14" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/><text x="267.2" y="89.9" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" font-weight="500" fill="#b9b3c9">II</text>
+<circle cx="283.8" cy="159.1" r="14" fill="#3ddc84" stroke="#6d5f8a" stroke-width="2"/><text x="283.8" y="162.6" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" font-weight="500" fill="#07050b">III</text>
+<circle cx="237.3" cy="217.5" r="14" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/><text x="237.3" y="221.0" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" font-weight="500" fill="#b9b3c9">IV</text>
+<circle cx="162.7" cy="217.5" r="14" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/><text x="162.7" y="221.0" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" font-weight="500" fill="#b9b3c9">V</text>
+<circle cx="116.2" cy="159.1" r="14" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/><text x="116.2" y="162.6" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" font-weight="500" fill="#b9b3c9">VI</text>
+<circle cx="132.8" cy="86.4" r="14" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/><text x="132.8" y="89.9" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" font-weight="500" fill="#b9b3c9">VII</text>
+<rect x="79" y="19" width="32" height="18" rx="6" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/>
+<rect x="289" y="19" width="32" height="18" rx="6" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/>
+<circle cx="118" cy="272" r="11" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/>
+<circle cx="156" cy="272" r="11" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/>
+<circle cx="244" cy="272" r="11" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/>
+<circle cx="282" cy="272" r="11" fill="#251d33" stroke="#6d5f8a" stroke-width="2"/>
+<rect x="164" y="114" width="72" height="52" rx="4" fill="#07050b" stroke="#2d2440" stroke-width="2"/>
+<text x="200" y="130" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="7" fill="#b794f6">C - MAJOR</text><text x="200" y="146" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11" font-weight="500" fill="#efe9f7">iii E</text><text x="200" y="159" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="7" fill="#a99dbd">90 BPM</text>
+<circle class="hl" cx="40" cy="45" r="22" fill="none" stroke-width="3"/>
+</svg>
+</div>
+<h3>Alpaca on the Mini</h3>
+<p>The NDLR's controls on the Mini's screen. The green button is the current chord and the coloured ring follows the dpad.</p>
+</figure>
+</div>
+<p class="cap">The first two images show the original hardware and belong to Conductive Labs and Polyend. The third is a simplified drawing.</p>
+</div>
+</section>
+
+<section id="history">
+<div class="wrap">
+<h2>Where they came from</h2>
+<p class="sub">Two small companies, each with an unusual instrument and a habit of listening to its users.</p>
+<div class="hist">
+<div>
+<h3>The NDLR</h3>
+<p class="tag">Conductive Labs, Beaverton, Oregon</p>
+<p>Pronounced "noodler". Conductive Labs is run by two co-founders who describe it as a passion project: they build what they want to use in their own studios. The NDLR packs a four-part polyphonic arpeggiator and chord player into one box, made to give otherwise silent synthesizers something to play.</p>
+<p>It reached the world on Kickstarter in September 2017 with a $40,000 goal. Backers could get one for $199, with delivery promised for late March 2018. Early demos paired prototypes with a Blofeld, Volcas and a Deepmind 12.</p>
+<p>The first version came in a blue and grey anodized aluminium case. Backers later asked for more, so the company redesigned the hardware and moved the software to a PJRC Teensy 4. The Rev2 has a red powder-coated base and a power button, and original owners could buy an upgrade board. In 2025 the company turned to a new synth, the Terrain Synth, with its own Kickstarter.</p>
+<ol class="timeline">
+<li><b>2017</b>Kickstarter launch in September, shown at Knobcon</li>
+<li><b>2018</b>Promised delivery to backers, late March</li>
+<li><b>Rev2</b>Teensy 4 rebuild, red base, power switch, motif gate control</li>
+<li><b>2025</b>Terrain Synth Kickstarter</li>
+</ol>
+</div>
+<div>
+<h3>The Tracker</h3>
+<p class="tag">Polyend, Olsztyn, Poland</p>
+<p>Trackers began as software on home computers: the Amiga, Atari ST, MS-DOS machines and the C64. Music is typed into a grid of notes and samples, row by row, instead of being drawn on a timeline. Polyend, founded in 2015 in north-eastern Poland by Piotr Raczyński, took that idea back into a box with buttons.</p>
+<p>The company first made drum robots and sequencers before releasing the Tracker hardware in 2020. The compact Tracker Mini was announced for pre-order in 2023 at $699, with first deliveries expected in July of that year. A limited all-metal edition followed for the company's tenth anniversary in 2025.</p>
+<p>On November 2, 2026 Polyend published the firmware source for the Tracker, Tracker+ and Tracker Mini on GitHub as Tracker Community Edition 1.0. It added a recovery system against bad builds, the CHIP and DIRT synths on the Tracker+ and Mini, and a synth SDK. Alpaca is built on that release.</p>
+<ol class="timeline">
+<li><b>1980s</b>Tracker software on the Amiga and other home computers</li>
+<li><b>2015</b>Polyend founded in Olsztyn</li>
+<li><b>2020</b>First Tracker hardware</li>
+<li><b>2023</b>Tracker Mini announced</li>
+<li><b>2026</b>Tracker CE 1.0, open source</li>
+</ol>
+</div>
+</div>
+</div>
+</section>
+
+<section id="play">
+<div class="wrap">
+<h2>Controls on the Mini</h2>
+<p class="sub">Open Config, then Info, then NDLR Panel. Everything is driven by the Mini's own buttons.</p>
+<table>
+<tbody>
+<tr><th scope="row">Dpad</th><td>Move the highlight</td></tr><tr><th scope="row">Middle</th><td>Press the highlighted control</td></tr><tr><th scope="row">+1 / -1</th><td>Turn the highlighted encoder one step</td></tr><tr><th scope="row">+10 / -10</th><td>Turn it ten steps</td></tr><tr><th scope="row">Play</th><td>ALL: start or stop every part</td></tr><tr><th scope="row">Shift</th><td>Hold for NDLR Shift, or highlight SHIFT and press Middle to latch it</td></tr><tr><th scope="row">Menu (hold)</th><td>Mini module popup, to leave the panel</td></tr>
+</tbody>
+</table>
+</div>
+</section>
+
+<section id="install">
+<div class="wrap">
+<h2>Install</h2>
+<p class="sub">Built from the Tracker CE source. Back up your SD card first.</p>
+<ol class="steps">
+<li>Download Alpaca and unzip it over the root of your <code>tracker-ce</code> checkout.</li>
+<li>Build for the Mini: <code>make mini TOOLCHAIN=arm-none-eabi- BUILD_TAG=alpaca</code></li>
+<li>Copy the <code>.ptf</code> file to <code>/Firmware</code> on the SD card.</li>
+<li>On the Mini, open Config and choose Firmware update.</li>
+</ol>
+<div class="btns" style="margin-top:28px"><a class="btn primary" href="#install">Download: [YOUR LINK HERE]</a></div>
+<p class="support">Alpaca is free. If it makes your music better, you can <a href="https://ko-fi.com/alpacamaraca">leave a tip on Ko-fi</a>.</p>
+<p class="note">Fan-made and unofficial. It uses the same licence as Tracker CE, PolyForm Noncommercial, so it is free to use but not to sell. Tracker CE's recovery system is there if a build misbehaves.</p>
+</div>
+</section>
+
+<footer>
+<div class="wrap">
+<p>Alpaca is an independent fan project. It is not made, sold or endorsed by Conductive Labs or Polyend. The NDLR is a product of Conductive Labs and the Tracker is a product of Polyend; both names belong to their owners.</p>
+<div class="src">
+<a href="https://ko-fi.com/alpacamaraca">Tip jar on Ko-fi</a>
+<a href="https://github.com/polyend/tracker-ce">Tracker CE on GitHub</a>
+<a href="https://conductivelabs.com">Conductive Labs</a>
+<a href="https://polyend.com">Polyend</a>
+<a href="https://www.synthtopia.com/?p=155829">Synthtopia on Tracker CE</a>
+<a href="https://www.matrixsynth.com/2017/09/the-conductive-labs-ndlr.html">MATRIXSYNTH on the NDLR</a>
+<a href="https://www.perfectcircuit.com/signal/what-is-a-tracker-polyend-tracker-mini">Perfect Circuit on trackers</a>
+</div>
+</div>
+</footer>
+
+<script>
+(function(){
+  var root=document.documentElement, btns=document.querySelectorAll('.schemes button');
+  function set(s,save){
+    if(s==='keys') root.removeAttribute('data-scheme'); else root.setAttribute('data-scheme',s);
+    btns.forEach(function(b){b.setAttribute('aria-pressed', b.dataset.scheme===s ? 'true':'false');});
+    if(save){ try{ localStorage.setItem('alpaca-scheme',s); }catch(e){} }
+  }
+  btns.forEach(function(b){ b.addEventListener('click',function(){ set(b.dataset.scheme,true); }); });
+  try{ var s=localStorage.getItem('alpaca-scheme'); if(s && document.querySelector('.schemes [data-scheme="'+s+'"]')) set(s,false); }catch(e){}
+})();
+</script>
+<script>
+"use strict";
+/* ---------------------------------------------------------------
+   Layout: NDLR panel photo coords (800x520) -> Mini screen coords
+   screen x = OX + x*S , y = OY + y*S   (S=0.75 -> panel is 600x390)
+---------------------------------------------------------------- */
+const S = 0.75, OX = 6, OY = 6;
+const px = x => OX + x*S, py = y => OY + y*S;
+const RING_C = {x:403, y:255};
+
+/* ---------- control table (all 23 physical controls + screen) ---------- */
+const CHORD = [
+  {id:'I',   deg:0, x:403, y:128, type:'triad'},
+  {id:'II',  deg:1, x:493, y:163, type:'7th'},
+  {id:'III', deg:2, x:535, y:257, type:'sus2'},
+  {id:'IV',  deg:3, x:497, y:350, type:'alt2'},
+  {id:'V',   deg:4, x:307, y:350, type:'alt1'},
+  {id:'VI',  deg:5, x:268, y:252, type:'sus4'},
+  {id:'VII', deg:6, x:305, y:160, type:'6th'},
+];
+const CTRL = [
+  {id:'E1',k:'enc',x:143,y:128,r:22,part:'PAD',     labels:['POSITION','STRUM']},
+  {id:'E2',k:'enc',x:143,y:225,r:22,part:'PAD',     labels:['RANGE','SPREAD']},
+  {id:'E3',k:'enc',x:143,y:325,r:22,part:'DRONE',   labels:['POSITION','NOTES','TRIGGER']},
+  {id:'E4',k:'enc',x:143,y:425,r:22,part:'T-K-M',   labels:['TEMPO','KEY','MODE']},
+  {id:'E5',k:'enc',x:662,y:128,r:22,part:'MOTIF',   labels:['POSITION','PATT-LEN']},
+  {id:'E6',k:'enc',x:662,y:222,r:22,part:'MOTIF',   labels:['VARIATION','PATTERN']},
+  {id:'E7',k:'enc',x:662,y:323,r:22,part:'MOTIF',   labels:['CLK DIV','RHY-LEN','GATE*']},
+  {id:'E8',k:'enc',x:662,y:425,r:22,part:'MOTIF',   labels:['ACCENT','RHYTHM','OFFSET']},
+  {id:'ALL', k:'btn',x:268,y:90, r:10},
+  {id:'MSEL',k:'btn',x:535,y:90, r:10},
+  ...CHORD.map(c=>({id:'C'+c.id,k:'chord',x:c.x,y:c.y,r:15,deg:c.deg,num:c.id,type:c.type})),
+  {id:'SCREEN',k:'screen',x:403,y:243,r:0},
+  {id:'MENU', k:'btn',x:403,y:322,r:10},
+  {id:'SHIFT',k:'shift',x:403,y:385,r:16},
+  {id:'PAD',  k:'part',x:258,y:433,r:10,part:'pad'},
+  {id:'DRONE',k:'part',x:313,y:433,r:10,part:'drone'},
+  {id:'M1',   k:'part',x:492,y:433,r:10,part:'m1'},
+  {id:'M2',   k:'part',x:547,y:433,r:10,part:'m2'},
+];
+const BY = Object.fromEntries(CTRL.map(c=>[c.id,c]));
+const CT = c => ({x:px(c.x), y:py(c.y)});
+
+/* ---------- outer (menu / editor) labels per encoder ---------- */
+const OUTER = {
+  E1:{menu:'MOD 1&2',   editor:'CHORD SEQ'},
+  E2:{menu:'MOD 3&4'},
+  E3:{menu:'MOD 5&6'},
+  E4:{menu:'MOD 7&8',   editor:'MIDI CNTLR'},
+  E5:{menu:'LFO CONFIG',editor:'PATTERN ED'},
+  E6:{menu:'SETTINGS 1',editor:'RHYTHM ED'},
+  E7:{menu:'SETTINGS 2',editor:'PERLIN*'},
+  E8:{menu:'SETTINGS 3'},
+};
+
+/* ---------- text: what each control does (from the NDLR Rev2 manual, FW 3.3.x) ---------- */
+const INFO = {
+  E1:{n:'Encoder 1 - PAD', rows:[
+    ['normal','Turn: Pad POSITION / STRUM. Press: switch between the two.'],
+    ['menu','Mod Matrix menu 1&2 (slots 1 and 2).'],
+    ['editor','Chord Sequencer.']],
+    d:'<em>Position</em> is the centre note of the Pad range (octaves 0-7); moving it inverts the chord. <em>Strum</em> has 7 settings, from none to 1/8-note strums, some playing the first 3 notes before strumming.'},
+  E2:{n:'Encoder 2 - PAD', rows:[
+    ['normal','Turn: Pad RANGE / SPREAD. Press: switch between the two.'],
+    ['menu','Mod Matrix menu 3&4.']],
+    d:'<em>Range</em> is how many Pad notes sound (1-22). <em>Spread</em> sets the voicing: stacked thirds, open voicings, root-only bass, random 70% notes, root+5ths or 3rds/7ths above.'},
+  E3:{n:'Encoder 3 - DRONE', rows:[
+    ['normal','Turn: Drone POSITION / NOTES / TRIGGER. Press: cycle the three.'],
+    ['menu','Mod Matrix menu 5&6.']],
+    d:'<em>Position</em> is one of 5 octaves. <em>Notes</em>: root, root+octave, root+5th, or all three. <em>Trigger</em>: Root mode (follows the key) or Chord mode (follows the chord), each with cadence rhythms.'},
+  E4:{n:'Encoder 4 - TEMPO / KEY / MODE', rows:[
+    ['normal','Turn: Tempo, Key or Mode. Press: cycle the three.'],
+    ['shift','Hold Shift while turning: the new value only applies when Shift is released.'],
+    ['menu','Mod Matrix menu 7&8.'],
+    ['editor','MIDI Controller editor.']],
+    d:'<em>Tempo</em> 10-300 BPM (internal clock only, cannot be modulated). <em>Key</em> steps round the circle of fifths. <em>Mode</em>: Major, Dorian, Phrygian, Lydian, Mixolydian, Minor, Locrian, Gypsy Min, Harmonic Min, Min Penta, Whole Tone, Tonic 2nds/3rds/4ths/6ths.'},
+  E5:{n:'Encoder 5 - MOTIF', rows:[
+    ['normal','Turn: Motif POSITION / PATT-LEN for the selected motif.'],
+    ['menu','LFO Config.'],
+    ['editor','Pattern Editor.']],
+    d:'<em>Position</em> is the first note of the motif (octaves 0-3 plus note). <em>Patt-Len</em> is how many of the 16 pattern notes are played. The 1/2 button chooses Motif 1 or 2.'},
+  E6:{n:'Encoder 6 - MOTIF', rows:[
+    ['normal','Turn: Motif VARIATION / PATTERN.'],
+    ['menu','Settings 1/3 (mostly MIDI).'],
+    ['editor','Rhythm Editor.']],
+    d:'<em>Variation</em>: forward, backward, ping-pong (two kinds), odd-then-even, random. <em>Pattern</em>: 1-20 are presets, 21-40 are user-editable (Chord, Scale or Chromatic note lists).'},
+  E7:{n:'Encoder 7 - MOTIF', rows:[
+    ['normal','Turn: CLK DIV / RHY-LEN. Centre arrow (*): GATE, not printed on the panel.'],
+    ['menu','Settings 2/3 (mostly velocities).'],
+    ['editor','Perlin Noise generator (not labelled on older units).']],
+    d:'<em>Clk Div</em>: 1/1, 1/2, 1/4, 1/8 plus triplets 1/3 and 1/6. <em>Rhy-Len</em>: 4-32 beats. <em>Gate</em> sets how soon each note turns off; press the encoder to bring the arrow to the centre position.'},
+  E8:{n:'Encoder 8 - MOTIF', rows:[
+    ['normal','Turn: ACCENT / RHYTHM / OFFSET.'],
+    ['menu','Settings 3/3 (general).']],
+    d:'<em>Accent</em> picks the velocity source (rhythm, humanized, fixed, or 7 patterns). <em>Rhythm</em>: 1-20 presets, 21-40 user. <em>Offset</em> delays the two motifs against each other by 0 to 3/16 of a beat (one shared setting).'},
+  ALL:{n:'ALL ||/>', rows:[
+    ['normal','Play/pause all four parts. Restarts both motifs in sync.'],
+    ['shift','MOD: toggle ALL modulations, including Key and Mode.']],
+    d:'Use this to lock the two motifs together: it restarts both on their first pattern note and first rhythm beat on the next down beat.'},
+  MSEL:{n:'1/2  (Shift: PANIC)', rows:[
+    ['normal','Toggle the right-hand encoders between Motif 1 and Motif 2.'],
+    ['shift','PANIC: all notes off on every channel and port.']],
+    d:'The selected motif is shown in yellow on the NDLR screen (top stripe and the MOTIF 1 / MOTIF 2 indicator). Panic clears stuck notes.'},
+  MENU:{n:'MENU  (Shift: Editors)', rows:[
+    ['normal','Toggle Menu mode: the eight encoder buttons then select menus.'],
+    ['shift','Toggle Editor mode: encoder buttons select an editor.'],
+    ['boot','At power-on, Shift+Menu opens the Boot Menu.']],
+    d:'Left four encoders open the Mod Matrix (2 slots each), top-right opens LFO Config, the other three open Settings 1-3. In Editor mode: Chord Seq, MIDI Controller, Pattern, Rhythm (and Perlin on E7).'},
+  SHIFT:{n:'SHIFT', rows:[
+    ['normal','Hold with another control to use its italic label.'],
+    ['boot','At power-on: freeze the splash screen (firmware and serial number).']],
+    d:'Shifted functions: chord type on the 7 chord buttons, MOD on the part buttons and ALL, PANIC on 1/2, Editors on MENU, and deferred Tempo/Key/Mode changes on encoder 4.'},
+  PAD:{n:'PAD ||/>', rows:[
+    ['normal','Play / pause the Pad.'],
+    ['shift','MOD: toggle modulations that target the Pad (red ring).']],
+    d:'Pad plays every note of the current chord within its Range. Output channel and port are set in Settings 1.'},
+  DRONE:{n:'DRONE ||/>', rows:[
+    ['normal','Play / pause the Drone.'],
+    ['shift','MOD: toggle modulations that target the Drone (red ring).']],
+    d:'Drone holds a root, 5th and/or octave. Notes stop when the Drone is turned off.'},
+  M1:{n:'MOTIF 1 ||/>', rows:[
+    ['normal','Play / pause Motif 1.'],
+    ['shift','MOD: toggle modulations that target Motif 1 (red ring).']],
+    d:'Motifs are the sequenced arpeggios. Pausing and restarting resumes where the motif stopped, so the two motifs can drift; ALL re-syncs them.'},
+  M2:{n:'MOTIF 2 ||/>', rows:[
+    ['normal','Play / pause Motif 2.'],
+    ['shift','MOD: toggle modulations that target Motif 2 (red ring).']],
+    d:'Same controls as Motif 1; the 1/2 button chooses which motif the right-hand encoders edit.'},
+  SCREEN:{n:'SCREEN', rows:[
+    ['view','Top stripes: Motif 1, Pad, Motif 2 (width = notes, height = octave).'],
+    ['view','Side arrows: selected encoder and which of its labels.']],
+    d:'Also shown: Key and Mode, BPM with a beat dot (blue on every 4th beat), chord degree + name + type, poly-chain dots, and play indicators for the four parts. The centre box changes to Pad / Drone / T-K-M / Motif detail.'},
+};
+const CHORD_INFO = {
+  I:'Triad', II:'7th', III:'sus2', IV:'alt2', V:'alt1', VI:'sus4', VII:'6th'
+};
+
+/* ---------- music state (so the little screen is live) ---------- */
+const KEYS = ['C','G','D','A','E','B','F#','Db','Ab','Eb','Bb','F'];   // circle of fifths, as on the NDLR
+const KEY_SEMI = {C:0,G:7,D:2,A:9,E:4,B:11,'F#':6,Db:1,Ab:8,Eb:3,Bb:10,F:5};
+const NOTE = ['C','Db','D','Eb','E','F','F#','G','Ab','A','Bb','B'];
+const MODES = [
+  ['Major',[0,2,4,5,7,9,11]],['Dorian',[0,2,3,5,7,9,10]],['Phrygian',[0,1,3,5,7,8,10]],
+  ['Lydian',[0,2,4,6,7,9,11]],['Mixolydian',[0,2,4,5,7,9,10]],['Minor',[0,2,3,5,7,8,10]],
+  ['Locrian',[0,1,3,5,6,8,10]],['Gypsy Min',null],['Harmonic Min',[0,2,3,5,7,8,11]],
+  ['Min Penta',null],['Whole Tone',null],['Tonic 2nds',null],['Tonic 3rds',null],['Tonic 4ths',null],['Tonic 6ths',null],
+];
+const ROMAN = ['I','II','III','IV','V','VI','VII'];
+
+
+const PARAMS = {
+  E1:[{n:'Position',min:0,max:7,def:3,unit:'octave'},{n:'Strum',list:['None','Strum 2','Strum 3','Strum 4','Strum 5','Strum 6','1/8 note'],def:0}],
+  E2:[{n:'Range',min:1,max:22,def:5,unit:'notes'},{n:'Spread',list:['Stacked 3rds','Open voicing','Root bass only','Random 70%','Root + 5ths','3rds/7ths above'],def:0}],
+  E3:[{n:'Position',min:1,max:5,def:2,unit:'octave'},{n:'Notes',list:['Root','Root + octave','Root + 5th','Root, 5th, octave'],def:0},{n:'Trigger',list:['Root mode','Chord mode'],def:0}],
+  E5:[{n:'Position',min:0,max:3,def:1,unit:'octave'},{n:'Patt-Len',min:1,max:16,def:16,unit:'notes'}],
+  E6:[{n:'Variation',list:['Forward','Backward','Ping-pong 1','Ping-pong 2','Odd, then even','Random'],def:0},{n:'Pattern',min:1,max:40,def:1}],
+  E7:[{n:'Clk Div',list:['1/1','1/2','1/4','1/8','1/3','1/6'],def:2},{n:'Rhy-Len',min:4,max:32,def:16,unit:'beats'},{n:'Gate',min:0,max:99,def:50}],
+  E8:[{n:'Accent',list:['Rhythm','Humanized','Fixed','Pattern 1','Pattern 2','Pattern 3','Pattern 4','Pattern 5','Pattern 6','Pattern 7'],def:0},{n:'Rhythm',min:1,max:40,def:1},{n:'Offset',list:['0','1/16 beat','2/16 beat','3/16 beat'],def:0}],
+};
+const st = {
+  sel:'E1', shift:false, shiftKey:false, menu:'off',
+  parts:{pad:true,drone:false,m1:true,m2:false}, modRing:{pad:false,drone:false,m1:false,m2:false,all:false},
+  motif:1, deg:3, type:'triad', pendingType:null,
+  enc:{E1:0,E2:0,E3:0,E4:0,E5:0,E6:0,E7:0,E8:0},
+  activeEnc:'E1', tempo:90, key:0, mode:0, turn:null, panic:0, toast:''
+};
+st.val = {}; for(const id in PARAMS){ st.val[id] = PARAMS[id].map(p => p.def); }
+function pText(id){ const lab=st.enc[id], p=PARAMS[id][lab], v=st.val[id][lab];
+  let t = p.list ? p.list[v] : String(v); if(p.unit && !p.list) t += ' ' + p.unit;
+  if(p.n==='Pattern'||p.n==='Rhythm') t += v<=20 ? ' (preset)' : ' (user)';
+  return p.n + ': ' + t; }
+function pStep(id,n){ const lab=st.enc[id], p=PARAMS[id][lab]; let v=st.val[id][lab];
+  if(p.list){ const len=p.list.length; v=((v+(n>0?1:-1))%len+len)%len; } else v=Math.max(p.min,Math.min(p.max,v+n));
+  st.val[id][lab]=v; }
+const shiftOn = () => st.shift || st.shiftKey;
+
+function chordInfo(){
+  const m = MODES[st.mode]; const iv = m[1];
+  const keyName = KEYS[st.key];
+  if(!iv) return {rom:ROMAN[st.deg], name:'-', type:st.type};
+  const d = st.deg, root = (KEY_SEMI[keyName] + iv[d]) % 12;
+  const third = (iv[(d+2)%7]-iv[d]+12)%12, fifth=(iv[(d+4)%7]-iv[d]+12)%12;
+  let rom = ROMAN[d];
+  if(third===3){ rom = rom.toLowerCase(); if(fifth===6) rom += '°'; }
+  else if(fifth===8) rom += '+';
+  return {rom, name:NOTE[root], type:st.type};
+}
+
+/* ---------- spatial navigation for the dpad ---------- */
+const DIRS = {left:[-1,0], right:[1,0], up:[0,-1], down:[0,1]};
+const OVERRIDE = { // hand-tuned moves where geometry alone feels wrong
+  'SHIFT:left':'DRONE','SHIFT:right':'M1','MENU:left':'CV','MENU:right':'CIV',
+  'CIII:up':'CII','CVI:up':'CVII','MSEL:left':'CI','ALL:right':'CI'
+};
+function neighbour(id, dir){
+  const o = OVERRIDE[id+':'+dir]; if(o && BY[o]) return o;
+  const a = BY[id], [dx,dy] = DIRS[dir]; let best=null, bs=1e9;
+  for(const b of CTRL){
+    if(b===a) continue;
+    const vx=b.x-a.x, vy=b.y-a.y, along=vx*dx+vy*dy, perp=Math.abs(vx*dy)+Math.abs(vy*dx);
+    if(along<=8) continue;
+    const s = along + 2.2*perp;
+    if(s<bs){bs=s;best=b.id;}
+  }
+  return best || id;
+}
+
+/* ---------- drawing helpers ---------- */
+const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');
+const T = (x,y,s,size,fill,anchor='middle',extra='') =>
+  `<text x="${x}" y="${y}" font-size="${size}" fill="${fill}" text-anchor="${anchor}" ${extra}>${esc(s)}</text>`;
+
+function ndlrScreen(x,y,w,big){
+  const s = w/100, h=132;
+  const ci = chordInfo();
+  const m1y = st.motif===1, m2y = st.motif===2;
+  let g = `<g transform="translate(${x},${y}) scale(${s})">`;
+  g += `<rect x="0" y="0" width="100" height="${h}" rx="3" fill="#000" stroke="#3a4152" stroke-width="1"/>`;
+  // top stripes
+  g += `<polygon points="8,16 40,12 40,16" fill="${m1y?'#ffd23f':'#e8e8e8'}"/>`;
+  g += `<rect x="30" y="14" width="40" height="4" fill="#fff"/>`;
+  g += `<polygon points="60,15 92,15 76,10" fill="${m2y?'#ffd23f':'#e8e8e8'}" transform="translate(0,4)"/>`;
+  g += T(50,30,KEYS[st.key]+' - '+MODES[st.mode][0].toUpperCase(),7,'#fff');
+  // sub screen box + title
+  g += `<rect x="18" y="36" width="64" height="48" fill="none" stroke="#fff" stroke-width="1.2"/>`;
+  const sub = {PAD:'PAD',DRONE:'DRONE','T-K-M':'T-K-M',MOTIF:'MOTIF '+st.motif}[BY[st.activeEnc].part];
+  g += T(50,63,sub,8,'#9aa6bd');
+  // encoder select arrows: 4 left, 4 right
+  for(let i=0;i<8;i++){
+    const left = i<4, row = i%4, ay = 42+row*14, ax = left?7:93, enc='E'+(i+1);
+    const act = enc===st.activeEnc, lab = st.enc[enc];
+    // label 0 up, 1 left/right-pointing (middle), 2 down
+    let pts;
+    if(lab===0) pts = `${ax-4},${ay+3} ${ax+4},${ay+3} ${ax},${ay-4}`;
+    else if(lab===2) pts = `${ax-4},${ay-3} ${ax+4},${ay-3} ${ax},${ay+4}`;
+    else pts = left ? `${ax+4},${ay-4} ${ax+4},${ay+4} ${ax-4},${ay}` : `${ax-4},${ay-4} ${ax-4},${ay+4} ${ax+4},${ay}`;
+    g += `<polygon points="${pts}" fill="${act?'#fff':'none'}" stroke="#fff" stroke-width="1"/>`;
+  }
+  // beat / tempo
+  g += `<circle cx="22" cy="95" r="3" fill="none" stroke="#fff" stroke-width="1"/>`;
+  g += T(30,98,st.tempo+' BPM',7.5,'#fff','start');
+  // chord line
+  g += T(6,118,ci.rom+' '+ci.name,13,'#fff','start','font-weight="700"');
+  g += T(95,118,st.pendingType||ci.type,13,st.pendingType?'#6fa0ff':'#fff','end','font-weight="700"');
+  // play indicators
+  const dot=(cx,cy,on,lab,hl)=>`<circle cx="${cx}" cy="${cy}" r="2.4" fill="${on?'#fff':'none'}" stroke="#fff" stroke-width=".9"/>`+T(cx+4,cy+2.5,lab,5.6,hl?'#ffd23f':'#fff','start');
+  g += dot(34,126,st.parts.pad,'PAD') + dot(34,131,st.parts.drone,'DRONE') + dot(66,126,st.parts.m1,'MOTIF1',st.motif===1) + dot(66,131,st.parts.m2,'MOTIF2',st.motif===2);
+  g += `</g>`;
+  return g;
+}
+
+function drawControl(c){
+  const {x,y} = CT(c), r = c.r*S;
+  let g = '';
+  if(c.k==='enc'){
+    g += `<circle cx="${x}" cy="${y}" r="${r+2}" fill="#0a0c10" stroke="#3b4458" stroke-width="1.5"/>`;
+    g += `<circle cx="${x}" cy="${y}" r="${r-2}" fill="#111419"/>`;
+    g += `<line x1="${x}" y1="${y-r+4}" x2="${x}" y2="${y-3}" stroke="#aeb7c9" stroke-width="2.2" stroke-linecap="round"/>`;
+    if(st.turn && st.turn.id===c.id) g += T(x,y+4,st.turn.dir>0?'↻':'↺',16,'#ffd23f');
+  } else if(c.k==='chord'){
+    const act = c.deg===st.deg;
+    g += `<circle cx="${x}" cy="${y}" r="${r}" fill="#0a0c10" stroke="${act?'#3ddc84':'#8a93a3'}" stroke-width="${act?2.5:1.5}"/>`;
+    g += T(x,y+3.5,c.num,c.num.length>2?9:11,act?'#3ddc84':'#d5dcea','middle','font-weight="700"');
+    // chord-type label on the inside of the ring
+    const vx=px(RING_C.x)-x, vy=py(RING_C.y)-y, l=Math.hypot(vx,vy);
+    const tx=x+vx/l*(r+17), ty=y+vy/l*(r+17)+3;
+    const t = CHORD_INFO[c.num];
+    const sh = shiftOn();
+    g += T(tx,ty,t,10,sh?(st.pendingType===c.type?'#6fa0ff':'#ffd23f'):'#566074','middle',sh?'font-weight="700"':'');
+  } else if(c.k==='shift'){
+    g += `<circle cx="${x}" cy="${y}" r="${r}" fill="#2f6bff" stroke="#8fb0ff" stroke-width="1.5"/>`;
+    if(shiftOn()) g += `<circle cx="${x}" cy="${y}" r="${r+4}" fill="none" stroke="#6fa0ff" stroke-width="2"/>`;
+    g += T(x,y+r+13,'SHIFT',9,'#aeb7c9','middle','font-style="italic"');
+  } else if(c.k==='part'){
+    const on = st.parts[c.part], ring = st.modRing[c.part];
+    g += `<circle cx="${x}" cy="${y}" r="${r+3}" fill="none" stroke="${ring?'#ff4d4d':'transparent'}" stroke-width="2"/>`;
+    g += `<circle cx="${x}" cy="${y}" r="${r}" fill="${on?'#3ddc84':'#e9e2cf'}" stroke="#222" stroke-width="1"/>`;
+    const lab = {pad:'PAD',drone:'DRONE',m1:'1',m2:'2'}[c.part];
+    g += T(x,y-r-6,lab,9,'#aeb7c9');
+  } else if(c.k==='btn'){
+    let on=false, glow='#e9e2cf';
+    if(c.id==='MENU') on = st.menu!=='off';
+    if(c.id==='ALL') on = Object.values(st.parts).every(Boolean);
+    g += `<circle cx="${x}" cy="${y}" r="${r}" fill="${on?'#ffd23f':glow}" stroke="#222" stroke-width="1"/>`;
+    if(c.id==='ALL'){ g += T(x-r-4,y-4,'ALL','8.5'*1,'#aeb7c9','end'); g += T(x-r-4,y+6,'║▶','8','#aeb7c9','end'); g += T(x+r+4,y+3,'MOD',8.5,shiftOn()?'#ffd23f':'#566074','start','font-style="italic"'); }
+    if(c.id==='MSEL'){ g += T(x-r-4,y+3,'PANIC',8.5,shiftOn()?'#ffd23f':'#566074','end','font-style="italic"'); g += T(x+r+4,y+3,'1/2',9,st.motif?'#ffd23f':'#aeb7c9','start'); }
+    if(c.id==='MENU'){ g += T(x+r+6,y+3,'MENU',9,'#aeb7c9','start'); g += T(x+r+6,y+14,'+ EDITOR',8,shiftOn()?'#ffd23f':'#566074','start','font-style="italic"'); }
+  }
+  return g;
+}
+
+function render(){
+  let g = '';
+  // panel body
+  g += `<rect x="${OX}" y="${OY}" width="${600}" height="${390}" rx="12" fill="#15191f" stroke="#2f3747" stroke-width="2"/>`;
+  g += T(px(403), py(52), 'alpaca', 18, '#aab3c5','middle','font-weight="700"');
+  // ring
+  const rc = {x:px(RING_C.x), y:py(RING_C.y)};
+  g += `<circle cx="${rc.x}" cy="${rc.y}" r="${130*S}" fill="none" stroke="#2c3341" stroke-width="9"/>`;
+  g += `<circle cx="${rc.x}" cy="${rc.y}" r="${130*S}" fill="none" stroke="#3b4456" stroke-width="1"/>`;
+  // outer labels beside encoders
+  for(const id in OUTER){
+    const c = BY[id], {x,y}=CT(c), left = id<'E5', o=OUTER[id];
+    const ax = left ? x-r2(c)-16 : x+r2(c)+16, anc = left?'end':'start';
+    const mAct = st.menu==='menu', eAct = st.menu==='editor';
+    g += T(ax,y-(o.editor?5:-3),o.menu,9,mAct?'#ffd23f':'#566074',anc,mAct?'font-weight="700"':'');
+    if(o.editor) g += T(ax,y+9,o.editor,8.5,eAct?'#ffd23f':'#566074',anc,(eAct?'font-weight="700" ':'')+'font-style="italic"');
+  }
+  // encoder labels (inner side)
+  for(const c of CTRL.filter(c=>c.k==='enc')){
+    const {x,y}=CT(c), left=c.id<'E5', ax = left ? x+r2(c)+8 : x-r2(c)-8, anc=left?'start':'end';
+    const n=c.labels.length, act = st.menu==='off' && st.activeEnc===c.id;
+    c.labels.forEach((l,i)=>{
+      const on = act && st.enc[c.id]===i;
+      g += T(ax, y-(n-1)*5.5+i*11+3, l, 9, on?'#ffd23f':'#8d98ad', anc, on?'font-weight="700"':'');
+    });
+  }
+  // screen
+  const sc = CT(BY.SCREEN);
+  g += ndlrScreen(sc.x-34, sc.y-46, 68, false);
+  for(const c of CTRL){ if(c.k!=='screen') g += drawControl(c); }
+  // mode banner on panel
+  // selection highlight
+  const cur = BY[st.sel], cc = CT(cur);
+  if(cur.k==='screen') g += `<rect class="selring" x="${cc.x-37}" y="${cc.y-46}" width="74" height="92" rx="5" fill="none" stroke="#ffd23f" stroke-width="3"/>`;
+  else {
+    const rr = (cur.r||10)*S + (cur.k==='enc'?9:7);
+    g += `<circle class="selring" cx="${cc.x}" cy="${cc.y}" r="${rr}" fill="none" stroke="#ffd23f" stroke-width="3"/>`;
+    // small corner ticks for visibility at a glance
+    g += `<circle cx="${cc.x}" cy="${cc.y}" r="${rr+4}" fill="none" stroke="#ffd23f" stroke-opacity=".25" stroke-width="3"/>`;
+  }
+  if(st.toast) g += `<g><rect x="${OX+150}" y="${OY+8}" width="300" height="20" rx="4" fill="#000" fill-opacity=".8" stroke="#ffd23f"/>${T(OX+300,OY+22,st.toast,11,'#ffd23f')}</g>`;
+  document.getElementById('panelsvg').innerHTML = g;
+  renderInfo(cur);
+  document.getElementById('shiftbtn').classList.toggle('on', st.shift);
+}
+const r2 = c => c.r*S + 2;
+
+function activeMode(rows){
+  const want = st.menu==='editor' ? 'editor' : st.menu==='menu' ? 'menu' : shiftOn() ? 'shift' : 'normal';
+  if(rows.some(r=>r[0]==='view')) return 'view';
+  if(rows.some(r=>r[0]===want)) return want;
+  return 'normal';
+}
+function renderInfo(c){
+  let inf, extra='';
+  if(c.k==='chord'){
+    const t = CHORD_INFO[c.num];
+    inf = {n:'Chord '+c.num+'  (Shift: '+t+')', rows:[
+      ['normal','Play chord degree '+c.num+'. All four parts move to the new chord in key.'],
+      ['shift','Set chord type to '+t+'. Shows blue until the next chord press.']],
+      d:'Buttons I-VII sit in a ring and map to the seven scale degrees. Shifted, they pick the type: I Triad, II 7th, III sus2, IV alt2, V alt1, VI sus4, VII 6th. Roman numerals go lower-case for minor and add a degree sign for diminished chords.'};
+  } else inf = INFO[c.id];
+  const am = activeMode(inf.rows);
+  const label = {view:'ON SCREEN', normal:'PRESS / TURN', shift:'+ SHIFT', menu:'IN MENU MODE', editor:'IN EDITOR MODE', boot:'AT BOOT'};
+  let html = `<div class="nm">${esc(inf.n)}</div>`;
+  html += `<div class="chips"><span class="chip ${st.menu==='off'&&!shiftOn()?'on':''}">NORMAL</span>`+
+          `<span class="chip blue ${shiftOn()?'on':''}">SHIFT</span>`+
+          `<span class="chip ${st.menu==='menu'?'on':''}">MENU</span>`+
+          `<span class="chip ${st.menu==='editor'?'on':''}">EDITOR</span></div>`;
+  for(const [m,t] of inf.rows){
+    html += `<div class="row ${m===am?'act':''}"><b>${label[m]}</b>${esc(t)}</div>`;
+  }
+  // state readout
+  const ci = chordInfo();
+  let now='';
+  if(c.k==='part') now = (st.parts[c.part]?'Now: PLAYING':'Now: paused') + (st.modRing[c.part]?' / mod ring':'');
+  else if(c.id==='E4') now = `Now: ${st.tempo} BPM  ${KEYS[st.key]}  ${MODES[st.mode][0]}`;
+  else if(c.k==='chord'||c.id==='SCREEN') now = `Now: ${ci.rom} ${ci.name} ${ci.type}`;
+  else if(c.id==='MSEL') now = `Now: Motif ${st.motif} selected`;
+  else if(c.k==='enc') now = PARAMS[c.id] ? pText(c.id) : `Now: ${c.labels[st.enc[c.id]]}`;
+  else if(c.id==='MENU') now = 'Now: '+({off:'normal',menu:'Menu mode',editor:'Editor mode'})[st.menu];
+  if(now) html += `<div class="now">${esc(now)}</div>`;
+  const info = document.getElementById('info');
+  info.innerHTML = html;
+  if(c.id==='SCREEN'){
+    // magnified copy of the NDLR main screen
+    const w=66; info.insertAdjacentHTML('beforeend',
+      `<svg width="${w}" height="${w*1.32}" viewBox="0 0 ${w} ${w*1.32}">${ndlrScreen(0,0,w,true)}</svg>`);
+  }
+  document.getElementById('desc').innerHTML = inf.d;
+}
+
+/* ---------- input ---------- */
+let toastT=null;
+function toast(s){ st.toast=s; clearTimeout(toastT); toastT=setTimeout(()=>{st.toast='';render();},1400); }
+
+function press(){
+  const c = BY[st.sel], sh = shiftOn();
+  if(c.k==='enc'){
+    if(st.menu==='menu'){ toast('Open: '+OUTER[c.id].menu); }
+    else if(st.menu==='editor'){ toast(OUTER[c.id].editor ? 'Open: '+OUTER[c.id].editor : 'No editor on this encoder'); }
+    else { st.enc[c.id] = (st.enc[c.id]+1) % c.labels.length; st.activeEnc = c.id; }
+  } else if(c.k==='chord'){
+    if(sh){ st.pendingType = c.type; toast('Next chord type: '+CHORD_INFO[c.num]); }
+    else { st.deg=c.deg; if(st.pendingType){st.type=st.pendingType; st.pendingType=null;} }
+  } else if(c.k==='part'){
+    if(sh) st.modRing[c.part] = !st.modRing[c.part]; else st.parts[c.part] = !st.parts[c.part];
+  } else if(c.id==='ALL'){
+    if(sh){ st.modRing.all=!st.modRing.all; for(const k in st.parts) st.modRing[k]=st.modRing.all; toast('All modulations '+(st.modRing.all?'toggled':'restored')); }
+    else { const any = Object.values(st.parts).some(Boolean); for(const k in st.parts) st.parts[k]=!any; toast(any?'All parts paused':'All parts playing (motifs re-synced)'); }
+  } else if(c.id==='MSEL'){
+    if(sh){ toast('PANIC: all notes off'); } else st.motif = st.motif===1?2:1;
+  } else if(c.id==='MENU'){
+    menuKey();
+  } else if(c.id==='SHIFT'){
+    st.shift = !st.shift;
+  }
+}
+function menuKey(){
+  if(shiftOn()) st.menu = st.menu==='editor' ? 'off' : 'editor';
+  else st.menu = st.menu==='menu' ? 'off' : 'menu';
+}
+function turn(n){
+  const c = BY[st.sel]; if(c.k!=='enc'){ toast('Select an encoder to turn it'); return; }
+  st.activeEnc = c.id; st.turn={id:c.id,dir:n}; setTimeout(()=>{st.turn=null;render();},500);
+  if(c.id==='E4'){
+    const lab=st.enc.E4;
+    if(lab===0) st.tempo = Math.max(10,Math.min(300,st.tempo+n));
+    else if(lab===1) st.key = (st.key+(n>0?1:-1)+12)%12;
+    else st.mode = (st.mode+(n>0?1:-1)+MODES.length)%MODES.length;
+  } else if(PARAMS[c.id]) pStep(c.id,n);
+}
+function act(k){
+  if(DIRS[k]) st.sel = neighbour(st.sel,k);
+  else if(k==='mid') press();
+  else if(k==='menu') menuKey();
+  else if(k==='shift') st.shift=!st.shift;
+  else if(k==='play'){ const any=Object.values(st.parts).some(Boolean); for(const p in st.parts) st.parts[p]=!any; }
+  else if(k==='p1') turn(1); else if(k==='m1') turn(-1);
+  else if(k==='p10') turn(10); else if(k==='m10') turn(-10);
+  render();
+}
+const dev=document.getElementById('device');
+const KEYMAP={ArrowLeft:'left',ArrowRight:'right',ArrowUp:'up',ArrowDown:'down',Enter:'mid',' ':'mid','-':'m1','=':'p1','+':'p1','[':'m10',']':'p10',m:'menu',M:'menu',p:'play',P:'play'};
+dev.addEventListener('keydown',e=>{
+  if(e.key==='Shift'){ st.shiftKey=true; render(); return; }
+  const m=KEYMAP[e.key]; if(!m) return;
+  if(e.target.closest('button') && (e.key==='Enter'||e.key===' ')) return;
+  e.preventDefault(); act(m);
+});
+dev.addEventListener('keyup',e=>{ if(e.key==='Shift'){ st.shiftKey=false; render(); }});
+dev.addEventListener('focusout',()=>{ if(st.shiftKey){ st.shiftKey=false; render(); }});
+document.querySelectorAll('#device button.k').forEach(b=>b.addEventListener('click',()=>act(b.dataset.k)));
+const psvg=document.getElementById('panelsvg');
+function pick(ev){
+  const r=psvg.getBoundingClientRect(), k=800/r.width, mx=(ev.clientX-r.left)*k, my=(ev.clientY-r.top)*k;
+  let best=null, bd=1e9;
+  for(const c of CTRL){ const p=CT(c), rad=c.k==='screen'?40:(c.r*S+8), d=Math.hypot(mx-p.x,my-p.y); if(d<rad && d<bd){bd=d;best=c.id;} }
+  return best;
+}
+/* rollover: a mouse pointer highlights what it is over; clicking presses it.
+   Touch has no hover, so a first tap highlights and a second tap presses. */
+psvg.addEventListener('pointermove',ev=>{
+  if(ev.pointerType!=='mouse') return;
+  const b=pick(ev); psvg.style.cursor=b?'pointer':'default';
+  if(b && b!==st.sel){ st.sel=b; render(); }
+});
+psvg.addEventListener('click',ev=>{
+  const b=pick(ev); if(!b) return;
+  dev.focus({preventScroll:true});
+  if(b===st.sel) press(); else st.sel=b;
+  render();
+});
+
+/* ---------- scale the 800x480 "screen" to fit its container ---------- */
+function fit(){
+  const wrap=document.getElementById('wrap'), scr=document.getElementById('screen');
+  const k = wrap.clientWidth/800; scr.style.transform=`scale(${k})`; wrap.style.height=(480*k)+'px';
+}
+addEventListener('resize',fit); fit(); render();
+window.__test = {st, BY, CTRL, neighbour, DIRS, act, render};
+
+</script>
+</body>
+</html>
