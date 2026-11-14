@@ -183,7 +183,7 @@ footer a:hover{color:var(--accent)}
 <section id="try">
 <div class="wrap">
 <h2>Try the panel</h2>
-<p class="sub">This is the screen Alpaca draws on the Mini. Roll the mouse over any control to see what it does, click to press it, click and drag a dial up or down to turn it, and use the buttons underneath as the Mini's dpad and keys. Switch Sound on to hear it: the Pad plays on Synth 1, the Drone on Synth 2 and both Motifs share Synth 3, as on the Tracker, and each synth has its own preset menu. and the encoders, tempo, key and mode change what you hear.</p>
+<p class="sub">This is the screen Alpaca draws on the Mini. Roll the mouse over any control to see what it does, click to press it, click and drag a dial up or down to turn it, and use the buttons underneath as the Mini's dpad and keys. Switch Sound on to hear it: the Pad plays on Synth 1, the Drone on Synth 2, Motif 1 on Synth 3 and Motif 2 on Synth 4 (or sharing Synth 3), and each synth has its own preset menu. and the encoders, tempo, key and mode change what you hear.</p>
 <p class="small-note">The panel is drawn for an 800 by 480 screen, so it reads best on a tablet or computer.</p>
 <div class="demo">
 <div class="device" id="device" tabindex="0" aria-label="Interactive Alpaca panel. Arrow keys move the highlight, Enter presses.">
@@ -220,7 +220,8 @@ footer a:hover{color:var(--accent)}
     <div class="grp"><small>SYNTHS</small>
       <label class="snd"><span>1 Pad</span><select id="soundpreset1" aria-label="Synth 1 preset, plays the Pad"></select></label>
       <label class="snd"><span>2 Drone</span><select id="soundpreset2" aria-label="Synth 2 preset, plays the Drone"></select></label>
-      <label class="snd"><span>3 Motifs</span><select id="soundpreset3" aria-label="Synth 3 preset, plays Motif 1 and Motif 2"></select></label>
+      <label class="snd"><span>3 Motif 1</span><select id="soundpreset3" aria-label="Synth 3 preset, plays Motif 1"></select></label>
+      <label class="snd"><span>4 Motif 2</span><select id="soundpreset4" aria-label="Synth 4 preset, plays Motif 2. Choose Share Synth 3 to play it on Synth 3 with Motif 1"></select></label>
     </div>
   </div>
 </div>
@@ -244,6 +245,7 @@ footer a:hover{color:var(--accent)}
 <article class="card"><h3>The five editors</h3><p>Editor mode opens the Chord Sequencer, MIDI Controller, Pattern Editor, Rhythm Editor and Perlin noise generator.</p></article>
 <article class="card"><h3>Played by the Tracker's own synths</h3><p>Alpaca has no sounds of its own. It plays the synths already built into your Tracker (ACD, FAT, UAP, WTFM, PERC, DIRT and CHIP), so the pad, drone and motifs sound as good as the Mini itself does.</p></article>
 <article class="card"><h3>Pick a sustaining sound for the Drone</h3><p>The Drone holds its notes for as long as it plays, so give Synth 2 a preset that sustains. A sound that decays on its own will fade away while the Drone is still running, and it will seem to have stopped.</p></article>
+<article class="card"><h3>Four synths, polyphony permitting</h3><p>Alpaca can play through up to four of the Tracker's synths at once: the Pad on Synth 1, the Drone on Synth 2, Motif 1 on Synth 3 and Motif 2 on Synth 4. All four are available as long as there is enough polyphony across them, and Motif 2 can share Synth 3 when there isn't.</p></article>
 <article class="card"><h3>Change presets while it plays</h3><p>Swap synth presets on the fly. The chords, drone and motifs keep playing while you audition new sounds.</p></article>
 <article class="card"><h3>Sample Record, one jump away</h3><p>Open the Sample Record window while Alpaca is playing, so you can capture a sound without stopping the music.</p></article>
 <article class="card"><h3>Loop sample playback</h3><p>Sample playback now has a loop setting, so you no longer have to hold the key or keep pressing Preview to hear a sample.</p></article>
@@ -513,7 +515,7 @@ const INFO = {
   M2:{n:'MOTIF 2 ||/>', rows:[
     ['normal','Play / pause Motif 2.'],
     ['shift','MOD: toggle modulations that target Motif 2 (red ring).']],
-    d:'Defaults to a descending quarter-note arpeggio. Shares Tracker synth channel 3 with Motif 1; the 1/2 button chooses which motif the right-hand encoders edit.'},
+    d:'Defaults to a descending quarter-note arpeggio. Plays on Synth 4, or shares Synth 3 with Motif 1; the 1/2 button chooses which motif the right-hand encoders edit.'},
   SCREEN:{n:'SCREEN', rows:[
     ['view','Top stripes: Motif 1, Pad, Motif 2 (width = notes, height = octave).'],
     ['view','Side arrows: selected encoder and which of its labels.']],
@@ -918,8 +920,9 @@ const DRONE_REPEAT = [0,0.25,0.5,1,0,0.25,0.5,1];  // Trigger: Chord, Chord 1/4,
 
 const audio = (() => {
   let ctx=null, master=null, comp=null, on=false, timer=null, vol=0.5;
-  /* three synths, as on the Tracker: Synth 1 = Pad, Synth 2 = Drone, Synth 3 = Motifs 1 and 2 (shared) */
-  const presets={1:'Soft pad',2:'Soft pad',3:'Glass'}, bus={};
+  /* four synths: Synth 1 = Pad, Synth 2 = Drone, Synth 3 = Motif 1, Synth 4 = Motif 2 (or Motif 2 shares Synth 3) */
+  const presets={1:'Soft pad',2:'Soft pad',3:'Glass',4:'Saw pad'}, bus={};
+  let m2Share=false;
   let nextBar=0, barNo=0, droneOsc=null, droneGain=null, droneKey='', droneNext=0;
   const clk={1:{next:0,k:0},2:{next:0,k:0}};
   const live=new Set();
@@ -1049,10 +1052,11 @@ const audio = (() => {
     else if(acc===2) vel*=0.6+rng(k+7)()*0.8;                                 // Humanize
     else if(acc===3) vel*=(k%4===0)?1.6:0.75;                                 // Downbeat
     else if(acc===4) vel*=(k%2===0)?1.3:0.7;                                  // Alternate
-    const P=AUDIO_PRESETS[presets[3]];
+    const syn = (mi===2 && !m2Share) ? 4 : 3;
+    const P=AUDIO_PRESETS[presets[syn]];
     const off = mi===2 ? offs*beat()/4 : 0;                                   // Offset delays Motif 2 by up to three sixteenths
     const dur=Math.max(0.05,gate*cd*beat()*0.98);
-    voice([mtof(fold(36+oct+c.base+seq[idx%n],48,96))],t+off,dur,vel,{wave:P.wave,det:P.det,atk:0.005,rel:0.12},P.wave[0],3);
+    voice([mtof(fold(36+oct+c.base+seq[idx%n],48,96))],t+off,dur,vel,{wave:P.wave,det:P.det,atk:0.005,rel:0.12},P.wave[0],syn);
   }
 
   /* scheduler with a short look-ahead; each motif keeps its own clock so Clk Div can differ */
@@ -1077,7 +1081,7 @@ const audio = (() => {
       ctx=new AC();
       master=ctx.createGain(); master.gain.value=vol*vol*0.8;
       comp=ctx.createDynamicsCompressor(); comp.threshold.value=-18; comp.ratio.value=6;
-      [1,2,3].forEach(s=>{ const f=ctx.createBiquadFilter(); f.type='lowpass'; f.frequency.value=AUDIO_PRESETS[presets[s]].cut; f.Q.value=0.6; f.connect(comp); bus[s]=f; });
+      [1,2,3,4].forEach(s=>{ const f=ctx.createBiquadFilter(); f.type='lowpass'; f.frequency.value=AUDIO_PRESETS[presets[s]].cut; f.Q.value=0.6; f.connect(comp); bus[s]=f; });
       comp.connect(master); master.connect(ctx.destination);
     }
     ctx.resume(); on=true; resync(ctx.currentTime+0.06);
@@ -1092,7 +1096,7 @@ const audio = (() => {
     toggle(){ if(on){ stop(); return false; } return start(); },
     setVolume(v){ vol=v; if(master) master.gain.setTargetAtTime(v*v*0.8,ctx.currentTime,0.03); },
     presetOf(s){ return presets[s]; },
-    setPreset(s,p){ presets[s]=p; if(bus[s]) bus[s].frequency.setTargetAtTime(AUDIO_PRESETS[p].cut,ctx.currentTime,0.05); if(s===2){ droneKey=''; if(on) setDrone(); } },
+    setPreset(s,p){ if(s===4){ m2Share = (p==='Share Synth 3'); if(m2Share) return; } presets[s]=p; if(bus[s]) bus[s].frequency.setTargetAtTime(AUDIO_PRESETS[p].cut,ctx.currentTime,0.05); if(s===2){ droneKey=''; if(on) setDrone(); } },
     /* a chord button was pressed: sound it straight away */
     hit(){ if(!on||!ctx) return; playChord(ctx.currentTime+0.02, 2.2*beat()); setDrone(); },
     /* ALL was pressed: restart the motifs together */
@@ -1105,8 +1109,9 @@ const audio = (() => {
 (function(){
   const btn=document.getElementById('soundbtn'), vol=document.getElementById('soundvol');
   if(!btn) return;
-  [1,2,3].forEach(s=>{ const sel=document.getElementById('soundpreset'+s); if(!sel) return;
+  [1,2,3,4].forEach(s=>{ const sel=document.getElementById('soundpreset'+s); if(!sel) return;
     Object.keys(AUDIO_PRESETS).forEach(n=>{ const o=document.createElement('option'); o.textContent=n; sel.appendChild(o); });
+    if(s===4){ const o=document.createElement('option'); o.textContent='Share Synth 3'; sel.appendChild(o); }
     sel.value=audio.presetOf(s); sel.addEventListener('change',()=>audio.setPreset(s,sel.value)); });
   btn.addEventListener('click',()=>{
     const ok=audio.toggle();
