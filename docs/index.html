@@ -112,20 +112,13 @@ footer a:hover{color:var(--accent)}
 .scrwrap{width:100%;background:#000;border-radius:6px;overflow:hidden;border:2px solid #1d2431;position:relative}
 #screen{width:800px;height:480px;position:relative;background:var(--d-bg);transform-origin:0 0;overflow:hidden}
 #panelsvg{position:absolute;left:0;top:0;width:800px;height:480px}
-#info{position:absolute;left:614px;top:6px;width:180px;height:390px;background:var(--d-panel);border:1px solid var(--d-line);border-radius:6px;padding:8px;display:flex;flex-direction:column;gap:6px;overflow:hidden}
-#info .nm{font-size:15px;font-weight:700;color:var(--d-hi);line-height:1.15}
-#info .row{font-size:11px;line-height:1.25;padding:3px 5px;border-left:3px solid var(--d-line);color:#98a3b8;border-radius:2px}
-#info .row b{display:block;font-size:9.5px;letter-spacing:.08em;color:var(--d-dim);font-weight:600}
-#info .row.act{border-left-color:var(--d-hi);background:#232a37;color:var(--d-txt)}
-#info .row.act b{color:var(--d-hi)}
-#info .now{font-size:11px;color:var(--d-on);margin-top:auto}
-#info svg{display:block;margin:0 auto}
-#desc{position:absolute;left:6px;top:402px;width:788px;height:72px;background:var(--d-panel);border:1px solid var(--d-line);border-radius:6px;padding:7px 10px;font-size:13px;line-height:1.35;color:var(--d-txt);overflow:hidden}
-#desc em{color:var(--d-hi);font-style:normal}
-.chips{display:flex;gap:4px;flex-wrap:wrap}
-.chip{font-size:9.5px;padding:1px 5px;border-radius:9px;border:1px solid var(--d-line);color:var(--d-dim)}
-.chip.on{color:#000;background:var(--d-hi);border-color:var(--d-hi);font-weight:700}
-.chip.blue.on{background:var(--d-blue);border-color:var(--d-blue);color:#fff}
+#info{position:absolute;left:614px;top:6px;width:181px;height:391px;background:#151a22;border:1px solid #2f3747;padding:6px 7px;overflow:hidden}
+#info .nm{font-size:16px;font-weight:700;color:var(--d-hi);line-height:1.2;margin-bottom:4px}
+#info .hd{font-size:11px;color:#566074;margin-top:5px;line-height:1.2}
+#info .tx{font-size:11px;line-height:1.3;color:#8d98ad}
+#info .tx.act{color:var(--d-txt)}
+#info .now{font-size:11px;color:var(--d-on);margin-top:6px}
+#desc{position:absolute;left:6px;top:402px;width:789px;height:73px;background:#151a22;border:1px solid #2f3747;padding:6px 8px;font-size:13px;line-height:1.45;color:var(--d-txt);overflow:hidden}
 .keys{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;margin-top:12px}
 .grp{display:flex;gap:6px;align-items:center;background:#0b0e14;border:1px solid #202838;border-radius:12px;padding:6px 8px}
 .grp small{color:var(--d-dim);font-size:10px;margin-right:2px}
@@ -138,9 +131,7 @@ footer a:hover{color:var(--accent)}
 .pad .u{grid-column:2;grid-row:1}.pad .l{grid-column:1;grid-row:2}.pad .m{grid-column:2;grid-row:2;border-radius:50%}
 .pad .r{grid-column:3;grid-row:2}.pad .d{grid-column:2;grid-row:3}
 .demo svg text{font-family:var(--d-mono)}
-.selring{animation:pulse 1.1s ease-in-out infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.55}}
-@media (prefers-reduced-motion:reduce){.selring{animation:none}}
+#panelsvg{touch-action:manipulation;user-select:none;-webkit-user-select:none}
 .snd{display:flex;align-items:center;gap:6px;color:var(--d-dim);font-size:11px}
 .snd input[type=range]{width:86px;accent-color:var(--d-hi)}
 .snd select{background:#1a212d;color:var(--d-txt);border:1px solid #2c3648;border-radius:8px;height:36px;padding:0 6px;font-family:var(--d-mono);font-size:12px}
@@ -183,7 +174,7 @@ footer a:hover{color:var(--accent)}
 <section id="try">
 <div class="wrap">
 <h2>Try the panel</h2>
-<p class="sub">This is the screen Alpaca draws on the Mini. Roll the mouse over any control to see what it does, click to press it, click and drag a dial up or down to turn it, and use the buttons underneath as the Mini's dpad and keys. Switch Sound on to hear it: the Pad plays on Synth 1, the Drone on Synth 2, Motif 1 on Synth 3 and Motif 2 on Synth 4 (or sharing Synth 3), and each synth has its own preset menu. and the encoders, tempo, key and mode change what you hear.</p>
+<p class="sub">This is the screen Alpaca draws on the Mini, and it behaves as the firmware does. Roll the mouse over any control to see what it does, click to press it, and drag a dial up or down to turn it. Press PLAY to start all four parts, press the chord buttons I to VII to change the harmony, and click a dial to step through its settings. Switch Sound on to hear it.</p>
 <p class="small-note">The panel is drawn for an 800 by 480 screen, so it reads best on a tablet or computer.</p>
 <div class="demo">
 <div class="device" id="device" tabindex="0" aria-label="Interactive Alpaca panel. Arrow keys move the highlight, Enter presses.">
@@ -218,14 +209,19 @@ footer a:hover{color:var(--accent)}
       <label class="snd"><span>Vol</span><input type="range" id="soundvol" min="0" max="100" value="50" aria-label="Volume"></label>
     </div>
     <div class="grp"><small>SYNTHS</small>
-      <label class="snd"><span>1 Pad</span><select id="soundpreset1" aria-label="Synth 1 preset, plays the Pad"></select></label>
-      <label class="snd"><span>2 Drone</span><select id="soundpreset2" aria-label="Synth 2 preset, plays the Drone"></select></label>
-      <label class="snd"><span>3 Motif 1</span><select id="soundpreset3" aria-label="Synth 3 preset, plays Motif 1"></select></label>
-      <label class="snd"><span>4 Motif 2</span><select id="soundpreset4" aria-label="Synth 4 preset, plays Motif 2. Choose Share Synth 3 to play it on Synth 3 with Motif 1"></select></label>
+      <label class="snd"><span>1 Pad</span><select id="soundpreset1" aria-label="Synth 1 sound, plays the Pad"></select></label>
+      <label class="snd"><span>2 Drone</span><select id="soundpreset2" aria-label="Synth 2 sound, plays the Drone"></select></label>
+      <label class="snd"><span>3 Motif 1</span><select id="soundpreset3" aria-label="Synth 3 sound, plays Motif 1"></select></label>
+      <label class="snd"><span>4 Motif 2</span><select id="soundpreset4" aria-label="Synth 4 sound, plays Motif 2"></select></label>
+    </div>
+    <div class="grp"><small>TRACKER</small>
+      <button type="button" class="k" id="trkbtn" aria-pressed="false">Pattern stopped</button>
     </div>
   </div>
 </div>
-<p class="demo-help">With a mouse, drag a dial up or down to turn it. Keyboard, once the panel has focus: <kbd>&larr;</kbd><kbd>&uarr;</kbd><kbd>&darr;</kbd><kbd>&rarr;</kbd> dpad, <kbd>Enter</kbd> Middle, <kbd>-</kbd><kbd>=</kbd> turn by 1, <kbd>[</kbd><kbd>]</kbd> turn by 10, <kbd>M</kbd> Menu, <kbd>P</kbd> Play, hold <kbd>Shift</kbd> for NDLR Shift. On a touch screen, tap once to highlight and again to press. Hold <kbd>Shift</kbd> and press the turn keys to change the master volume, as on the Mini. The sound here is a simple browser synth that shows the idea. On the Tracker, Alpaca plays the bundled synths (ACD, FAT, UAP, WTFM, PERC, DIRT and CHIP), so it sounds much better.</p>
+<p class="demo-help">Keyboard, once the panel has focus: <kbd>&larr;</kbd><kbd>&uarr;</kbd><kbd>&darr;</kbd><kbd>&rarr;</kbd> dpad, <kbd>Enter</kbd> Middle, <kbd>-</kbd><kbd>=</kbd> turn by 1, <kbd>[</kbd><kbd>]</kbd> turn by 10, <kbd>P</kbd> Play, hold <kbd>Shift</kbd> for Shift. On a touch screen, tap once to highlight and again to press. Holding Shift while you turn changes the master volume, as on the Mini.</p>
+<p class="demo-help">Things to try: turn the bottom-left dial to QNT and choose Next Bar, then press a chord button and watch it wait, lit blue, for the bar line. Start the Tracker pattern and the panel follows its tempo, with TRK on the screen. Give the Drone the Pluck sound to hear why it needs a sound that sustains. REC lights up as it does on the Mini, but the demo does not save a file.</p>
+<p class="demo-help">The sound here is a simple browser synth, and the drum loop stands in for a Tracker pattern. On the Tracker, Alpaca plays the built-in synths (ACD, FAT, VAP, WTFM, PERC, DIRT and CHIP), so it sounds much better.</p>
 </div>
 </div>
 </section>
@@ -236,22 +232,21 @@ footer a:hover{color:var(--accent)}
 <p class="sub">An NDLR is a box you play with chords and encoders. Alpaca keeps that layout and puts all of it on hardware you may already own.</p>
 <div class="grid3">
 <article class="card"><h3>Your whole NDLR on screen</h3><p>All eight encoders, the seven chord buttons, ALL, 1/2, Menu, Shift and the four part buttons sit where they do on the hardware, drawn across the Mini's 800 by 480 display.</p></article>
-<article class="card"><h3>The dpad is your finger</h3><p>Move a highlight from control to control with the dpad. Middle presses what is highlighted, and the plus and minus buttons turn the highlighted encoder by 1 or by 10.</p></article>
-<article class="card"><h3>Chords, keys and modes</h3><p>Chord buttons I to VII, with Shift chord types: triad, 7th, sus2, alt2, alt1, sus4 and 6th. Fifteen modes, keys stepped around the circle of fifths, and tempo from 10 to 300 BPM.</p></article>
-<article class="card"><h3>Straight to the synths</h3><p>Pad, Drone and both motifs play the Mini's internal synths over virtual MIDI. Load WTFM, ACD or VAP on a synth and Alpaca drives it.</p></article>
-<article class="card"><h3>Pad and Drone</h3><p>Pad position, strum, range up to 22 notes and six spread voicings. Drone position, notes and trigger, with root and chord modes.</p></article>
-<article class="card"><h3>Two motifs</h3><p>Position and pattern length, six variations, forty patterns and forty rhythms, clock divisions, rhythm length of 4 to 32 beats, accent and offset. The 1/2 button picks which motif you edit.</p></article>
-<article class="card"><h3>Mod matrix and LFOs</h3><p>Menu mode opens the four Mod Matrix pages, LFO Config and the three Settings pages from the encoder buttons, as on the hardware.</p></article>
-<article class="card"><h3>The five editors</h3><p>Editor mode opens the Chord Sequencer, MIDI Controller, Pattern Editor, Rhythm Editor and Perlin noise generator.</p></article>
-<article class="card"><h3>Played by the Tracker's own synths</h3><p>Alpaca has no sounds of its own. It plays the synths already built into your Tracker (ACD, FAT, UAP, WTFM, PERC, DIRT and CHIP), so the pad, drone and motifs sound as good as the Mini itself does.</p></article>
-<article class="card"><h3>Pick a sustaining sound for the Drone</h3><p>The Drone holds its notes for as long as it plays, so give its synth a preset that sustains. A sound that decays on its own will fade away while the Drone is still running, and it will seem to have stopped.</p></article>
-<article class="card"><h3>Four synths, polyphony permitting</h3><p>Alpaca can play through up to four of the Tracker's synths at once, and you choose which synth each part plays on: the Pad, the Drone, Motif 1 and Motif 2 can each use any of them. By default they sit on Synths 1 to 4. All four are available as long as there is enough polyphony across them, and parts can share a synth when there isn't.</p></article>
-<article class="card"><h3>Change presets while it plays</h3><p>Swap synth presets on the fly. The chords, drone and motifs keep playing while you audition new sounds.</p></article>
-<article class="card"><h3>Record everything you hear</h3><p>Press record in the bottom right of the screen and it captures all the sound playing, Alpaca and your Tracker pattern together, into the Recordings folder. Each take is saved with a prefix and an incrementing number, such as NDLR0003, so nothing gets overwritten.</p></article>
-<article class="card"><h3>Play over a normal Tracker pattern</h3><p>Alpaca does not take over the Tracker. Start it while an ordinary pattern is already running and play over the top, with your chords, drone and motifs layered on what you have written.</p></article>
-<article class="card"><h3>Sample Record, one jump away</h3><p>Open the Sample Record window while Alpaca is playing, so you can capture a sound without stopping the music.</p></article>
+<article class="card"><h3>The dpad is your finger</h3><p>Move a highlight from control to control with the dpad. Middle presses what is highlighted, and the plus and minus buttons turn the highlighted dial. Each dial's white line follows the value it is set to.</p></article>
+<article class="card"><h3>Chords, keys and modes</h3><p>Chord buttons I to VII, with Shift chord types: triad, 7th, sus2, alt2, alt1, sus4 and 6th. Eleven modes, keys stepped around the circle of fifths, and tempo from 10 to 300 BPM.</p></article>
+<article class="card"><h3>Pad and Drone</h3><p>The Pad has octave, strum, a range of up to eight notes and four spread voicings. The Drone has octave, added fifth and octave notes, and a trigger that follows the chord or holds the key root, held or repeated every quarter, half or whole note.</p></article>
+<article class="card"><h3>Two motifs</h3><p>Each motif has its own octave and pattern length, six variations, eight patterns, eight rhythms, six clock divisions, a rhythm length of 4 to 32 steps, gate and accent. Offset delays Motif 2 by up to three sixteenth notes. The 1/2 button picks which motif you edit.</p></article>
+<article class="card"><h3>Launch on the beat or the bar</h3><p>Set Quantise to Next Beat or Next Bar and chord changes and part starts wait for the grid. A queued button turns blue until it lands, and motifs already playing keep their place.</p></article>
+<article class="card"><h3>Play over a normal Tracker pattern</h3><p>Alpaca does not take over the Tracker. Start it while an ordinary pattern is already running and play over the top. The panel follows the Tracker's tempo, with TRK on its screen, and your chords, drone and motifs come in on the next beat or bar.</p></article>
+<article class="card"><h3>Its own clock when you want it</h3><p>Switch Clock to Internal and the jam runs at its own tempo while the Tracker pattern keeps playing. Switch back and the parts rejoin the pattern on the next beat or bar.</p></article>
+<article class="card"><h3>Played by the Tracker's own synths</h3><p>Alpaca has no sounds of its own. It plays the synths already built into your Tracker (ACD, FAT, VAP, WTFM, PERC, DIRT and CHIP), so the pad, drone and motifs sound as good as the Mini itself does.</p></article>
+<article class="card"><h3>Four synths, polyphony permitting</h3><p>The Pad plays Synth 1, the Drone Synth 2, Motif 1 Synth 3 and Motif 2 Synth 4, and you can load any of the Tracker's synths and any patch on each of them. The four share the Mini's eight voices, so all four are available as long as there is enough polyphony to go round. The Pad and Drone borrow spare voices while they play.</p></article>
+<article class="card"><h3>Pick a sustaining sound for the Drone</h3><p>The Drone holds its notes for as long as it plays, so give Synth 2 a patch that sustains. A sound that decays on its own will fade away while the Drone is still running, and it will seem to have stopped.</p></article>
+<article class="card"><h3>Change patches while it plays</h3><p>Open Instrument Parameters from the Menu while the jam is running and swap or edit the patch on any of the four synths. The chords, drone and motifs keep playing while you audition new sounds.</p></article>
+<article class="card"><h3>Record everything you hear</h3><p>Press REC in the bottom right of the screen and it captures all the sound playing, Alpaca and your Tracker pattern together, as a stereo WAV in the Recordings folder. Each take is saved with a prefix and an incrementing number, such as NDLR0003, so nothing gets overwritten.</p></article>
+<article class="card"><h3>Sample Record, one jump away</h3><p>Open the Sample Recorder while Alpaca is playing and Master Mix is selected for you, so you can capture the jam as a sample without stopping the music.</p></article>
 <article class="card"><h3>Loop sample playback</h3><p>Sample playback now has a loop setting, so you no longer have to hold the key or keep pressing Preview to hear a sample.</p></article>
-<article class="card"><h3>The manual in the margin</h3><p>A side column explains whatever is highlighted: what it does alone, with Shift, and in Menu or Editor mode, with a live readout of its value.</p></article>
+<article class="card"><h3>The manual in the margin</h3><p>A side column explains whatever is highlighted: what it does alone, with Shift, and in Menu or Editor mode, with a live readout of its value. Menu and Editor modes show the NDLR's labels for the Mod Matrix, LFO, Settings and editor pages; those pages are not in this build.</p></article>
 </div>
 </div>
 </section>
@@ -323,7 +318,7 @@ footer a:hover{color:var(--accent)}
 <p class="sub">Open Config, then Info, then NDLR Panel. Everything is driven by the Mini's own buttons.</p>
 <table>
 <tbody>
-<tr><th scope="row">Dpad</th><td>Move the highlight</td></tr><tr><th scope="row">Middle</th><td>Press the highlighted control</td></tr><tr><th scope="row">+1 / -1</th><td>Turn the highlighted encoder one step</td></tr><tr><th scope="row">+10 / -10</th><td>Turn it ten steps</td></tr><tr><th scope="row">Play</th><td>ALL: start or stop every part</td></tr><tr><th scope="row">Shift</th><td>Hold for NDLR Shift, or highlight SHIFT and press Middle to latch it</td></tr><tr><th scope="row">Menu (hold)</th><td>Mini module popup, to leave the panel</td></tr>
+<tr><th scope="row">Dpad</th><td>Move the highlight</td></tr><tr><th scope="row">Middle</th><td>Press the highlighted control</td></tr><tr><th scope="row">+1 / -1</th><td>Turn the highlighted encoder one step</td></tr><tr><th scope="row">+10 / -10</th><td>Turn it ten steps</td></tr><tr><th scope="row">Middle on a dial</th><td>Step through that dial's settings</td></tr><tr><th scope="row">Play</th><td>ALL: start or stop every part</td></tr><tr><th scope="row">Shift + 1/2</th><td>Panic: stop all four parts and release their notes</td></tr><tr><th scope="row">Shift with +/-</th><td>Master volume</td></tr><tr><th scope="row">Shift</th><td>Hold for NDLR Shift, or highlight SHIFT and press Middle to latch it</td></tr><tr><th scope="row">Menu (hold)</th><td>Mini module popup, to leave the panel</td></tr>
 </tbody>
 </table>
 </div>
@@ -392,756 +387,1245 @@ footer a:hover{color:var(--accent)}
 </script>
 <script>
 "use strict";
-/* ---------------------------------------------------------------
-   Layout: NDLR panel photo coords (800x520) -> Mini screen coords
-   screen x = OX + x*S , y = OY + y*S   (S=0.75 -> panel is 600x390)
----------------------------------------------------------------- */
-const S = 0.75, OX = 6, OY = 6;
-const px = x => OX + x*S, py = y => OY + y*S;
-const RING_C = {x:403, y:255};
+/* ------------------------------------------------------------------
+   Alpaca panel demo.
+   A browser port of the firmware's NDLR panel: the state, clock,
+   quantised launches, Pad, Drone and motif playback follow
+   fNdlrPanel.cpp, and the drawing follows ndlrPanelControl.cpp.
+   The sound is a small Web Audio synth standing in for the Tracker's
+   own synths. Nothing plays until Sound is switched on.
+------------------------------------------------------------------- */
 
-/* ---------- control table (all 23 physical controls + screen) ---------- */
-const CHORD = [
-  {id:'I',   deg:0, x:403, y:128, type:'triad'},
-  {id:'II',  deg:1, x:493, y:163, type:'7th'},
-  {id:'III', deg:2, x:535, y:257, type:'sus2'},
-  {id:'IV',  deg:3, x:497, y:350, type:'alt2'},
-  {id:'V',   deg:4, x:307, y:350, type:'alt1'},
-  {id:'VI',  deg:5, x:268, y:252, type:'sus4'},
-  {id:'VII', deg:6, x:305, y:160, type:'6th'},
+/* ---------- tables (from the firmware) ---------- */
+const PPB = 48, PPBAR = 4 * PPB, MAX_PAD = 8, ALL_PARTS = 0x0f;
+const VEL_PAD = 80, VEL_DRONE = 90, VEL_MOTIF = 100;
+const STRUM_NAMES = ["Off", "1/32", "1/16", "1/8T", "3 + 1/8T", "1/8", "3 + 1/8"];
+const STRUM_PULSES = [0, 6, 12, 16, 16, 24, 24];
+const SPREAD_NAMES = ["Close", "Open", "Low Root", "Root + 5th"];
+const DRONE_NOTES_NAMES = ["Root", "Root + Oct", "Root + 5th", "Root 5th Oct"];
+const TRIGGER_NAMES = ["Chord", "Chord 1/4", "Chord 1/2", "Chord 1/1", "Key", "Key 1/4", "Key 1/2", "Key 1/1"];
+const VARIATION_NAMES = ["Forward", "Backward", "Ping-Pong", "Ping-Pong 2", "Odd / Even", "Random"];
+const DIVISION_NAMES = ["1/1", "1/2", "1/3", "1/4", "1/6", "1/8"];
+const DIVISION_PULSES = [192, 96, 64, 48, 32, 24];
+const ACCENT_NAMES = ["Fixed", "Rhythm", "Humanize", "Downbeat", "Alternate"];
+const QUANTISE_NAMES = ["Off", "Next Beat", "Next Bar"];
+const CLOCK_NAMES = ["Tracker", "Internal"];
+
+/* length 0 follows the current chord across two octaves */
+const PATTERNS = [
+  { name: "Arpeggio", length: 0, scale: false, notes: [] },
+  { name: "Broken", length: 8, scale: false, notes: [0, 2, 1, 3, 2, 4, 3, 1] },
+  { name: "Pendulum", length: 8, scale: false, notes: [0, 2, 4, 2, 1, 3, 5, 3] },
+  { name: "Bass Jump", length: 8, scale: false, notes: [0, 0, 3, 0, 2, 0, 4, 2] },
+  { name: "Scale Up", length: 8, scale: true, notes: [0, 1, 2, 3, 4, 5, 6, 7] },
+  { name: "Scale Skip", length: 8, scale: true, notes: [0, 2, 4, 6, 7, 5, 3, 1] },
+  { name: "Answer", length: 8, scale: false, notes: [0, 1, 2, 4, 3, 2, 1, 0] },
+  { name: "Cascade", length: 16, scale: false, notes: [0, 2, 3, 5, 1, 3, 4, 6, 2, 4, 5, 7, 6, 4, 3, 1] }
 ];
-const CTRL = [
-  {id:'E1',k:'enc',x:143,y:128,r:22,part:'PAD',     labels:['POSITION','STRUM']},
-  {id:'E2',k:'enc',x:143,y:225,r:22,part:'PAD',     labels:['RANGE','SPREAD']},
-  {id:'E3',k:'enc',x:143,y:325,r:22,part:'DRONE',   labels:['POSITION','NOTES','TRIGGER']},
-  {id:'E4',k:'enc',x:143,y:425,r:22,part:'T-K-M',   labels:['TEMPO','KEY','MODE']},
-  {id:'E5',k:'enc',x:662,y:128,r:22,part:'MOTIF',   labels:['POSITION','PATT-LEN']},
-  {id:'E6',k:'enc',x:662,y:222,r:22,part:'MOTIF',   labels:['VARIATION','PATTERN']},
-  {id:'E7',k:'enc',x:662,y:323,r:22,part:'MOTIF',   labels:['CLK DIV','RHY-LEN','GATE*']},
-  {id:'E8',k:'enc',x:662,y:425,r:22,part:'MOTIF',   labels:['ACCENT','RHYTHM','OFFSET']},
-  {id:'ALL', k:'btn',x:268,y:90, r:10},
-  {id:'MSEL',k:'btn',x:535,y:90, r:10},
-  ...CHORD.map(c=>({id:'C'+c.id,k:'chord',x:c.x,y:c.y,r:15,deg:c.deg,num:c.id,type:c.type})),
-  {id:'SCREEN',k:'screen',x:403,y:243,r:0},
-  {id:'MENU', k:'btn',x:403,y:322,r:10},
-  {id:'SHIFT',k:'shift',x:403,y:385,r:16},
-  {id:'PAD',  k:'part',x:258,y:433,r:10,part:'pad'},
-  {id:'DRONE',k:'part',x:313,y:433,r:10,part:'drone'},
-  {id:'M1',   k:'part',x:492,y:433,r:10,part:'m1'},
-  {id:'M2',   k:'part',x:547,y:433,r:10,part:'m2'},
+/* zero is a rest, other values are note velocities */
+const RHYTHMS = [
+  { name: "Straight", steps: [100] },
+  { name: "Offbeat", steps: [0, 108, 0, 90] },
+  { name: "Syncopate", steps: [115, 0, 84, 102, 0, 97, 0, 86] },
+  { name: "Tresillo", steps: [114, 0, 0, 94, 0, 0, 103, 0] },
+  { name: "Gallop", steps: [116, 82, 100, 0] },
+  { name: "Pulse", steps: [118, 0, 0, 0, 95, 0, 0, 0] },
+  { name: "Stutter", steps: [112, 84, 92, 0, 0, 103, 92, 0] },
+  { name: "Sparse", steps: [113, 0, 0, 0, 0, 86, 0, 0] }
 ];
-const BY = Object.fromEntries(CTRL.map(c=>[c.id,c]));
-const CT = c => ({x:px(c.x), y:py(c.y)});
-
-/* ---------- outer (menu / editor) labels per encoder ---------- */
-const OUTER = {
-  E1:{menu:'MOD 1&2',   editor:'CHORD SEQ'},
-  E2:{menu:'MOD 3&4'},
-  E3:{menu:'MOD 5&6'},
-  E4:{menu:'MOD 7&8',   editor:'MIDI CNTLR'},
-  E5:{menu:'LFO CONFIG',editor:'PATTERN ED'},
-  E6:{menu:'SETTINGS 1',editor:'RHYTHM ED'},
-  E7:{menu:'SETTINGS 2',editor:'PERLIN*'},
-  E8:{menu:'SETTINGS 3'},
-};
-
-/* ---------- text: what each control does (from the NDLR Rev2 manual, FW 3.3.x) ---------- */
-const INFO = {
-  E1:{n:'Encoder 1 - PAD', rows:[
-    ['normal','Turn: Pad POSITION / STRUM. Press: switch between the two.'],
-    ['menu','Mod Matrix menu 1&2 (slots 1 and 2).'],
-    ['editor','Chord Sequencer.']],
-    d:'<em>Position</em> sets the octave. <em>Strum</em> spreads each new chord across the beat, from Off to an eighth-note interval.'},
-  E2:{n:'Encoder 2 - PAD', rows:[
-    ['normal','Turn: Pad RANGE / SPREAD. Press: switch between the two.'],
-    ['menu','Mod Matrix menu 3&4.']],
-    d:'<em>Range</em> sets the note count, limited by the voices available on the Pad synth. Auto follows the chord. <em>Spread</em> changes the voicing.'},
-  E3:{n:'Encoder 3 - DRONE', rows:[
-    ['normal','Turn: Drone POSITION / NOTES / TRIGGER. Press: cycle the three.'],
-    ['menu','Mod Matrix menu 5&6.']],
-    d:'<em>Position</em> is one of 5 octaves. <em>Notes</em> adds a fifth or octave when voices are available. <em>Trigger</em> follows the chord or holds the key root, with optional repeats.'},
-  E4:{n:'Encoder 4 - TEMPO / KEY / MODE', rows:[
-    ['normal','Turn: Tempo, Key or Mode. Press: cycle the three.'],
-    ['shift','Physical Shift + +/- controls the Mini\'s master volume.'],
-    ['menu','Mod Matrix menu 7&8.'],
-    ['editor','MIDI Controller editor.']],
-    d:'<em>Tempo</em> 10-300 BPM. <em>Key</em> steps round the circle of fifths. <em>Mode</em>: Major, Dorian, Phrygian, Lydian, Mixolydian, Minor, Locrian, Gypsy Min, Harmonic Min, Min Penta, Whole Tone.'},
-  E5:{n:'Encoder 5 - MOTIF', rows:[
-    ['normal','Turn: Motif POSITION / PATT-LEN for the selected motif.'],
-    ['menu','LFO Config.'],
-    ['editor','Pattern Editor.']],
-    d:'<em>Position</em> sets the octave. <em>Patt-Len</em> sets 1 to 16 notes, or Auto to follow the preset length. The 1/2 button chooses Motif 1 or 2.'},
-  E6:{n:'Encoder 6 - MOTIF', rows:[
-    ['normal','Turn: Motif VARIATION / PATTERN.'],
-    ['menu','Settings 1/3 (mostly MIDI).'],
-    ['editor','Rhythm Editor.']],
-    d:'<em>Variation</em> changes playback order. <em>Pattern</em> selects one of eight chord or scale patterns.'},
-  E7:{n:'Encoder 7 - MOTIF', rows:[
-    ['normal','Turn: CLK DIV / RHY-LEN. Centre arrow (*): GATE, not printed on the panel.'],
-    ['menu','Settings 2/3 (mostly velocities).'],
-    ['editor','Perlin Noise generator (not labelled on older units).']],
-    d:'<em>Clk Div</em> sets the step rate. <em>Rhy-Len</em> sets 4 to 32 steps. <em>Gate</em> sets the percentage of each step that a note sounds.'},
-  E8:{n:'Encoder 8 - MOTIF', rows:[
-    ['normal','Turn: ACCENT / RHYTHM / OFFSET.'],
-    ['menu','Settings 3/3 (general).']],
-    d:'<em>Accent</em> sets the velocity pattern. <em>Rhythm</em> picks one of eight presets. <em>Offset</em> delays Motif 2 by up to three sixteenth notes.'},
-  ALL:{n:'ALL ||/>', rows:[
-    ['normal','Play/pause all four parts. Restarts both motifs in sync.'],
-    ['shift','MOD: toggle ALL modulations, including Key and Mode.']],
-    d:'Use this to lock the two motifs together: it restarts both on their first pattern note and first rhythm beat on the next down beat.'},
-  MSEL:{n:'1/2  (Shift: PANIC)', rows:[
-    ['normal','Toggle the right-hand encoders between Motif 1 and Motif 2.'],
-    ['shift','PANIC: stop all parts and release their notes.']],
-    d:'The selected motif is shown in yellow on the NDLR screen (top stripe and the MOTIF 1 / MOTIF 2 indicator). Panic clears stuck notes.'},
-  MENU:{n:'MENU  (Shift: Editors)', rows:[
-    ['normal','Toggle Menu mode: the eight encoder buttons then select menus.'],
-    ['shift','Toggle Editor mode: encoder buttons select an editor.'],
-    ['boot','At power-on, Shift+Menu opens the Boot Menu.']],
-    d:'Left four encoders open the Mod Matrix (2 slots each), top-right opens LFO Config, the other three open Settings 1-3. In Editor mode: Chord Seq, MIDI Controller, Pattern, Rhythm (and Perlin on E7).'},
-  SHIFT:{n:'SHIFT', rows:[
-    ['normal','Hold with another control to use its italic label.'],
-    ['boot','At power-on: freeze the splash screen (firmware and serial number).']],
-    d:'Shifted functions: chord type on the 7 chord buttons, MOD on the part buttons and ALL, PANIC on 1/2, Editors on MENU, and deferred Tempo/Key/Mode changes on encoder 4.'},
-  PAD:{n:'PAD ||/>', rows:[
-    ['normal','Play / pause the Pad.'],
-    ['shift','MOD: toggle modulations that target the Pad (red ring).']],
-    d:'Pad plays every note of the current chord within its Range. Plays on Tracker synth channel 1.'},
-  DRONE:{n:'DRONE ||/>', rows:[
-    ['normal','Play / pause the Drone.'],
-    ['shift','MOD: toggle modulations that target the Drone (red ring).']],
-    d:'Drone can hold the chord or key root. Plays on Tracker synth channel 2.'},
-  M1:{n:'MOTIF 1 ||/>', rows:[
-    ['normal','Play / pause Motif 1.'],
-    ['shift','MOD: toggle modulations that target Motif 1 (red ring).']],
-    d:'Defaults to an ascending eighth-note arpeggio. Plays on Tracker synth channel 3.'},
-  M2:{n:'MOTIF 2 ||/>', rows:[
-    ['normal','Play / pause Motif 2.'],
-    ['shift','MOD: toggle modulations that target Motif 2 (red ring).']],
-    d:'Defaults to a descending quarter-note arpeggio. Plays on Synth 4 by default, and you can choose any synth; the 1/2 button chooses which motif the right-hand encoders edit.'},
-  SCREEN:{n:'SCREEN', rows:[
-    ['view','Top stripes: Motif 1, Pad, Motif 2 (width = notes, height = octave).'],
-    ['view','Side arrows: selected encoder and which of its labels.']],
-    d:'Also shown: Key and Mode, BPM with a beat dot (blue on every 4th beat), chord degree + name + type, poly-chain dots, and play indicators for the four parts. The centre box changes to Pad / Drone / T-K-M / Motif detail.'},
-};
-const CHORD_INFO = {
-  I:'Triad', II:'7th', III:'sus2', IV:'alt2', V:'alt1', VI:'sus4', VII:'6th'
-};
-
-/* ---------- music state (so the little screen is live) ---------- */
-const KEYS = ['C','G','D','A','E','B','F#','Db','Ab','Eb','Bb','F'];   // circle of fifths, as on the NDLR
-const KEY_SEMI = {C:0,G:7,D:2,A:9,E:4,B:11,'F#':6,Db:1,Ab:8,Eb:3,Bb:10,F:5};
-const NOTE = ['C','Db','D','Eb','E','F','F#','G','Ab','A','Bb','B'];
 const MODES = [
-  ['Major',[0,2,4,5,7,9,11]],['Dorian',[0,2,3,5,7,9,10]],['Phrygian',[0,1,3,5,7,8,10]],
-  ['Lydian',[0,2,4,6,7,9,11]],['Mixolydian',[0,2,4,5,7,9,10]],['Minor',[0,2,3,5,7,8,10]],
-  ['Locrian',[0,1,3,5,6,8,10]],['Gypsy Min',null],['Harmonic Min',[0,2,3,5,7,8,11]],
-  ['Min Penta',null],['Whole Tone',null],
+  { name: "MAJOR", iv: [0, 2, 4, 5, 7, 9, 11] }, { name: "DORIAN", iv: [0, 2, 3, 5, 7, 9, 10] },
+  { name: "PHRYGIAN", iv: [0, 1, 3, 5, 7, 8, 10] }, { name: "LYDIAN", iv: [0, 2, 4, 6, 7, 9, 11] },
+  { name: "MIXOLYDIAN", iv: [0, 2, 4, 5, 7, 9, 10] }, { name: "MINOR", iv: [0, 2, 3, 5, 7, 8, 10] },
+  { name: "LOCRIAN", iv: [0, 1, 3, 5, 6, 8, 10] }, { name: "GYPSY MIN", iv: [0, 2, 3, 6, 7, 8, 11] },
+  { name: "HARM MIN", iv: [0, 2, 3, 5, 7, 8, 11] }, { name: "MIN PENTA", iv: [0, 3, 5, 7, 10] },
+  { name: "WHOLE TONE", iv: [0, 2, 4, 6, 8, 10] }
 ];
-const MODE_IV = {'Gypsy Min':[0,2,3,6,7,8,11],'Min Penta':[0,3,5,7,10],'Whole Tone':[0,2,4,6,8,10]};
-const ALT1=['triad','7th','triad','triad','7th','7th','6th'], ALT2=['7th','7th','triad','7th','7th','6th','7th'];
-function resolvedType(){ return st.type==='alt1'?ALT1[st.deg]: st.type==='alt2'?ALT2[st.deg]: st.type; }
-const ROMAN = ['I','II','III','IV','V','VI','VII'];
+const KEY_NAME = ["C", "G", "D", "A", "E", "B", "F#", "Db", "Ab", "Eb", "Bb", "F"];   /* circle of fifths */
+const KEY_SEMI = [0, 7, 2, 9, 4, 11, 6, 1, 8, 3, 10, 5];
+const NOTE_NAME = ["C", "Db", "D", "Eb", "E", "F", "F#", "G", "Ab", "A", "Bb", "B"];
+const ROMAN_UPPER = ["I", "II", "III", "IV", "V", "VI", "VII"];
+const ROMAN_LOWER = ["i", "ii", "iii", "iv", "v", "vi", "vii"];
+const CT_TRIAD = 0, CT_7TH = 1, CT_ALT2 = 3, CT_ALT1 = 4, CT_6TH = 6;
+const TYPE_NAME = ["triad", "7th", "sus2", "alt2", "alt1", "sus4", "6th"];
+/* alt1 and alt2 resolve to a fixed type per chord degree */
+const ALT1 = [CT_TRIAD, CT_7TH, CT_TRIAD, CT_TRIAD, CT_7TH, CT_7TH, CT_6TH];
+const ALT2 = [CT_7TH, CT_7TH, CT_TRIAD, CT_7TH, CT_7TH, CT_6TH, CT_7TH];
+/* scale-step offsets stacked on the chord root */
+const SHAPE = [[0, 2, 4], [0, 2, 4, 6], [0, 1, 4], [0, 2, 4, 6], [0, 2, 4], [0, 3, 4], [0, 2, 4, 5]];
 
+/* ---------- controls, in the order the firmware navigates them ---------- */
+const C_ENC1 = 0, C_ENC8 = 7, C_ALL = 8, C_MOTIFSEL = 9, C_CHORD1 = 10, C_SCREEN = 17, C_MENU = 18,
+      C_SHIFT = 19, C_PAD = 20, C_RECORD = 24, C_COUNT = 25;
+const K_ENC = 0, K_BTN = 1, K_CHORD = 2, K_SCREEN = 3, K_SHIFT = 4, K_PART = 5, K_RECORD = 6;
+/* x, y, radius on the 800 x 520 panel reference, and the control kind */
+const GEOM = [
+  [143, 128, 22, K_ENC], [143, 225, 22, K_ENC], [143, 325, 22, K_ENC], [143, 425, 22, K_ENC],
+  [662, 128, 22, K_ENC], [662, 222, 22, K_ENC], [662, 323, 22, K_ENC], [662, 425, 22, K_ENC],
+  [268, 90, 10, K_BTN], [535, 90, 10, K_BTN],
+  [403, 128, 15, K_CHORD], [493, 163, 15, K_CHORD], [535, 257, 15, K_CHORD], [497, 350, 15, K_CHORD],
+  [307, 350, 15, K_CHORD], [268, 252, 15, K_CHORD], [305, 160, 15, K_CHORD],
+  [403, 243, 0, K_SCREEN], [403, 322, 10, K_BTN], [403, 385, 16, K_SHIFT],
+  [258, 433, 10, K_PART], [313, 433, 10, K_PART], [492, 433, 10, K_PART], [547, 433, 10, K_PART],
+  [768, 495, 0, K_RECORD]
+];
+const ENC_LABEL_COUNT = [2, 2, 3, 5, 2, 2, 3, 3];
+const ENC_LABEL = [["POS", "STRUM"], ["RANGE", "SPREAD"], ["POS", "NOTES", "TRIG"],
+  ["TEMPO", "KEY", "MODE", "QNT", "CLOCK"], ["POS", "P-LEN"], ["VAR", "PATT"],
+  ["DIV", "R-LEN", "GATE"], ["ACCNT", "RHY", "OFFS"]];
+const ENC_MENU_NAME = ["MOD 1&2", "MOD 3&4", "MOD 5&6", "MOD 7&8", "LFO CFG", "SET 1", "SET 2", "SET 3"];
+const ENC_EDITOR_NAME = ["CHORD SEQ", "", "", "MIDI CTL", "PATT ED", "RHY ED", "PERLIN", ""];
+const PART_LABEL = ["PAD", "DRONE", "1", "2"];
+const sx = v => 6 + Math.trunc(v * 3 / 4), sy = sx, sr = v => Math.trunc(v * 3 / 4);
 
-const nums = (a,b) => Array.from({length:b-a+1},(_,i)=>String(a+i));
-const PARAMS = {
-  E1:[{n:'Position',min:0,max:7,def:3,unit:'octave'},{n:'Strum',list:['Off','Strum 2','Strum 3','Strum 4','Strum 5','3 + 1/8T','3 + 1/8'],def:0}],
-  E2:[{n:'Range',list:['Auto'].concat(nums(1,22)),def:0},{n:'Spread',list:['Stacked','Open','Low Root','Random 70%','Root + 5ths','3rds / 7ths above'],def:0}],
-  E3:[{n:'Position',min:1,max:5,def:2,unit:'octave'},{n:'Notes',list:['Root','Root + Oct','Root + 5th','Root 5th Oct'],def:0},{n:'Trigger',list:['Chord','Chord 1/4','Chord 1/2','Chord 1/1','Key','Key 1/4','Key 1/2','Key 1/1'],def:0}],
-  E5:[{n:'Position',min:0,max:3,def:1,unit:'octave'},{n:'Patt-Len',list:['Auto'].concat(nums(1,16)),def:0}],
-  E6:[{n:'Variation',list:['Forward','Backward','Ping-Pong','Ping-Pong 2','Odd / Even'],def:0},{n:'Pattern',list:['Arpeggio','Broken','Pendulum','Bass Jump','Scale Up','Scale Skip','Answer','Cascade'],def:0}],
-  E7:[{n:'Clk Div',list:['1/1','1/2','1/4','1/8','1/3','1/6'],def:3},{n:'Rhy-Len',min:4,max:32,def:16,unit:'steps'},{n:'Gate',min:0,max:99,def:50,unit:'%'}],
-  E8:[{n:'Accent',list:['Fixed','Rhythm','Humanize','Downbeat','Alternate'],def:1},{n:'Rhythm',list:['Straight','Offbeat','Syncopate','Tresillo','Gallop','Pulse','Stutter','Sparse'],def:0},{n:'Offset',list:['0/16','1/16','2/16','3/16'],def:0}],
-};
-const st = {
-  sel:'E1', shift:false, shiftKey:false, menu:'off',
-  parts:{pad:true,drone:false,m1:true,m2:false}, modRing:{pad:false,drone:false,m1:false,m2:false,all:false},
-  motif:1, deg:3, type:'triad', pendingType:null,
-  enc:{E1:0,E2:0,E3:0,E4:0,E5:0,E6:0,E7:0,E8:0},
-  activeEnc:'E1', tempo:90, key:0, mode:0, turn:null, panic:0, toast:''
-};
-st.val = {}; for(const id in PARAMS){ st.val[id] = PARAMS[id].map(p => p.def); }
-function pText(id){ const lab=st.enc[id], p=PARAMS[id][lab], v=st.val[id][lab];
-  let t = p.list ? p.list[v] : String(v); if(p.unit && !p.list) t += ' ' + p.unit;
-  return p.n + ': ' + t; }
-function pStep(id,n){ const lab=st.enc[id], p=PARAMS[id][lab]; let v=st.val[id][lab];
-  if(p.list){ const len=p.list.length; v=((v+(n>0?1:-1))%len+len)%len; } else v=Math.max(p.min,Math.min(p.max,v+n));
-  st.val[id][lab]=v; }
-st.ang = {};
-st.mval = {1:{},2:{}};
-for(const id of ['E5','E6','E7','E8']){ st.mval[1][id]=st.val[id].slice(); st.mval[2][id]=st.val[id].slice(); }
-st.mval[2].E7[0]=2; st.mval[2].E6[0]=1;   /* defaults: Motif 1 ascending eighths, Motif 2 descending quarters */
-function useMotif(){ for(const id of ['E5','E6','E7','E8']) st.val[id]=st.mval[st.motif][id]; }
-useMotif();
-const shiftOn = () => st.shift || st.shiftKey;
+/* ---------- info text (from the firmware) ---------- */
+const IM_NORMAL = 0, IM_SHIFT = 1, IM_MENU = 2, IM_EDITOR = 3, IM_VIEW = 4, IM_BOOT = 5;
+const MODE_HEADER = ["PRESS / TURN", "+ SHIFT", "IN MENU MODE", "IN EDITOR MODE", "ON SCREEN", "AT BOOT"];
+const INFO = [
+  { name: "Encoder 1 - PAD",
+    rows: [[IM_NORMAL, "Turn: Pad POSITION / STRUM. Press: switch between the two."], [IM_MENU, "Mod Matrix menu 1&2."], [IM_EDITOR, "Chord Sequencer."]],
+    desc: "Position sets the octave. Strum spreads each new chord across the beat, from Off to an eighth-note interval." },
+  { name: "Encoder 2 - PAD",
+    rows: [[IM_NORMAL, "Turn: Pad RANGE / SPREAD. Press: switch between the two."], [IM_MENU, "Mod Matrix menu 3&4."]],
+    desc: "Range sets the note count, limited by available Synth 1 voices. Auto follows the chord. Spread changes the voicing." },
+  { name: "Encoder 3 - DRONE",
+    rows: [[IM_NORMAL, "Turn: Drone POSITION / NOTES / TRIGGER. Press: cycle the three."], [IM_MENU, "Mod Matrix menu 5&6."]],
+    desc: "Notes adds a fifth or octave when voices are available. Trigger follows the chord or holds the key root, with optional repeats." },
+  { name: "Enc 4 - TEMPO / KEY",
+    rows: [[IM_NORMAL, "Press to cycle Tempo, Key, Mode, Quantise and Clock. Turn to adjust."], [IM_SHIFT, "Physical Shift + +/- controls the Mini’s master volume."], [IM_MENU, "Mod Matrix menu 7&8."], [IM_EDITOR, "MIDI Controller editor."]],
+    desc: "Tracker follows the running pattern. Internal uses NDLR tempo while the pattern keeps playing. Quantise uses the selected clock." },
+  { name: "Encoder 5 - MOTIF",
+    rows: [[IM_NORMAL, "Turn: Motif POSITION / PATT-LEN for the selected motif."], [IM_MENU, "LFO Config."], [IM_EDITOR, "Pattern Editor."]],
+    desc: "Position sets the octave. Pattern Length sets 1 to 16 notes, or Auto to follow the preset length." },
+  { name: "Encoder 6 - MOTIF",
+    rows: [[IM_NORMAL, "Turn: Motif VARIATION / PATTERN."], [IM_MENU, "Settings 1/3 (mostly MIDI)."], [IM_EDITOR, "Rhythm Editor."]],
+    desc: "Variation changes playback order. Pattern selects one of eight chord or scale patterns." },
+  { name: "Encoder 7 - MOTIF",
+    rows: [[IM_NORMAL, "Turn: CLK DIV / RHY-LEN. Centre arrow (GATE) is not printed on the panel."], [IM_MENU, "Settings 2/3 (mostly velocities)."], [IM_EDITOR, "Perlin Noise generator."]],
+    desc: "Clock Division sets the step rate. Rhythm Length sets 4 to 32 steps. Gate sets the percentage of each step that a note sounds." },
+  { name: "Encoder 8 - MOTIF",
+    rows: [[IM_NORMAL, "Turn: ACCENT / RHYTHM / OFFSET."], [IM_MENU, "Settings 3/3 (general)."]],
+    desc: "Accent sets the velocity pattern. Rhythm picks one of eight presets. Offset delays Motif 2 by up to three sixteenth notes." },
+  { name: "ALL  ||/>",
+    rows: [[IM_NORMAL, "Play/pause all four parts. Restarts both motifs in sync."], [IM_SHIFT, "MOD: toggle ALL modulations (red rings; visual only here)."]],
+    desc: "Restarts both motifs on their first pattern note and first rhythm beat so they lock together." },
+  { name: "1/2  (Shift: PANIC)",
+    rows: [[IM_NORMAL, "Right-hand encoders edit Motif 1 or Motif 2."], [IM_SHIFT, "PANIC: stop all parts and release their notes."]],
+    desc: "The selected motif is highlighted on the NDLR screen. Panic releases the notes played by the panel." },
+  null, null, null, null, null, null, null,   /* chords: filled in when drawn */
+  { name: "NDLR SCREEN",
+    rows: [[IM_VIEW, "Top stripes: Motif 1, Pad, Motif 2."], [IM_VIEW, "Side markers: selected encoder."]],
+    desc: "Shows key and mode, BPM, chord degree + name + type, and the four play indicators. The centre box changes to Pad / Drone / T-K-M / Motif detail." },
+  { name: "MENU (Shift: Editors)",
+    rows: [[IM_NORMAL, "Toggle Menu mode: the eight encoder buttons then open menus."], [IM_SHIFT, "Toggle Editor mode."], [IM_BOOT, "At power-on, Shift+Menu opens the Boot Menu."]],
+    desc: "Left four encoders open the Mod Matrix, top-right opens LFO Config, the others open Settings 1-3. Editors: Chord Seq, MIDI Controller, Pattern, Rhythm, Perlin." },
+  { name: "SHIFT",
+    rows: [[IM_NORMAL, "Hold it with another control for the italic label. Middle latches it."], [IM_BOOT, "At power-on: freeze the splash screen."]],
+    desc: "Shifted functions: chord type on the 7 chord buttons, MOD on part buttons and ALL, PANIC on 1/2, Editors on MENU. The Mini Shift button works as NDLR Shift too." },
+  { name: "PAD  ||/>",
+    rows: [[IM_NORMAL, "Play / pause the Pad."], [IM_SHIFT, "MOD: toggle modulations that target the Pad (red ring)."]],
+    desc: "Pad plays every note of the current chord. Plays on Tracker synth channel 1." },
+  { name: "DRONE  ||/>",
+    rows: [[IM_NORMAL, "Play / pause the Drone."], [IM_SHIFT, "MOD: toggle modulations that target the Drone (red ring)."]],
+    desc: "Drone can hold the chord or key root. Plays on Tracker synth channel 2." },
+  { name: "MOTIF 1  ||/>",
+    rows: [[IM_NORMAL, "Play / pause Motif 1 (up arpeggio)."], [IM_SHIFT, "MOD: toggle modulations that target Motif 1 (red ring)."]],
+    desc: "Defaults to an ascending eighth-note arpeggio. Plays on Tracker synth channel 3." },
+  { name: "MOTIF 2  ||/>",
+    rows: [[IM_NORMAL, "Play / pause Motif 2 (down arpeggio)."], [IM_SHIFT, "MOD: toggle modulations that target Motif 2 (red ring)."]],
+    desc: "Defaults to a descending quarter-note arpeggio on Tracker Synth 4." },
+  { name: "RECORD",
+    rows: [[IM_NORMAL, "Press Middle to start or stop recording."]],
+    desc: "Saves the stereo mix, including the Tracker pattern, to Recordings on the SD card." }
+];
 
-function chordInfo(){
-  const m = MODES[st.mode]; const iv = m[1] || MODE_IV[m[0]]; const n = iv.length;
-  const at = k => iv[k%n] + 12*Math.floor(k/n);
-  const d = st.deg, root = (KEY_SEMI[KEYS[st.key]] + at(d)) % 12;
-  const third = (at(d+2)-at(d))%12, fifth = (at(d+4)-at(d))%12;
-  let rom = ROMAN[d];
-  if(third===3){ rom = rom.toLowerCase(); if(fifth===6) rom += '°'; }
-  else if(fifth===8) rom += '+';
-  return {rom, name:NOTE[root], type:resolvedType()};
+/* ---------- state ---------- */
+const s = {};
+function resetSession() {
+  const internalClock = !!s.internalClock;
+  Object.assign(s, {
+    sel: C_ENC1, shiftLatched: false, physShift: false, menuMode: 0,
+    partOn: [0, 0, 0, 0], modRing: [0, 0, 0, 0], motif: 1, activeEnc: 0,
+    encLabel: [0, 0, 0, 0, 0, 0, 0, 0],
+    degree: 0, type: CT_TRIAD, pendingType: -1, tempo: 90, key: 0, mode: 0,
+    padOct: 3, droneOct: 2, padRange: 0, padStrum: 0, padSpread: 0,
+    droneNotesMode: 0, droneTrigger: 0, motifOffset: 0, quantise: 0,
+    pendingPartToggles: 0, queuedChord: 0, queuedChordType: 0, launchPulse: 0, barPulse: 0,
+    trackerRun: -1, internalClock, trackerClock: false, trackerTempo: 0,
+    motifSettings: [
+      { octave: 4, patternLength: 0, variation: 0, pattern: 0, division: 5, rhythmLength: 8, gate: 100, accent: 0, rhythm: 0 },
+      { octave: 5, patternLength: 0, variation: 1, pattern: 0, division: 3, rhythmLength: 8, gate: 100, accent: 0, rhythm: 0 }
+    ],
+    motifPlayback: [
+      { nextStep: 0, noteEnd: 0, patternStep: 0, rhythmStep: 0, note: -1 },
+      { nextStep: 0, noteEnd: 0, patternStep: 0, rhythmStep: 0, note: -1 }
+    ],
+    dirty: 1, toast: "", toastUntil: 0, recordToast: false, pulse: 0,
+    random: ((Date.now() & 0x7fffffff) | 1) >>> 0,
+    padNext: 0, droneNext: 0, padNotes: [], padPlayed: 0, droneNotes: [],
+    /* the demo is not limited by the Mini's eight-voice budget */
+    voices: [MAX_PAD, 3, 1, 1],
+    recording: false, take: 0
+  });
+}
+resetSession();
+
+const shiftOn = () => s.shiftLatched || s.physShift;
+function toast(msg, recordingMessage) {
+  s.recordToast = !!recordingMessage;
+  s.toast = msg;
+  s.toastUntil = wallNow() + 1.5;
+  s.dirty = 1;
 }
 
-/* ---------- spatial navigation for the dpad ---------- */
-const DIRS = {left:[-1,0], right:[1,0], up:[0,-1], down:[0,1]};
-const OVERRIDE = { // hand-tuned moves where geometry alone feels wrong
-  'SHIFT:left':'DRONE','SHIFT:right':'M1','MENU:left':'CV','MENU:right':'CIV',
-  'CIII:up':'CII','CVI:up':'CVII','MSEL:left':'CI','ALL:right':'CI'
-};
-function neighbour(id, dir){
-  const o = OVERRIDE[id+':'+dir]; if(o && BY[o]) return o;
-  const a = BY[id], [dx,dy] = DIRS[dir]; let best=null, bs=1e9;
-  for(const b of CTRL){
-    if(b===a) continue;
-    const vx=b.x-a.x, vy=b.y-a.y, along=vx*dx+vy*dy, perp=Math.abs(vx*dy)+Math.abs(vy*dx);
-    if(along<=8) continue;
-    const s = along + 2.2*perp;
-    if(s<bs){bs=s;best=b.id;}
-  }
-  return best || id;
+/* ---------- clock ----------
+   The firmware counts 48 pulses per beat. Here every pulse is given a time on
+   the audio clock a little ahead of now, so notes land exactly on the grid. */
+const trk = { running: false, run: 0, pulse: 0, startStep: 0, tempo: 120, nextT: 0 };
+let ndlrNextT = 0, lastPulseT = 0, audioOff = 0, curT = 0;
+function wallNow() { return performance.now() / 1000; }
+function actionTime() {
+  const ctx = audio.ctx();
+  curT = ctx ? Math.max(ctx.currentTime, lastPulseT + audioOff) : 0;
 }
 
-/* ---------- drawing helpers ---------- */
-const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');
-const T = (x,y,s,size,fill,anchor='middle',extra='') =>
-  `<text x="${x}" y="${y}" font-size="${size}" fill="${fill}" text-anchor="${anchor}" ${extra}>${esc(s)}</text>`;
-
-function ndlrScreen(x,y,w,big){
-  const s = w/100, h=132;
-  const ci = chordInfo();
-  const m1y = st.motif===1, m2y = st.motif===2;
-  let g = `<g transform="translate(${x},${y}) scale(${s})">`;
-  g += `<rect x="0" y="0" width="100" height="${h}" rx="3" fill="#000" stroke="#3a4152" stroke-width="1"/>`;
-  // top stripes
-  g += `<polygon points="8,16 40,12 40,16" fill="${m1y?'#ffd23f':'#e8e8e8'}"/>`;
-  g += `<rect x="30" y="14" width="40" height="4" fill="#fff"/>`;
-  g += `<polygon points="60,15 92,15 76,10" fill="${m2y?'#ffd23f':'#e8e8e8'}" transform="translate(0,4)"/>`;
-  g += T(50,30,KEYS[st.key]+' - '+MODES[st.mode][0].toUpperCase(),7,'#fff');
-  // sub screen box + title
-  g += `<rect x="18" y="36" width="64" height="48" fill="none" stroke="#fff" stroke-width="1.2"/>`;
-  const sub = {PAD:'PAD',DRONE:'DRONE','T-K-M':'T-K-M',MOTIF:'MOTIF '+st.motif}[BY[st.activeEnc].part];
-  g += T(50,63,sub,8,'#9aa6bd');
-  // encoder select arrows: 4 left, 4 right
-  for(let i=0;i<8;i++){
-    const left = i<4, row = i%4, ay = 42+row*14, ax = left?7:93, enc='E'+(i+1);
-    const act = enc===st.activeEnc, lab = st.enc[enc];
-    // label 0 up, 1 left/right-pointing (middle), 2 down
-    let pts;
-    if(lab===0) pts = `${ax-4},${ay+3} ${ax+4},${ay+3} ${ax},${ay-4}`;
-    else if(lab===2) pts = `${ax-4},${ay-3} ${ax+4},${ay-3} ${ax},${ay+4}`;
-    else pts = left ? `${ax+4},${ay-4} ${ax+4},${ay+4} ${ax-4},${ay}` : `${ax-4},${ay-4} ${ax-4},${ay+4} ${ax+4},${ay}`;
-    g += `<polygon points="${pts}" fill="${act?'#fff':'none'}" stroke="#fff" stroke-width="1"/>`;
-  }
-  // beat / tempo
-  g += `<circle cx="22" cy="95" r="3" fill="none" stroke="#fff" stroke-width="1"/>`;
-  g += T(30,98,st.tempo+' BPM',7.5,'#fff','start');
-  // chord line
-  g += T(6,118,ci.rom+' '+ci.name,13,'#fff','start','font-weight="700"');
-  g += T(95,118,st.pendingType||ci.type,13,st.pendingType?'#6fa0ff':'#fff','end','font-weight="700"');
-  // play indicators
-  const dot=(cx,cy,on,lab,hl)=>`<circle cx="${cx}" cy="${cy}" r="2.4" fill="${on?'#fff':'none'}" stroke="#fff" stroke-width=".9"/>`+T(cx+4,cy+2.5,lab,5.6,hl?'#ffd23f':'#fff','start');
-  g += dot(34,126,st.parts.pad,'PAD') + dot(34,131,st.parts.drone,'DRONE') + dot(66,126,st.parts.m1,'MOTIF1',st.motif===1) + dot(66,131,st.parts.m2,'MOTIF2',st.motif===2);
-  g += `</g>`;
-  return g;
+/* ---------- sound ---------- */
+function synthNote(on, note, velocity, channel) {
+  if (note < 0 || note > 127) return;
+  if (on) audio.noteOn(channel, note, velocity, curT); else audio.noteOff(channel, note, curT);
 }
-
-function drawControl(c){
-  const {x,y} = CT(c), r = c.r*S;
-  let g = '';
-  if(c.k==='enc'){
-    g += `<circle cx="${x}" cy="${y}" r="${r+2}" fill="#0a0c10" stroke="#3b4458" stroke-width="1.5"/>`;
-    g += `<circle cx="${x}" cy="${y}" r="${r-2}" fill="#111419"/>`;
-    g += `<line x1="${x}" y1="${y-r+4}" x2="${x}" y2="${y-3}" stroke="#aeb7c9" stroke-width="2.2" stroke-linecap="round" transform="rotate(${(st.ang[c.id]||0)%360} ${x} ${y})"/>`;
-    if(st.turn && st.turn.id===c.id) g += T(x,y+4,st.turn.dir>0?'↻':'↺',16,'#ffd23f');
-  } else if(c.k==='chord'){
-    const act = c.deg===st.deg;
-    g += `<circle cx="${x}" cy="${y}" r="${r}" fill="#0a0c10" stroke="${act?'#3ddc84':'#8a93a3'}" stroke-width="${act?2.5:1.5}"/>`;
-    g += T(x,y+3.5,c.num,c.num.length>2?9:11,act?'#3ddc84':'#d5dcea','middle','font-weight="700"');
-    // chord-type label on the inside of the ring
-    const vx=px(RING_C.x)-x, vy=py(RING_C.y)-y, l=Math.hypot(vx,vy);
-    const tx=x+vx/l*(r+17), ty=y+vy/l*(r+17)+3;
-    const t = CHORD_INFO[c.num];
-    const sh = shiftOn();
-    g += T(tx,ty,t,10,sh?(st.pendingType===c.type?'#6fa0ff':'#ffd23f'):'#566074','middle',sh?'font-weight="700"':'');
-  } else if(c.k==='shift'){
-    g += `<circle cx="${x}" cy="${y}" r="${r}" fill="#2f6bff" stroke="#8fb0ff" stroke-width="1.5"/>`;
-    if(shiftOn()) g += `<circle cx="${x}" cy="${y}" r="${r+4}" fill="none" stroke="#6fa0ff" stroke-width="2"/>`;
-    g += T(x,y+r+13,'SHIFT',9,'#aeb7c9','middle','font-style="italic"');
-  } else if(c.k==='part'){
-    const on = st.parts[c.part], ring = st.modRing[c.part];
-    g += `<circle cx="${x}" cy="${y}" r="${r+3}" fill="none" stroke="${ring?'#ff4d4d':'transparent'}" stroke-width="2"/>`;
-    g += `<circle cx="${x}" cy="${y}" r="${r}" fill="${on?'#3ddc84':'#e9e2cf'}" stroke="#222" stroke-width="1"/>`;
-    const lab = {pad:'PAD',drone:'DRONE',m1:'1',m2:'2'}[c.part];
-    g += T(x,y-r-6,lab,9,'#aeb7c9');
-  } else if(c.k==='btn'){
-    let on=false, glow='#e9e2cf';
-    if(c.id==='MENU') on = st.menu!=='off';
-    if(c.id==='ALL') on = Object.values(st.parts).every(Boolean);
-    g += `<circle cx="${x}" cy="${y}" r="${r}" fill="${on?'#ffd23f':glow}" stroke="#222" stroke-width="1"/>`;
-    if(c.id==='ALL'){ g += T(x-r-4,y-4,'ALL','8.5'*1,'#aeb7c9','end'); g += T(x-r-4,y+6,'║▶','8','#aeb7c9','end'); g += T(x+r+4,y+3,'MOD',8.5,shiftOn()?'#ffd23f':'#566074','start','font-style="italic"'); }
-    if(c.id==='MSEL'){ g += T(x-r-4,y+3,'PANIC',8.5,shiftOn()?'#ffd23f':'#566074','end','font-style="italic"'); g += T(x+r+4,y+3,'1/2',9,st.motif?'#ffd23f':'#aeb7c9','start'); }
-    if(c.id==='MENU'){ g += T(x+r+6,y+3,'MENU',9,'#aeb7c9','start'); g += T(x+r+6,y+14,'+ EDITOR',8,shiftOn()?'#ffd23f':'#566074','start','font-style="italic"'); }
-  }
-  return g;
+function resolvedType() {
+  if (s.type === CT_ALT1) return ALT1[s.degree];
+  if (s.type === CT_ALT2) return ALT2[s.degree];
+  return s.type;
 }
-
-function render(){
-  let g = '';
-  // panel body
-  g += `<rect x="${OX}" y="${OY}" width="${600}" height="${390}" rx="12" fill="#15191f" stroke="#2f3747" stroke-width="2"/>`;
-  g += T(px(403), py(52), 'alpaca', 18, '#aab3c5','middle','font-weight="700"');
-  // ring
-  const rc = {x:px(RING_C.x), y:py(RING_C.y)};
-  g += `<circle cx="${rc.x}" cy="${rc.y}" r="${130*S}" fill="none" stroke="#2c3341" stroke-width="9"/>`;
-  g += `<circle cx="${rc.x}" cy="${rc.y}" r="${130*S}" fill="none" stroke="#3b4456" stroke-width="1"/>`;
-  // outer labels beside encoders
-  for(const id in OUTER){
-    const c = BY[id], {x,y}=CT(c), left = id<'E5', o=OUTER[id];
-    const ax = left ? x-r2(c)-16 : x+r2(c)+16, anc = left?'end':'start';
-    const mAct = st.menu==='menu', eAct = st.menu==='editor';
-    g += T(ax,y-(o.editor?5:-3),o.menu,9,mAct?'#ffd23f':'#566074',anc,mAct?'font-weight="700"':'');
-    if(o.editor) g += T(ax,y+9,o.editor,8.5,eAct?'#ffd23f':'#566074',anc,(eAct?'font-weight="700" ':'')+'font-style="italic"');
-  }
-  // encoder labels (inner side)
-  for(const c of CTRL.filter(c=>c.k==='enc')){
-    const {x,y}=CT(c), left=c.id<'E5', ax = left ? x+r2(c)+8 : x-r2(c)-8, anc=left?'start':'end';
-    const n=c.labels.length, act = st.menu==='off' && st.activeEnc===c.id;
-    c.labels.forEach((l,i)=>{
-      const on = act && st.enc[c.id]===i;
-      g += T(ax, y-(n-1)*5.5+i*11+3, l, 9, on?'#ffd23f':'#8d98ad', anc, on?'font-weight="700"':'');
-    });
-  }
-  // screen
-  const sc = CT(BY.SCREEN);
-  g += ndlrScreen(sc.x-34, sc.y-46, 68, false);
-  for(const c of CTRL){ if(c.k!=='screen') g += drawControl(c); }
-  // mode banner on panel
-  // selection highlight
-  const cur = BY[st.sel], cc = CT(cur);
-  if(cur.k==='screen') g += `<rect class="selring" x="${cc.x-37}" y="${cc.y-46}" width="74" height="92" rx="5" fill="none" stroke="#ffd23f" stroke-width="3"/>`;
-  else {
-    const rr = (cur.r||10)*S + (cur.k==='enc'?9:7);
-    g += `<circle class="selring" cx="${cc.x}" cy="${cc.y}" r="${rr}" fill="none" stroke="#ffd23f" stroke-width="3"/>`;
-    // small corner ticks for visibility at a glance
-    g += `<circle cx="${cc.x}" cy="${cc.y}" r="${rr+4}" fill="none" stroke="#ffd23f" stroke-opacity=".25" stroke-width="3"/>`;
-  }
-  if(st.toast) g += `<g><rect x="${OX+150}" y="${OY+8}" width="300" height="20" rx="4" fill="#000" fill-opacity=".8" stroke="#ffd23f"/>${T(OX+300,OY+22,st.toast,11,'#ffd23f')}</g>`;
-  document.getElementById('panelsvg').innerHTML = g;
-  renderInfo(cur);
-  document.getElementById('shiftbtn').classList.toggle('on', st.shift);
+/* MIDI note for a scale step (which may pass one octave) in the current key and mode */
+function noteForStep(stepIdx, baseOctave) {
+  const iv = MODES[s.mode].iv, n = iv.length;
+  return 12 * (baseOctave + 1) + KEY_SEMI[s.key] + iv[stepIdx % n] + 12 * Math.floor(stepIdx / n);
 }
-const r2 = c => c.r*S + 2;
-
-function activeMode(rows){
-  const want = st.menu==='editor' ? 'editor' : st.menu==='menu' ? 'menu' : shiftOn() ? 'shift' : 'normal';
-  if(rows.some(r=>r[0]==='view')) return 'view';
-  if(rows.some(r=>r[0]===want)) return want;
-  return 'normal';
+function buildChord(baseOctave) {
+  return SHAPE[resolvedType()].map(step => noteForStep(s.degree + step, baseOctave));
 }
-function renderInfo(c){
-  let inf, extra='';
-  if(c.k==='chord'){
-    const t = CHORD_INFO[c.num];
-    inf = {n:'Chord '+c.num+'  (Shift: '+t+')', rows:[
-      ['normal','Play chord degree '+c.num+'. All four parts move to the new chord in key.'],
-      ['shift','Set chord type to '+t+'. Shows blue until the next chord press.']],
-      d:'Buttons I-VII sit in a ring and map to the seven scale degrees. Shifted, they pick the type: I Triad, II 7th, III sus2, IV alt2, V alt1, VI sus4, VII 6th. Roman numerals go lower-case for minor and add a degree sign for diminished chords.'};
-  } else inf = INFO[c.id];
-  const am = activeMode(inf.rows);
-  const label = {view:'ON SCREEN', normal:'PRESS / TURN', shift:'+ SHIFT', menu:'IN MENU MODE', editor:'IN EDITOR MODE', boot:'AT BOOT'};
-  let html = `<div class="nm">${esc(inf.n)}</div>`;
-  html += `<div class="chips"><span class="chip ${st.menu==='off'&&!shiftOn()?'on':''}">NORMAL</span>`+
-          `<span class="chip blue ${shiftOn()?'on':''}">SHIFT</span>`+
-          `<span class="chip ${st.menu==='menu'?'on':''}">MENU</span>`+
-          `<span class="chip ${st.menu==='editor'?'on':''}">EDITOR</span></div>`;
-  for(const [m,t] of inf.rows){
-    html += `<div class="row ${m===am?'act':''}"><b>${label[m]}</b>${esc(t)}</div>`;
-  }
-  // state readout
-  const ci = chordInfo();
-  let now='';
-  if(c.k==='part') now = (st.parts[c.part]?'Now: PLAYING':'Now: paused') + (st.modRing[c.part]?' / mod ring':'');
-  else if(c.id==='E4') now = `Now: ${st.tempo} BPM  ${KEYS[st.key]}  ${MODES[st.mode][0]}`;
-  else if(c.k==='chord'||c.id==='SCREEN') now = `Now: ${ci.rom} ${ci.name} ${ci.type}`;
-  else if(c.id==='MSEL') now = `Now: Motif ${st.motif} selected`;
-  else if(c.k==='enc') now = PARAMS[c.id] ? pText(c.id) : `Now: ${c.labels[st.enc[c.id]]}`;
-  else if(c.id==='MENU') now = 'Now: '+({off:'normal',menu:'Menu mode',editor:'Editor mode'})[st.menu];
-  if(now) html += `<div class="now">${esc(now)}</div>`;
-  const info = document.getElementById('info');
-  info.innerHTML = html;
-  if(c.id==='SCREEN'){
-    // magnified copy of the NDLR main screen
-    const w=66; info.insertAdjacentHTML('beforeend',
-      `<svg width="${w}" height="${w*1.32}" viewBox="0 0 ${w} ${w*1.32}">${ndlrScreen(0,0,w,true)}</svg>`);
-  }
-  document.getElementById('desc').innerHTML = inf.d;
+const due = (clock, deadline) => clock - deadline >= 0;
+function inMidiRange(note) { while (note > 127) note -= 12; return note; }
+
+function releasePad() {
+  for (let i = 0; i < s.padPlayed; i++) synthNote(false, s.padNotes[i], 0, 1);
+  s.padNotes = []; s.padPlayed = 0;
 }
+function releaseDrone() {
+  for (const n of s.droneNotes) synthNote(false, n, 0, 2);
+  s.droneNotes = [];
+}
+function releaseMotif(index) {
+  const voice = s.motifPlayback[index];
+  if (voice.note >= 0) synthNote(false, voice.note, 0, 3 + index);
+  voice.note = -1;
+}
+function allNotesOff() { releasePad(); releaseDrone(); releaseMotif(0); releaseMotif(1); }
 
-/* ---------- input ---------- */
-let toastT=null;
-function toast(s){ st.toast=s; clearTimeout(toastT); toastT=setTimeout(()=>{st.toast='';render();},1400); }
-
-function press(){
-  const c = BY[st.sel], sh = shiftOn();
-  if(c.k==='enc'){
-    if(st.menu==='menu'){ toast('Open: '+OUTER[c.id].menu); }
-    else if(st.menu==='editor'){ toast(OUTER[c.id].editor ? 'Open: '+OUTER[c.id].editor : 'No editor on this encoder'); }
-    else { st.enc[c.id] = (st.enc[c.id]+1) % c.labels.length; st.activeEnc = c.id; }
-  } else if(c.k==='chord'){
-    if(sh){ st.pendingType = c.type; toast('Next chord type: '+CHORD_INFO[c.num]); }
-    else { st.deg=c.deg; if(st.pendingType){st.type=st.pendingType; st.pendingType=null;} }
-  } else if(c.k==='part'){
-    if(sh) st.modRing[c.part] = !st.modRing[c.part]; else st.parts[c.part] = !st.parts[c.part];
-  } else if(c.id==='ALL'){
-    if(sh){ st.modRing.all=!st.modRing.all; for(const k in st.parts) st.modRing[k]=st.modRing.all; toast('All modulations '+(st.modRing.all?'toggled':'restored')); }
-    else { const any = Object.values(st.parts).some(Boolean); for(const k in st.parts) st.parts[k]=!any; toast(any?'All parts paused':'All parts playing (motifs re-synced)'); }
-  } else if(c.id==='MSEL'){
-    if(sh){ toast('PANIC: all notes off'); } else st.motif = st.motif===1?2:1;
-  } else if(c.id==='MENU'){
-    menuKey();
-  } else if(c.id==='SHIFT'){
-    st.shift = !st.shift;
+function playPadNotes() {
+  while (s.padPlayed < s.padNotes.length && due(s.pulse, s.padNext)) {
+    synthNote(true, s.padNotes[s.padPlayed], VEL_PAD, 1);
+    ++s.padPlayed;
+    const together = (s.padStrum === 4 || s.padStrum === 6) && s.padPlayed < 3;
+    if (!together) s.padNext += STRUM_PULSES[s.padStrum];
   }
 }
-function menuKey(){
-  if(shiftOn()) st.menu = st.menu==='editor' ? 'off' : 'editor';
-  else st.menu = st.menu==='menu' ? 'off' : 'menu';
-}
-function turn(n){
-  const c = BY[st.sel]; if(c.k!=='enc'){ toast('Select an encoder to turn it'); return; }
-  st.activeEnc = c.id; st.ang[c.id]=(st.ang[c.id]||0)+n*15; st.turn={id:c.id,dir:n}; setTimeout(()=>{st.turn=null;render();},500);
-  if(c.id==='E4'){
-    const lab=st.enc.E4;
-    if(lab===0) st.tempo = Math.max(10,Math.min(300,st.tempo+n));
-    else if(lab===1) st.key = (st.key+(n>0?1:-1)+12)%12;
-    else st.mode = (st.mode+(n>0?1:-1)+MODES.length)%MODES.length;
-  } else if(PARAMS[c.id]) pStep(c.id,n);
-}
-function act(k){
-  if(DIRS[k]) st.sel = neighbour(st.sel,k);
-  else if(k==='mid') press();
-  else if(k==='menu') menuKey();
-  else if(k==='shift') st.shift=!st.shift;
-  else if(k==='play'){ const any=Object.values(st.parts).some(Boolean); for(const p in st.parts) st.parts[p]=!any; }
-  else if(k==='p1') turn(1); else if(k==='m1') turn(-1);
-  else if(k==='p10') turn(10); else if(k==='m10') turn(-10);
-  render();
-}
-const dev=document.getElementById('device');
-const KEYMAP={ArrowLeft:'left',ArrowRight:'right',ArrowUp:'up',ArrowDown:'down',Enter:'mid',' ':'mid','-':'m1','=':'p1','+':'p1','[':'m10',']':'p10',m:'menu',M:'menu',p:'play',P:'play'};
-dev.addEventListener('keydown',e=>{
-  if(e.key==='Shift'){ st.shiftKey=true; render(); return; }
-  const m=KEYMAP[e.key]; if(!m) return;
-  if(e.target.closest('button') && (e.key==='Enter'||e.key===' ')) return;
-  e.preventDefault(); act(m);
-});
-dev.addEventListener('keyup',e=>{ if(e.key==='Shift'){ st.shiftKey=false; render(); }});
-dev.addEventListener('focusout',()=>{ if(st.shiftKey){ st.shiftKey=false; render(); }});
-document.querySelectorAll('#device button.k').forEach(b=>b.addEventListener('click',()=>act(b.dataset.k)));
-const psvg=document.getElementById('panelsvg');
-function pick(ev){
-  const r=psvg.getBoundingClientRect(), k=800/r.width, mx=(ev.clientX-r.left)*k, my=(ev.clientY-r.top)*k;
-  let best=null, bd=1e9;
-  for(const c of CTRL){ const p=CT(c), rad=c.k==='screen'?40:(c.r*S+8), d=Math.hypot(mx-p.x,my-p.y); if(d<rad && d<bd){bd=d;best=c.id;} }
-  return best;
-}
-/* rollover: a mouse pointer highlights what it is over; clicking presses it.
-   Touch has no hover, so a first tap highlights and a second tap presses. */
-let drag=null, suppressClick=false;
-psvg.addEventListener('pointermove',ev=>{
-  if(ev.pointerType!=='mouse' || drag) return;
-  const b=pick(ev); psvg.style.cursor=b?(BY[b].k==='enc'?'ns-resize':'pointer'):'default';
-  if(b && b!==st.sel){ st.sel=b; render(); }
-});
-psvg.addEventListener('click',ev=>{
-  if(suppressClick){ suppressClick=false; return; }
-  const b=pick(ev); if(!b) return;
-  dev.focus({preventScroll:true});
-  if(b===st.sel) press(); else st.sel=b;
-  render();
-});
-/* click and drag an encoder: up turns it up, down turns it down, one step per few pixels */
-const DRAG_PX=7;
-psvg.addEventListener('pointerdown',ev=>{
-  suppressClick=false;
-  if(ev.pointerType!=='mouse' || ev.button!==0) return;
-  const b=pick(ev); if(!b || BY[b].k!=='enc') return;
-  st.sel=b; render();
-  drag={id:b,y:ev.clientY,acc:0,moved:false};
-  try{ psvg.setPointerCapture(ev.pointerId); }catch(e){}
-  psvg.style.cursor='ns-resize';
-  dev.focus({preventScroll:true});
-  ev.preventDefault();
-});
-psvg.addEventListener('pointermove',ev=>{
-  if(!drag) return;
-  drag.acc += drag.y-ev.clientY; drag.y=ev.clientY;
-  while(drag.acc>=DRAG_PX){ drag.acc-=DRAG_PX; drag.moved=true; turn(1); }
-  while(drag.acc<=-DRAG_PX){ drag.acc+=DRAG_PX; drag.moved=true; turn(-1); }
-  if(drag.moved) render();
-});
-function endDrag(ev){
-  if(!drag) return;
-  if(drag.moved) suppressClick=true;
-  drag=null;
-  try{ psvg.releasePointerCapture(ev.pointerId); }catch(e){}
-}
-psvg.addEventListener('pointerup',endDrag);
-psvg.addEventListener('pointercancel',endDrag);
-
-/* ---------- scale the 800x480 "screen" to fit its container ---------- */
-function fit(){
-  const wrap=document.getElementById('wrap'), scr=document.getElementById('screen');
-  const k = wrap.clientWidth/800; scr.style.transform=`scale(${k})`; wrap.style.height=(480*k)+'px';
-}
-addEventListener('resize',fit); fit(); render();
-window.__test = {st, BY, CTRL, neighbour, DIRS, act, render};
-
-/* ---------------------------------------------------------------
-   Sound for the demo. A small Web Audio synth that follows the panel
-   state: pad (chord), drone, and two motifs, all clocked from the tempo.
-   Option names and ranges follow the Alpaca firmware's own text. The
-   notes the named patterns play are the demo's reading of those names,
-   and the synth is not the Mini's own engine. Nothing plays until
-   Sound is switched on.
----------------------------------------------------------------- */
-const AUDIO_PRESETS = {
-  'Soft pad':  {wave:['triangle','sine'],   det:6,  atk:0.25, rel:1.2, cut:1400, drone:'sine'},
-  'Saw pad':   {wave:['sawtooth','sawtooth'],det:9, atk:0.12, rel:0.9, cut:1900, drone:'triangle'},
-  'Glass':     {wave:['sine','triangle'],   det:3,  atk:0.01, rel:1.6, cut:5200, drone:'sine'},
-  'Organ':     {wave:['square','sine'],     det:2,  atk:0.02, rel:0.25,cut:2600, drone:'square'}
-};
-/* rhythm presets: 1 = a note on that step. They repeat across Rhy-Len steps. */
-const RHYTHMS = [[1,1,1,1],[0,1,0,1],[1,0,0,1,0,1,0,0],[1,0,0,1,0,0,1,0],[1,0,1,1],[1,0,0,0],[1,1,0,1,1,0,0,1],[1,0,0,0,0,1,0,0]];
-const CDIV = [4,2,1,0.5,4/3,2/3];                 // Clk Div in beats: 1/1 1/2 1/4 1/8 1/3 1/6
-const DRONE_REPEAT = [0,0.25,0.5,1,0,0.25,0.5,1];  // Trigger: Chord, Chord 1/4, 1/2, 1/1, Key, Key 1/4, 1/2, 1/1 (fraction of a bar)
-
-const audio = (() => {
-  let ctx=null, master=null, comp=null, on=false, timer=null, vol=0.5;
-  /* four synths: Synth 1 = Pad, Synth 2 = Drone, Synth 3 = Motif 1, Synth 4 = Motif 2 (or Motif 2 shares Synth 3) */
-  const presets={1:'Soft pad',2:'Soft pad',3:'Glass',4:'Saw pad'}, bus={};
-  let m2Share=false;
-  let nextBar=0, barNo=0, droneOsc=null, droneGain=null, droneKey='', droneNext=0;
-  const clk={1:{next:0,k:0},2:{next:0,k:0}};
-  const live=new Set();
-  const mtof = m => 440*Math.pow(2,(m-69)/12);
-  const fold = (m,lo=36,hi=96) => { while(m>hi) m-=12; while(m<lo) m+=12; return m; };   // keep every note audible and safe
-  function rng(seed){ let s=(seed*2654435761)>>>0||1; return ()=>{ s^=s<<13; s>>>=0; s^=s>>>17; s^=s<<5; s>>>=0; return s/4294967296; }; }
-  function scale(){ const m=MODES[st.mode]; return m[1] || MODE_IV[m[0]] || [0,2,4,5,7,9,11]; }
-  function degNote(iv,d){ const n=iv.length, o=Math.floor(d/n), i=((d%n)+n)%n; return iv[i]+12*o; }
-  function root(){ return KEY_SEMI[KEYS[st.key]]; }
-  const V = id => st.val[id];
-  const MV = (mi,id) => st.mval[mi][id];
-  function beat(){ return 60/st.tempo; }
-
-  /* chord as semitones above the chord root */
-  function chordNotes(){
-    const iv=scale(), d=st.deg;
-    const shape={triad:[0,2,4],'7th':[0,2,4,6],sus2:[0,1,4],sus4:[0,3,4],'6th':[0,2,4,5]}[resolvedType()]||[0,2,4];
-    let degs=shape.slice();
-    const rangeSel=V('E2')[0];                          // Range: 0 = Auto (follows the chord), else a note count
-    const want = rangeSel===0 ? shape.length : rangeSel;
-    while(degs.length<want) degs.push(degs[degs.length-shape.length]+7);
-    degs=degs.slice(0,want);
-    let notes=degs.map(k=>degNote(iv,d+k)-degNote(iv,d));
-    const spread=V('E2')[1];                            // Spread
-    if(spread===1 && notes.length>2) notes[1]+=12;      // Open
-    if(spread===2) notes=[notes[0]-12].concat(notes.slice(1)); // Low Root
-    if(spread===4){ const f=(degNote(iv,d+4)-degNote(iv,d)); notes=notes.filter((n,i)=>i===0||(((n-f)%12)+12)%12===0); }
-    if(spread===5) notes=[notes[0]-12].concat(notes.filter((n,i)=>i>0&&i%2===0));
-    if(!notes.length) notes=[0];
-    return {base:root()+degNote(iv,d), notes:notes.sort((a,b)=>a-b), spread};
+function voicePad(pulse) {
+  if (pulse === undefined) pulse = s.pulse;
+  releasePad();
+  if (!s.partOn[0]) return;
+  const chord = buildChord(s.padOct), chordSize = chord.length;
+  const wanted = s.padRange ? s.padRange : chordSize;
+  const count = Math.min(wanted, s.voices[0]);
+  const fifth = noteForStep(s.degree + 4, s.padOct);
+  const notes = [];
+  for (let i = 0; i < count; ++i) {
+    let note = chord[i % chordSize] + 12 * Math.floor(i / chordSize);
+    switch (s.padSpread) {
+      case 1: if (i === 1) note -= 12; break;                      /* Open: drop the second tone an octave */
+      case 2:                                                       /* Low Root under the close voicing */
+        note = i === 0 ? chord[0] - 12 : chord[(i - 1) % chordSize] + 12 * Math.floor((i - 1) / chordSize);
+        break;
+      case 3: note = (i % 2 === 0 ? chord[0] : fifth) + 12 * Math.floor(i / 2); break;   /* Root + 5th */
+      default: break;
+    }
+    note = inMidiRange(note);
+    while (notes.includes(note)) note -= 12;                        /* never double a pitch */
+    notes.push(note);
   }
-
-  function voice(freqs,t,dur,gain,P,type2,syn){
-    const g=ctx.createGain(); g.gain.setValueAtTime(0.0001,t);
-    g.gain.exponentialRampToValueAtTime(gain,t+P.atk);
-    g.gain.setValueAtTime(gain,t+Math.max(P.atk,dur));
-    g.gain.exponentialRampToValueAtTime(0.0001,t+dur+P.rel);
-    g.connect(bus[syn||1]);
-    const oscs=[];
-    freqs.forEach(f=>{ for(let k=0;k<2;k++){
-      const o=ctx.createOscillator(); o.type=type2||P.wave[k]; o.frequency.value=f; o.detune.value=(k?1:-1)*P.det;
-      o.connect(g); o.start(t); o.stop(t+dur+P.rel+0.05); oscs.push(o);
-    }});
-    oscs[0].onended=()=>{ try{g.disconnect();}catch(e){} live.delete(g); }; live.add(g);
+  notes.sort((a, b) => a - b);                                      /* strum from the lowest note up */
+  s.padNotes = notes; s.padPlayed = 0;
+  s.padNext = pulse;
+  playPadNotes();
+}
+function voiceDrone() {
+  releaseDrone();
+  if (!s.partOn[1]) return;
+  const root = s.droneTrigger < 4 ? s.degree : 0;
+  const tonic = noteForStep(root, s.droneOct);
+  const notes = [];
+  if (s.voices[1] > 0) notes.push(tonic);
+  if (s.droneNotesMode >= 2 && notes.length < s.voices[1]) notes.push(noteForStep(root + 4, s.droneOct));
+  if ((s.droneNotesMode & 1) && notes.length < s.voices[1]) notes.push(tonic + 12);
+  s.droneNotes = notes;
+  for (const n of notes) synthNote(true, n, VEL_DRONE, 2);
+}
+function droneInterval() {
+  const cadence = s.droneTrigger % 4;
+  return PPB * (1 << (cadence ? cadence - 1 : 0));
+}
+function restartDrone(pulse) {
+  if (pulse === undefined) pulse = s.pulse;
+  voiceDrone();
+  s.droneNext = pulse + droneInterval();
+}
+function revoice() { voicePad(); restartDrone(); }
+function resetMotif(index, pulse) {
+  if (pulse === undefined) pulse = s.pulse;
+  releaseMotif(index);
+  const voice = s.motifPlayback[index];
+  voice.patternStep = 0; voice.rhythmStep = 0;
+  voice.nextStep = pulse + (index === 1 ? 12 * s.motifOffset : 0);
+}
+function playingParts() {
+  let parts = 0;
+  for (let p = 0; p < 4; ++p) parts |= s.partOn[p] << p;
+  return parts;
+}
+const hasQueuedLaunch = () => !!(s.pendingPartToggles || s.queuedChord);
+const quantiseLaunch = () => s.trackerClock || s.quantise !== 0;
+const quantiseMode = () => (s.trackerClock && !s.quantise ? 1 : s.quantise);
+function setLaunchDeadline() {
+  const grid = s.quantise === 2 ? PPBAR : PPB;
+  s.launchPulse = s.pulse + grid - s.barPulse % grid;
+}
+/* joining the Tracker clock: stop, then bring the playing parts back in on the grid */
+function queueTrackerRestart() {
+  const requested = playingParts() ^ s.pendingPartToggles;
+  allNotesOff();
+  s.partOn = [0, 0, 0, 0];
+  s.pendingPartToggles = requested;
+  if (hasQueuedLaunch()) setLaunchDeadline();
+  s.dirty = 1;
+}
+function applyLaunch(pulse) {
+  const changed = s.pendingPartToggles;
+  const chordChanged = s.queuedChord !== 0;
+  s.pendingPartToggles = 0;
+  if (chordChanged) {
+    s.degree = s.queuedChord - 1;
+    s.type = s.queuedChordType;
+    s.queuedChord = 0;
   }
-
-  /* Pad: the chord, with Position (octave), Strum, Range and Spread */
-  function playChord(t,dur){
-    if(!st.parts.pad) return;
-    const P=AUDIO_PRESETS[presets[1]], c=chordNotes(), oct=12*V('E1')[0]-12;
-    const strum=V('E1')[1];
-    let notes=c.notes.slice(); const r=rng(7+st.deg);
-    if(c.spread===3){ notes=notes.filter(()=>r()<0.7); if(!notes.length) notes=[c.notes[0]]; }
-    const g=0.17/Math.sqrt(notes.length);
-    notes.forEach((n,i)=>{
-      let off=0;
-      if(strum>=1&&strum<=4) off=i*0.03*(strum+1);                       // short strums
-      else if(strum===5) off=i<3?0:(i-2)*beat()/3/2;                     // first 3 together, then triplet-eighth strum
-      else if(strum===6) off=i<3?0:(i-2)*beat()/2;                       // first 3 together, then eighth-note strum
-      voice([mtof(fold(24+oct+c.base+n))],t+off,dur,g,P,undefined,1);
-    });
+  for (let p = 0; p < 4; ++p) s.partOn[p] ^= (changed >> p) & 1;
+  if ((changed & 1) && !s.partOn[0]) releasePad();
+  if ((changed & 2) && !s.partOn[1]) releaseDrone();
+  for (let index = 0; index < 2; ++index) if (changed & (4 << index)) resetMotif(index, pulse);
+  if (s.partOn[0] && ((changed & 1) || chordChanged)) voicePad(pulse);
+  if (s.partOn[1] && ((changed & 2) || (chordChanged && s.droneTrigger < 4))) restartDrone(pulse);
+  s.dirty = 1;
+}
+function updateLaunch() {
+  if (hasQueuedLaunch() && due(s.pulse, s.launchPulse)) applyLaunch(s.launchPulse);
+}
+function togglePart(part) {
+  updateLaunch();
+  if (quantiseLaunch() && !hasQueuedLaunch()) setLaunchDeadline();
+  s.pendingPartToggles ^= 1 << part;
+  if (!quantiseLaunch()) applyLaunch(s.pulse);
+}
+function selectChord(degree) {
+  updateLaunch();
+  const alreadyQueued = hasQueuedLaunch();
+  if (quantiseLaunch() && !alreadyQueued) setLaunchDeadline();
+  if (s.pendingType >= 0) { s.queuedChordType = s.pendingType; s.pendingType = -1; }
+  else if (!s.queuedChord) s.queuedChordType = s.type;
+  s.queuedChord = degree + 1;
+  if (!quantiseLaunch() || (!alreadyQueued && !playingParts())) applyLaunch(s.pulse);
+}
+function randomValue() {
+  let r = s.random;
+  r ^= r << 13; r >>>= 0; r ^= r >>> 17; r ^= r << 5; r >>>= 0;
+  s.random = r;
+  return r;
+}
+function motifPatternIndex(variation, step, length) {
+  const i = step % length;
+  switch (variation) {
+    case 1: return length - 1 - i;
+    case 2: {
+      if (length === 1) return 0;
+      const period = length * 2 - 2, pos = step % period;
+      return pos < length ? pos : period - pos;
+    }
+    case 3: {
+      const pos = step % (length * 2);
+      return pos < length ? pos : length * 2 - 1 - pos;
+    }
+    case 4: { const half = (length + 1) >> 1; return i < half ? 2 * i : 2 * (i - half) + 1; }
+    case 5: return randomValue() % length;
+    default: return i;
   }
-
-  /* Drone: Position (octave), Notes (root, +oct, +5th, both) and Trigger (follow the chord or hold the key root, with optional repeats) */
-  function droneNotes(){ const nm=V('E3')[1]; return [[0],[0,12],[0,7],[0,7,12]][nm]; }
-  function droneRoot(){ const trig=V('E3')[2]; return trig>=4 ? root() : root()+degNote(scale(),st.deg); }
-  function droneMidi(n){ return mtof(fold(12+12*V('E3')[0]+droneRoot()+n,28,60)); }
-  function setDrone(){
-    if(!ctx) return;
-    const trig=V('E3')[2];
-    const want = on && st.parts.drone && DRONE_REPEAT[trig]===0;      // held drone; repeating triggers are scheduled instead
-    const P=AUDIO_PRESETS[presets[2]];
-    const key=[want,presets[2],droneRoot(),V('E3')[0],V('E3')[1]].join();
-    if(key===droneKey) return;
-    droneKey=key;
-    if(droneOsc){ const g=droneGain, o=droneOsc; g.gain.cancelScheduledValues(ctx.currentTime); g.gain.setTargetAtTime(0.0001,ctx.currentTime,0.12); o.forEach(x=>x.stop(ctx.currentTime+0.6)); droneOsc=null; }
-    if(!want) return;
-    droneGain=ctx.createGain(); droneGain.gain.value=0.0001; droneGain.connect(bus[2]);
-    droneGain.gain.setTargetAtTime(0.06,ctx.currentTime,0.2);
-    droneOsc=droneNotes().map(n=>{ const o=ctx.createOscillator(); o.type=P.drone; o.frequency.value=droneMidi(n); o.connect(droneGain); o.start(); return o; });
+}
+function motifVelocity(accent, rhythmVelocity, step) {
+  switch (accent) {
+    case 1: return rhythmVelocity;
+    case 2: return rhythmVelocity + (randomValue() % 17) - 8;
+    case 3: return step % 4 === 0 ? 118 : 82;
+    case 4: return step % 2 === 0 ? 110 : 75;
+    default: return VEL_MOTIF;
   }
-  function droneHit(t,dur){
-    const P=AUDIO_PRESETS[presets[2]];
-    droneNotes().forEach(n=>voice([droneMidi(n)],t,dur,0.07,{wave:[P.drone,P.drone],det:P.det,atk:0.01,rel:0.25},P.drone,2));
-  }
+}
+function tickMotif(index) {
+  if (!s.partOn[index + 2]) return;
+  const voice = s.motifPlayback[index], settings = s.motifSettings[index];
+  if (voice.note >= 0 && due(s.pulse, voice.noteEnd)) releaseMotif(index);
+  if (!due(s.pulse, voice.nextStep)) return;
 
-  /* Motifs: Pattern picks one of eight named patterns, Variation the playback order, Rhythm one of eight presets */
-  function patternNotes(pat,len,c,iv){
-    const pool=c.notes.concat(c.notes.map(n=>n+12));
-    const sc=[]; for(let i=0;i<16;i++) sc.push(degNote(iv,st.deg+i)-degNote(iv,st.deg));
-    const out=[], n=pool.length, m=Math.max(1,2*(n-1));
-    for(let i=0;i<len;i++){
-      let v;
-      switch(pat){
-        case 0: v=pool[i%n]; break;                                             // Arpeggio
-        case 1: v=pool[([0,2,1,3][i%4]+Math.floor(i/4))%n]; break;              // Broken
-        case 2: { const q=i%m; v=pool[q<n?q:m-q]; break; }                       // Pendulum
-        case 3: v=(i%2===0)?pool[0]:pool[1+(Math.floor(i/2)%Math.max(1,n-1))]; break; // Bass Jump
-        case 4: v=sc[i%8]; break;                                               // Scale Up
-        case 5: v=sc[(i*2)%10]; break;                                          // Scale Skip
-        case 6: v=pool[[0,1,2,1,3,2,4,3][i%8]%n]; break;                        // Answer
-        default: v=pool[(n-1)-((i+Math.floor(i/3))%n)];                         // Cascade
+  const interval = DIVISION_PULSES[settings.division];
+  const skipped = Math.floor((s.pulse - voice.nextStep) / interval);
+  voice.nextStep += (skipped + 1) * interval;
+  const rhythm = RHYTHMS[settings.rhythm].steps;
+  const step = (voice.rhythmStep + skipped) % settings.rhythmLength;
+  voice.rhythmStep = (step + 1) % settings.rhythmLength;
+  const velocity = rhythm[step % rhythm.length];
+  releaseMotif(index);
+  if (!velocity || s.voices[index + 2] === 0) return;
+
+  const chord = buildChord(settings.octave), chordSize = chord.length;
+  const pattern = PATTERNS[settings.pattern];
+  const presetLength = pattern.length ? pattern.length : chordSize * 2;
+  const length = settings.patternLength ? settings.patternLength : presetLength;
+  const position = motifPatternIndex(settings.variation, voice.patternStep++, length);
+  const degree = pattern.length ? pattern.notes[position % presetLength] : position;
+  const note = inMidiRange(pattern.scale ? noteForStep(s.degree + degree, settings.octave)
+                                         : chord[degree % chordSize] + 12 * Math.floor(degree / chordSize));
+  synthNote(true, note, motifVelocity(settings.accent, velocity, step), 3 + index);
+  voice.note = note;
+  voice.noteEnd = voice.nextStep - interval + Math.floor((interval * settings.gate + 99) / 100);
+  if (due(s.pulse, voice.noteEnd)) voice.noteEnd = s.pulse + 1;
+}
+function musicTick() {
+  updateLaunch();
+  playPadNotes();
+  if (s.partOn[1] && s.droneTrigger % 4 !== 0 && due(s.pulse, s.droneNext)) {
+    const interval = droneInterval();
+    restartDrone(s.droneNext + Math.floor((s.pulse - s.droneNext) / interval) * interval);
+  }
+  tickMotif(0);
+  tickMotif(1);
+}
+
+/* the firmware's advanceClock: which clock drives the panel, and what happens when that changes */
+const trackerDriving = () => trk.running && !s.internalClock;
+function syncClockSource(t) {
+  if (trackerDriving()) {
+    if (s.trackerTempo !== trk.tempo) { s.trackerTempo = trk.tempo; s.dirty = 1; }
+    if (!s.trackerClock || trk.run !== s.trackerRun) {
+      s.trackerClock = true;
+      s.trackerRun = trk.run;
+      s.barPulse = (trk.pulse + trk.startStep * (PPB / 4)) % PPBAR;
+      queueTrackerRestart();
+      return true;
+    }
+    return false;
+  }
+  if (s.trackerClock) {
+    s.trackerClock = false;
+    ndlrNextT = t;
+    if (s.internalClock && s.quantise === 0 && hasQueuedLaunch()) applyLaunch(s.pulse);
+    s.dirty = 1;
+  }
+  return false;
+}
+/* the Tracker pattern under the jam: a one-bar drum loop of sixteen steps */
+const DRUM_KICK = [1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0];
+const DRUM_SNARE = [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0];
+const DRUM_HAT = [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1];
+function trackerPulse(t) {
+  if (trk.pulse % 12 === 0) {
+    const step = (trk.pulse / 12) % 16, at = t + audioOff;
+    if (DRUM_KICK[step]) audio.drum("kick", at);
+    if (DRUM_SNARE[step]) audio.drum("snare", at);
+    if (DRUM_HAT[step]) audio.drum("hat", at);
+  }
+}
+function setTracker(running) {
+  if (running === trk.running) return;
+  trk.running = running;
+  if (running) { trk.run++; trk.pulse = 0; trk.nextT = wallNow() + 0.03; }
+  pump();
+}
+function pump() {
+  const now = wallNow(), ctx = audio.ctx();
+  if (ctx) audioOff = ctx.currentTime - now;
+  const horizon = now + (typeof document !== "undefined" && document.hidden ? 1.5 : 0.08);
+  if (s.trackerClock && !trackerDriving()) syncClockSource(now);   /* the Tracker stopped, or Clock went to Internal */
+  if (now - ndlrNextT > 1) ndlrNextT = now;                 /* the page stalled: do not replay the gap */
+  if (trk.running && now - trk.nextT > 1) trk.nextT = now;
+  for (let guard = 0; guard < 20000; guard++) {
+    const drive = trackerDriving();
+    const tT = trk.running ? trk.nextT : Infinity;
+    const nT = drive ? Infinity : ndlrNextT;
+    const t = Math.min(tT, nT);
+    if (t > horizon) break;
+    lastPulseT = t; curT = t + audioOff;
+    if (tT <= nT) {
+      trackerPulse(t);
+      if (drive) {
+        if (!syncClockSource(t)) { s.pulse++; s.barPulse = (s.barPulse + 1) % PPBAR; }
+        musicTick();
       }
-      out.push(v);
+      trk.pulse++;
+      trk.nextT += 60 / (trk.tempo * PPB);
+    } else {
+      syncClockSource(t);
+      s.pulse++; s.barPulse = (s.barPulse + 1) % PPBAR;
+      ndlrNextT += 60 / (s.tempo * PPB);
+      musicTick();
     }
-    return out;
   }
-  function motifStep(mi,t,k){
-    if(!st.parts['m'+mi]) return;
-    const pv=MV(mi,'E6')[0], pat=MV(mi,'E6')[1];
-    const lenSel=MV(mi,'E5')[1], len = lenSel===0 ? 8 : lenSel;            // Patt-Len: Auto follows the preset length
-    const rl=MV(mi,'E7')[1], gate=MV(mi,'E7')[2]/100, cd=CDIV[MV(mi,'E7')[0]];
-    const acc=MV(mi,'E8')[0], rhy=MV(mi,'E8')[1], offs=MV(mi,'E8')[2];
-    const R=RHYTHMS[rhy], pos=k%rl;
-    if(!R[pos%R.length]) return;
-    const c=chordNotes(), iv=scale();
-    const seq=patternNotes(pat,len,c,iv), n=seq.length;
-    let idx;
-    if(pv===0) idx=k%n;                                                      // Forward
-    else if(pv===1) idx=(n-1)-(k%n);                                         // Backward
-    else if(pv===2){ const m=Math.max(1,2*n-2), q=k%m; idx=q<n?q:m-q; }       // Ping-Pong
-    else if(pv===3){ const m=2*n, q=k%m; idx=q<n?q:m-1-q; }                  // Ping-Pong 2 (end notes repeat)
-    else { const odd=[],even=[]; for(let i=0;i<n;i++) (i%2?odd:even).push(i); idx=odd.concat(even)[k%n]; } // Odd / Even
-    const oct=12*(MV(mi,'E5')[0]+(mi===2?1:0));
-    let vel=0.075;
-    if(acc===1) vel*=(pos%4===0)?1.4:0.85;                                    // Rhythm
-    else if(acc===2) vel*=0.6+rng(k+7)()*0.8;                                 // Humanize
-    else if(acc===3) vel*=(k%4===0)?1.6:0.75;                                 // Downbeat
-    else if(acc===4) vel*=(k%2===0)?1.3:0.7;                                  // Alternate
-    const syn = (mi===2 && !m2Share) ? 4 : 3;
-    const P=AUDIO_PRESETS[presets[syn]];
-    const off = mi===2 ? offs*beat()/4 : 0;                                   // Offset delays Motif 2 by up to three sixteenths
-    const dur=Math.max(0.05,gate*cd*beat()*0.98);
-    voice([mtof(fold(36+oct+c.base+seq[idx%n],48,96))],t+off,dur,vel,{wave:P.wave,det:P.det,atk:0.005,rel:0.12},P.wave[0],syn);
+  if (s.toast && now >= s.toastUntil) { s.toast = ""; s.dirty = 1; }
+  if (s.dirty) render();
+}
+
+/* ---------- press and turn ---------- */
+function toggleAll() {
+  updateLaunch();
+  const playing = playingParts();
+  if (s.trackerClock) {
+    if (!hasQueuedLaunch()) setLaunchDeadline();
+    const requested = playing ^ s.pendingPartToggles;
+    s.pendingPartToggles = playing ^ (requested ? 0 : ALL_PARTS);
+    s.dirty = 1;
+  } else if (!playing) {
+    s.barPulse = 0;
+    ndlrNextT = wallNow() + 60 / (s.tempo * PPB);           /* this press is the downbeat */
+    lastPulseT = wallNow();
+    actionTime();
+    s.pendingPartToggles = ALL_PARTS;
+    applyLaunch(s.pulse);
+    toast("All parts playing");
+  } else if (!s.quantise) {
+    s.pendingPartToggles = playing;
+    applyLaunch(s.pulse);
+    toast("All parts paused");
+  } else {
+    if (!hasQueuedLaunch()) setLaunchDeadline();
+    s.pendingPartToggles = s.pendingPartToggles === playing ? 0 : playing;
+    if (!hasQueuedLaunch()) toast("Queued stop cancelled");
+    s.dirty = 1;
+  }
+}
+function toggleAllMods() {
+  const on = s.modRing[0] ? 0 : 1;
+  s.modRing = [on, on, on, on];
+  toast("MOD rings: visual only");
+}
+function toggleRecording() {
+  if (s.recording) {
+    s.recording = false;
+    toast("Saved NDLR" + String(s.take).padStart(4, "0") + ".wav", true);
+  } else {
+    s.recording = true; s.take++;
+    toast("Recording stereo mix", true);
+  }
+}
+function pressSelected() {
+  const c = s.sel, kind = GEOM[c][3], sh = shiftOn();
+  switch (kind) {
+    case K_ENC: {
+      const e = c - C_ENC1;
+      s.activeEnc = e;
+      if (s.menuMode === 1) toast("Menu screens: not in this build");
+      else if (s.menuMode === 2) toast("Editors: not in this build");
+      else s.encLabel[e] = (s.encLabel[e] + 1) % ENC_LABEL_COUNT[e];
+      break;
+    }
+    case K_CHORD: {
+      const d = c - C_CHORD1;
+      if (sh) { s.pendingType = d; toast("Chord type set for next chord"); }
+      else selectChord(d);
+      break;
+    }
+    case K_PART: {
+      const p = c - C_PAD;
+      if (sh) s.modRing[p] = s.modRing[p] ? 0 : 1; else togglePart(p);
+      break;
+    }
+    case K_SHIFT: s.shiftLatched = !s.shiftLatched; break;
+    case K_RECORD: toggleRecording(); break;
+    case K_BTN:
+      if (c === C_ALL) { if (sh) toggleAllMods(); else toggleAll(); }
+      else if (c === C_MOTIFSEL) {
+        if (sh) {
+          s.pendingPartToggles = 0; s.queuedChord = 0;
+          s.partOn = [0, 0, 0, 0];
+          allNotesOff();
+          toast("PANIC: all parts stopped");
+        } else s.motif = s.motif === 1 ? 2 : 1;
+      } else if (c === C_MENU) {
+        if (sh) s.menuMode = s.menuMode === 2 ? 0 : 2;
+        else s.menuMode = s.menuMode === 1 ? 0 : 1;
+      }
+      break;
+    default: break;
+  }
+  s.dirty = 1;
+}
+const clampInt = (v, lo, hi) => (v < lo ? lo : v > hi ? hi : v);
+/* adjust clamps and cycle wraps; both report whether the value changed */
+function adjust(obj, key, delta, low, high) {
+  const next = clampInt(obj[key] + delta, low, high), changed = next !== obj[key];
+  obj[key] = next;
+  return changed;
+}
+function cycle(obj, key, direction, count) {
+  const next = (obj[key] + direction + count) % count, changed = next !== obj[key];
+  obj[key] = next;
+  return changed;
+}
+function turn(n) {
+  if (s.physShift) { changeVolume(n); return; }             /* physical Shift + turn is master volume */
+  if (GEOM[s.sel][3] !== K_ENC) { toast("Select an encoder to turn it"); return; }
+  if (s.menuMode !== 0) { toast("Leave Menu / Editor mode"); return; }
+  updateLaunch();
+  const e = s.sel - C_ENC1, label = s.encLabel[e], dir = n > 0 ? 1 : -1;
+  const index = s.motif - 1, motif = s.motifSettings[index], play = s.motifPlayback[index];
+  s.activeEnc = e;
+  switch (e) {
+    case 0:
+      if (label === 0 ? adjust(s, "padOct", dir, 1, 6) : cycle(s, "padStrum", dir, STRUM_NAMES.length)) voicePad();
+      break;
+    case 1:
+      if (label === 0) {
+        if (s.padRange === 0) s.padRange = SHAPE[resolvedType()].length;
+        if (adjust(s, "padRange", dir, 0, MAX_PAD)) voicePad();
+      } else if (cycle(s, "padSpread", dir, SPREAD_NAMES.length)) voicePad();
+      break;
+    case 2: {
+      const changed = label === 0 ? adjust(s, "droneOct", dir, 1, 4)
+                    : label === 1 ? cycle(s, "droneNotesMode", dir, DRONE_NOTES_NAMES.length)
+                                  : cycle(s, "droneTrigger", dir, TRIGGER_NAMES.length);
+      if (changed) restartDrone();
+      break;
+    }
+    case 3:
+      if (label === 0) {
+        if (s.trackerClock) toast("Following Tracker tempo"); else adjust(s, "tempo", n, 10, 300);
+      } else if (label === 1) { s.key = (s.key + dir + 12) % 12; revoice(); }
+      else if (label === 2) { s.mode = (s.mode + dir + MODES.length) % MODES.length; revoice(); }
+      else if (label === 3) {
+        const quantise = clampInt(quantiseMode() + dir, s.trackerClock ? 1 : 0, 2);
+        if (quantise !== quantiseMode()) {
+          s.quantise = quantise;
+          if (hasQueuedLaunch()) { if (quantiseLaunch()) setLaunchDeadline(); else applyLaunch(s.pulse); }
+        }
+      } else {
+        const next = clampInt((s.internalClock ? 1 : 0) + dir, 0, 1) === 1;
+        if (next !== s.internalClock) { s.internalClock = next; syncClockSource(wallNow()); }
+      }
+      break;
+    case 4:
+      if (label === 0) adjust(motif, "octave", dir, 2, 6);
+      else {
+        if (motif.patternLength === 0) {
+          const pattern = PATTERNS[motif.pattern];
+          motif.patternLength = pattern.length ? pattern.length : 2 * SHAPE[resolvedType()].length;
+        }
+        if (adjust(motif, "patternLength", dir, 0, 16)) play.patternStep = 0;
+      }
+      break;
+    case 5:
+      if (label === 0 ? cycle(motif, "variation", dir, VARIATION_NAMES.length)
+                      : adjust(motif, "pattern", dir, 0, PATTERNS.length - 1)) play.patternStep = 0;
+      break;
+    case 6:
+      if (label === 0) { if (cycle(motif, "division", dir, DIVISION_NAMES.length)) play.nextStep = s.pulse + DIVISION_PULSES[motif.division]; }
+      else if (label === 1) { if (adjust(motif, "rhythmLength", n, 4, 32)) play.rhythmStep %= motif.rhythmLength; }
+      else adjust(motif, "gate", n, 5, 100);
+      break;
+    case 7:
+      if (label === 0) cycle(motif, "accent", dir, ACCENT_NAMES.length);
+      else if (label === 1) { if (adjust(motif, "rhythm", dir, 0, RHYTHMS.length - 1)) play.rhythmStep = 0; }
+      else if (adjust(s, "motifOffset", dir, 0, 3)) { resetMotif(0); resetMotif(1); }
+      break;
+  }
+  s.dirty = 1;
+}
+/* a synth's sound was changed while the jam plays: restart that part's notes */
+function synthChanged(part) {
+  actionTime();
+  if (part === 0) { releasePad(); voicePad(); }
+  else if (part === 1) { releaseDrone(); voiceDrone(); }
+  else releaseMotif(part - 2);
+  musicTick();
+}
+
+/* ---------- navigation (dpad) ---------- */
+const DIR_LEFT = 0, DIR_RIGHT = 1, DIR_UP = 2, DIR_DOWN = 3;
+const OVERRIDES = [
+  [C_SHIFT, DIR_LEFT, 21], [C_SHIFT, DIR_RIGHT, 22],
+  [C_MENU, DIR_LEFT, 14], [C_MENU, DIR_RIGHT, 13],
+  [12, DIR_UP, 11], [15, DIR_UP, 16],
+  [C_MOTIFSEL, DIR_LEFT, C_CHORD1], [C_ALL, DIR_RIGHT, C_CHORD1],
+  [C_ENC8, DIR_DOWN, C_RECORD], [C_RECORD, DIR_UP, C_ENC8], [C_RECORD, DIR_LEFT, C_ENC8]
+];
+function neighbour(from, dir) {
+  for (const o of OVERRIDES) if (o[0] === from && o[1] === dir) return o[2];
+  const dx = dir === DIR_LEFT ? -1 : dir === DIR_RIGHT ? 1 : 0;
+  const dy = dir === DIR_UP ? -1 : dir === DIR_DOWN ? 1 : 0;
+  let best = -1, bestScore = Infinity;
+  for (let i = 0; i < C_COUNT; i++) {
+    if (i === from) continue;
+    const vx = GEOM[i][0] - GEOM[from][0], vy = GEOM[i][1] - GEOM[from][1];
+    const along = vx * dx + vy * dy;
+    if (along <= 8) continue;
+    const perp = Math.abs(vx * dy) + Math.abs(vy * dx);
+    const score = along * 10 + perp * 22;
+    if (score < bestScore) { bestScore = score; best = i; }
+  }
+  return best >= 0 ? best : from;
+}
+function selectControl(c) {
+  s.sel = c;
+  if (GEOM[c][3] === K_ENC) s.activeEnc = c - C_ENC1;
+  s.dirty = 1;
+}
+function move(dir) { selectControl(neighbour(s.sel, dir)); }
+
+/* ---------- view (the firmware's rebuildView) ---------- */
+function chordLabels() {
+  const iv = MODES[s.mode].iv, d = s.degree;
+  const name = NOTE_NAME[(KEY_SEMI[s.key] + iv[d % iv.length]) % 12];
+  if (iv.length === 7) {
+    const third = (iv[(d + 2) % 7] - iv[d] + 12) % 12, fifth = (iv[(d + 4) % 7] - iv[d] + 12) % 12;
+    if (third === 3) return { roman: ROMAN_LOWER[d] + (fifth === 6 ? "o" : ""), name };
+  }
+  return { roman: ROMAN_UPPER[d], name };
+}
+/* dials sweep clockwise from 7:30 to 4:30, in degrees */
+const dialAngle = (value, minimum, maximum) => -135 + (value - minimum) * 270 / (maximum - minimum);
+const optionAngle = (index, count) => dialAngle(index, 0, count - 1);
+function encoderAngle(enc) {
+  const motif = s.motifSettings[s.motif - 1], label = s.encLabel[enc];
+  switch (enc) {
+    case 0: return label === 0 ? dialAngle(s.padOct, 1, 6) : optionAngle(s.padStrum, STRUM_NAMES.length);
+    case 1: return label === 0 ? dialAngle(s.padRange, 0, MAX_PAD) : optionAngle(s.padSpread, SPREAD_NAMES.length);
+    case 2:
+      if (label === 0) return dialAngle(s.droneOct, 1, 4);
+      if (label === 1) return optionAngle(s.droneNotesMode, DRONE_NOTES_NAMES.length);
+      return optionAngle(s.droneTrigger, TRIGGER_NAMES.length);
+    case 3:
+      if (label === 0) return dialAngle(clampInt(s.trackerClock ? s.trackerTempo : s.tempo, 10, 300), 10, 300);
+      if (label === 1) return optionAngle(s.key, 12);
+      if (label === 2) return optionAngle(s.mode, MODES.length);
+      if (label === 3) return optionAngle(quantiseMode(), QUANTISE_NAMES.length);
+      return optionAngle(s.internalClock ? 1 : 0, 2);
+    case 4: return label === 0 ? dialAngle(motif.octave, 2, 6) : dialAngle(motif.patternLength, 0, 16);
+    case 5: return label === 0 ? optionAngle(motif.variation, VARIATION_NAMES.length) : optionAngle(motif.pattern, PATTERNS.length);
+    case 6:
+      if (label === 0) return optionAngle(motif.division, DIVISION_NAMES.length);
+      if (label === 1) return dialAngle(motif.rhythmLength, 4, 32);
+      return dialAngle(motif.gate, 5, 100);
+    case 7:
+      if (label === 0) return optionAngle(motif.accent, ACCENT_NAMES.length);
+      if (label === 1) return optionAngle(motif.rhythm, RHYTHMS.length);
+      return dialAngle(s.motifOffset, 0, 3);
+    default: return 0;
+  }
+}
+function encoderValue(enc) {
+  const motif = s.motifSettings[s.motif - 1], label = s.encLabel[enc];
+  switch (enc) {
+    case 0: return label === 0 ? "Pad Oct " + s.padOct : STRUM_NAMES[s.padStrum];
+    case 1:
+      if (label === 1) return SPREAD_NAMES[s.padSpread];
+      if (!s.padRange) return "Chord (Auto)";
+      if (s.partOn[0] && s.padNotes.length < s.padRange) return s.padNotes.length + "/" + s.padRange + " voices";
+      return s.padRange + " notes";
+    case 2:
+      if (label === 0) return "Drone Oct " + s.droneOct;
+      return label === 1 ? DRONE_NOTES_NAMES[s.droneNotesMode] : TRIGGER_NAMES[s.droneTrigger];
+    case 3:
+      if (label === 0) return s.trackerClock ? "Tracker " + s.trackerTempo : "Tempo " + s.tempo;
+      if (label === 1) return KEY_NAME[s.key];
+      if (label === 2) return MODES[s.mode].name;
+      if (label === 3) return QUANTISE_NAMES[quantiseMode()];
+      return CLOCK_NAMES[s.internalClock ? 1 : 0];
+    case 4:
+      if (label === 0) return "M" + s.motif + " Oct " + motif.octave;
+      return motif.patternLength ? motif.patternLength + " notes" : "Length Auto";
+    case 5: return label === 0 ? VARIATION_NAMES[motif.variation] : PATTERNS[motif.pattern].name;
+    case 6:
+      if (label === 0) return "Div " + DIVISION_NAMES[motif.division];
+      if (label === 1) return motif.rhythmLength + " steps";
+      return "Gate " + motif.gate + "%";
+    case 7:
+      if (label === 0) return ACCENT_NAMES[motif.accent];
+      if (label === 1) return RHYTHMS[motif.rhythm].name;
+      return s.motifOffset + "/16";
+    default: return "";
+  }
+}
+function buildView() {
+  const cl = chordLabels(), kind = GEOM[s.sel][3], sh = shiftOn();
+  let toastText = s.toast;
+  if (hasQueuedLaunch() && !(s.recordToast && toastText))
+    toastText = "Queued for " + (s.quantise === 2 ? "next bar" : "next beat");
+
+  let inf = INFO[s.sel];
+  if (kind === K_CHORD) {
+    const d = s.sel - C_CHORD1;
+    inf = { name: "Chord " + ROMAN_UPPER[d],
+      rows: [[IM_NORMAL, "Play chord degree " + ROMAN_UPPER[d] + ". All parts follow, in key."],
+             [IM_SHIFT, "Set chord type " + TYPE_NAME[d] + ". Applies on the next chord press."]],
+      desc: "Buttons I-VII are the scale degrees. With Shift they pick the type: I triad, II 7th, III sus2, IV alt2, V alt1, VI sus4, VII 6th." };
+  }
+  const want = s.menuMode === 2 ? IM_EDITOR : s.menuMode === 1 ? IM_MENU : sh ? IM_SHIFT : IM_NORMAL;
+  const hasWant = inf.rows.some(r => r[0] === want), hasView = inf.rows.some(r => r[0] === IM_VIEW);
+  const active = hasView ? IM_VIEW : hasWant ? want : IM_NORMAL;
+
+  let now = "";
+  if (kind === K_PART) now = "Now: " + (s.partOn[s.sel - C_PAD] ? "PLAYING" : "paused");
+  else if (kind === K_ENC && s.menuMode === 0) now = encoderValue(s.sel - C_ENC1);
+  else if (kind === K_CHORD || kind === K_SCREEN) now = "Now: " + cl.roman + " " + cl.name + " " + TYPE_NAME[resolvedType()];
+  else if (s.sel === C_MOTIFSEL) now = "Now: Motif " + s.motif;
+
+  return {
+    shift: sh, toast: toastText, info: inf, active, now,
+    keyMode: KEY_NAME[s.key] + " " + MODES[s.mode].name,
+    detailText: encoderValue(s.activeEnc),
+    chordText: cl.roman + " " + cl.name,
+    typeText: s.pendingType >= 0 ? TYPE_NAME[s.pendingType] : TYPE_NAME[resolvedType()],
+    bpmText: s.trackerClock ? s.trackerTempo + " BPM TRK" : s.tempo + " BPM"
+  };
+}
+
+/* ---------- drawing (the firmware's panel control, as SVG) ---------- */
+const COL = { body: "#15191f", bodyEdge: "#2f3747", ringEdge: "#3b4456", knob: "#111419", knobEdge: "#3b4458",
+  notch: "#aeb7c9", text: "#d5dcea", dim: "#8d98ad", faint: "#566074", hi: "#ffd23f", on: "#3ddc84",
+  blue: "#2f6bff", blueLight: "#6fa0ff", red: "#ff4d4d", cream: "#e9e2cf", black: "#000", infoBg: "#151a22" };
+const FONT_SMALL = 11, FONT_NORMAL = 13, FONT_BOLD = 16;
+const esc = t => String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+const disc = (x, y, r, c) => '<circle cx="' + x + '" cy="' + y + '" r="' + r + '" fill="' + c + '"/>';
+const fillRect = (x0, y0, x1, y1, c) => '<rect x="' + x0 + '" y="' + y0 + '" width="' + (x1 - x0) + '" height="' + (y1 - y0) + '" fill="' + c + '"/>';
+const frameRect = (x0, y0, x1, y1, c) => '<rect x="' + (x0 + 0.5) + '" y="' + (y0 + 0.5) + '" width="' + (x1 - x0) + '" height="' + (y1 - y0) + '" fill="none" stroke="' + c + '"/>';
+/* text is centred vertically on y; anchor is start, middle or end */
+function drawText(x, y, size, anchor, color, str, bold) {
+  return '<text x="' + x + '" y="' + y + '" font-size="' + size + '" text-anchor="' + anchor + '" dominant-baseline="central" fill="' + color + '"' +
+    (bold ? ' font-weight="700"' : "") + ">" + esc(str) + "</text>";
+}
+function drawPanel(v) {
+  const o = [];
+  o.push(fillRect(6, 6, 606, 396, COL.body), frameRect(6, 6, 606, 396, COL.bodyEdge));
+  o.push(drawText(308, 41, FONT_BOLD, "middle", COL.dim, "NDLR PANEL", true));
+  const rcx = sx(403), rcy = sy(255);
+  o.push(disc(rcx, rcy, sr(130) + 4, COL.ringEdge), disc(rcx, rcy, sr(130) - 3, COL.body));
+
+  /* encoder labels, between each encoder and the chord ring */
+  for (let i = 0; i < 8; i++) {
+    const g = GEOM[i], ex = sx(g[0]), ey = sy(g[1]), er = sr(g[2]), left = i < 4, n = ENC_LABEL_COUNT[i];
+    const lx = left ? ex + er + 8 : ex - er - 8;
+    for (let j = 0; j < n; j++) {
+      const activeLabel = s.menuMode === 0 && s.activeEnc === i && s.encLabel[i] === j;
+      o.push(drawText(lx, ey - (n - 1) * 6 + j * 12, FONT_SMALL, left ? "start" : "end", activeLabel ? COL.hi : COL.dim, ENC_LABEL[i][j]));
+    }
+    if (s.menuMode !== 0) {
+      const outer = s.menuMode === 1 ? ENC_MENU_NAME[i] : ENC_EDITOR_NAME[i];
+      o.push(drawText(left ? ex - er - 10 : ex + er + 10, ey, FONT_SMALL, left ? "end" : "start", outer ? COL.hi : COL.faint, outer || "-"));
+    }
   }
 
-  /* scheduler with a short look-ahead; each motif keeps its own clock so Clk Div can differ */
-  function resync(t){ nextBar=t; barNo=0; droneNext=t; clk[1].next=clk[2].next=t; clk[1].k=clk[2].k=0; }
-  function tick(){
-    if(!ctx||!on) return;
-    const any=Object.values(st.parts).some(Boolean), horizon=ctx.currentTime+0.14;
-    if(!any){ resync(ctx.currentTime+0.05); setDrone(); return; }
-    while(nextBar<horizon){ playChord(nextBar,4*beat()*0.97); nextBar+=4*beat(); barNo++; }
-    [1,2].forEach(mi=>{
-      const cd=CDIV[MV(mi,'E7')[0]]*beat();
-      while(clk[mi].next<horizon){ motifStep(mi,clk[mi].next,clk[mi].k++); clk[mi].next+=cd; }
-    });
-    const rep=DRONE_REPEAT[V('E3')[2]];
-    if(st.parts.drone && rep>0){ const per=rep*4*beat(); while(droneNext<horizon){ droneHit(droneNext,per*0.9); droneNext+=per; } }
-    else droneNext=Math.max(droneNext,ctx.currentTime);
-    setDrone();
-  }
-  function start(){
-    if(!ctx){
-      const AC=window.AudioContext||window.webkitAudioContext; if(!AC) return false;
-      ctx=new AC();
-      master=ctx.createGain(); master.gain.value=vol*vol*0.8;
-      comp=ctx.createDynamicsCompressor(); comp.threshold.value=-18; comp.ratio.value=6;
-      [1,2,3,4].forEach(s=>{ const f=ctx.createBiquadFilter(); f.type='lowpass'; f.frequency.value=AUDIO_PRESETS[presets[s]].cut; f.Q.value=0.6; f.connect(comp); bus[s]=f; });
-      comp.connect(master); master.connect(ctx.destination);
+  /* selection highlight, under the controls */
+  {
+    const g = GEOM[s.sel], x = sx(g[0]), y = sy(g[1]);
+    if (g[3] === K_SCREEN) o.push(fillRect(x - 54, y - 47, x + 54, y + 47, COL.hi));
+    else if (g[3] !== K_RECORD) {
+      const r = sr(g[2]) + (g[3] === K_ENC ? 8 : 6);
+      o.push(disc(x, y, r, COL.hi), disc(x, y, r - 3, COL.body));
     }
-    ctx.resume(); on=true; resync(ctx.currentTime+0.06);
-    clearInterval(timer); timer=setInterval(tick,25); return true;
   }
-  function stop(){
-    on=false; clearInterval(timer); timer=null; droneKey='';
-    if(ctx){ setDrone(); ctx.suspend(); }
+
+  for (let c = 0; c < C_COUNT; c++) {
+    const g = GEOM[c], x = sx(g[0]), y = sy(g[1]), r = sr(g[2]);
+    switch (g[3]) {
+      case K_ENC: {
+        const a = encoderAngle(c - C_ENC1) * Math.PI / 180, dx = Math.sin(a), dy = -Math.cos(a);
+        o.push(disc(x, y, r + 1, COL.knobEdge), disc(x, y, r - 1, COL.knob));
+        o.push('<line x1="' + (x + dx * 3).toFixed(2) + '" y1="' + (y + dy * 3).toFixed(2) + '" x2="' + (x + dx * (r - 4)).toFixed(2) +
+          '" y2="' + (y + dy * (r - 4)).toFixed(2) + '" stroke="' + COL.notch + '" stroke-width="4" stroke-linecap="round"/>');
+        break;
+      }
+      case K_CHORD: {
+        const deg = c - C_CHORD1, activeChord = s.degree === deg, queued = s.queuedChord === deg + 1;
+        o.push(disc(x, y, r, queued ? COL.blueLight : activeChord ? COL.on : COL.dim), disc(x, y, r - 2, COL.knob));
+        o.push(drawText(x, y, FONT_SMALL, "middle", activeChord ? COL.on : COL.text, ROMAN_UPPER[deg]));
+        if (v.shift) {                                              /* chord types, on the inside of the ring */
+          const vx = rcx - x, vy = rcy - y, len = Math.hypot(vx, vy), inset = deg === 0 ? r + 13 : r + 10;
+          o.push(drawText(x + Math.trunc(vx / len * inset), y + Math.trunc(vy / len * inset), FONT_SMALL - 1, "middle", COL.hi, TYPE_NAME[deg]));
+        }
+        break;
+      }
+      case K_SHIFT:
+        if (v.shift) o.push(disc(x, y, r + 4, COL.blueLight), disc(x, y, r + 2, COL.body));
+        o.push(disc(x, y, r, COL.blue), drawText(x, y + r + 12, FONT_SMALL, "middle", COL.dim, "SHIFT"));
+        break;
+      case K_PART: {
+        const p = c - C_PAD, queued = s.pendingPartToggles & (1 << p);
+        if (s.modRing[p]) o.push(disc(x, y, r + 3, COL.red), disc(x, y, r + 1, COL.body));
+        o.push(disc(x, y, r, queued ? COL.blueLight : s.partOn[p] ? COL.on : COL.cream));
+        o.push(drawText(x, y - r - 8, FONT_SMALL, "middle", COL.dim, PART_LABEL[p]));
+        break;
+      }
+      case K_BTN: {
+        let lit = false;
+        if (c === C_MENU) lit = s.menuMode !== 0;
+        else if (c === C_ALL) lit = !!(s.partOn[0] && s.partOn[1] && s.partOn[2] && s.partOn[3]);
+        o.push(disc(x, y, r, lit ? COL.hi : COL.cream));
+        if (c === C_ALL) {
+          o.push(drawText(x - r - 4, y, FONT_SMALL, "end", COL.dim, "ALL"), drawText(x + r + 4, y, FONT_SMALL, "start", v.shift ? COL.hi : COL.faint, "MOD"));
+        } else if (c === C_MOTIFSEL) {
+          o.push(drawText(x - r - 4, y, FONT_SMALL, "end", v.shift ? COL.hi : COL.faint, "PANIC"), drawText(x + r + 4, y, FONT_SMALL, "start", COL.hi, s.motif === 2 ? "1/[2]" : "[1]/2"));
+        } else {
+          o.push(drawText(x + r + 5, y, FONT_SMALL, "start", COL.dim, "MENU"), drawText(x + r + 5, y + 12, FONT_SMALL, "start", v.shift ? COL.hi : COL.faint, "+EDIT"));
+        }
+        break;
+      }
+      case K_RECORD:
+        if (s.sel === C_RECORD) o.push(frameRect(x - 23, y - 9, x + 19, y + 9, COL.hi));
+        o.push(disc(x - 16, y, 4, s.recording ? COL.red : COL.faint), drawText(x + 3, y, FONT_SMALL, "middle", s.recording ? COL.red : COL.text, "REC"));
+        break;
+      case K_SCREEN: {                                              /* the NDLR's own display, drawn small */
+        const x0 = x - 51, y0 = y - 44, x1 = x + 51, y1 = y + 44;
+        o.push(fillRect(x0, y0, x1, y1, COL.black), frameRect(x0, y0, x1, y1, COL.bodyEdge));
+        o.push(drawText(x, y0 + 9, FONT_SMALL, "middle", COL.text, v.keyMode));
+        for (let i = 0; i < 8; i++) {                               /* which encoder the box describes */
+          const mx = i < 4 ? x0 + 4 : x1 - 4, my = y0 + 24 + (i % 4) * 9;
+          o.push(disc(mx, my, 3, COL.text));
+          if (s.activeEnc !== i) o.push(disc(mx, my, 2, COL.black));
+        }
+        o.push(frameRect(x0 + 11, y0 + 18, x1 - 11, y0 + 57, COL.text));
+        o.push(drawText(x, y0 + 29, FONT_SMALL, "middle", COL.dim, v.detailText));
+        o.push(drawText(x, y0 + 46, FONT_SMALL, "middle", COL.text, v.bpmText));
+        o.push(drawText(x0 + 4, y0 + 69, FONT_NORMAL, "start", COL.text, v.chordText));
+        o.push(drawText(x1 - 4, y0 + 69, FONT_SMALL, "end", s.pendingType >= 0 ? COL.blueLight : COL.text, v.typeText));
+        for (let p = 0; p < 4; p++) {                               /* play indicators: pad, drone, motif 1, motif 2 */
+          const dx = x - 30 + p * 20, motifSel = (p === 2 && s.motif === 1) || (p === 3 && s.motif === 2);
+          o.push(disc(dx, y1 - 4, 2, motifSel ? COL.hi : COL.text));
+          if (!s.partOn[p]) o.push(disc(dx, y1 - 4, 1, COL.black));
+        }
+        break;
+      }
+      default: break;
+    }
+  }
+  if (v.toast) {
+    o.push(fillRect(156, 14, 456, 36, COL.black), frameRect(156, 14, 456, 36, COL.hi));
+    o.push(drawText(306, 25, FONT_SMALL, "middle", COL.hi, v.toast));
+  }
+  return o.join("");
+}
+function drawInfo(v) {
+  let h = '<div class="nm">' + esc(v.info.name) + "</div>";
+  for (const row of v.info.rows)
+    h += '<div class="hd">' + esc(MODE_HEADER[row[0]]) + '</div><div class="tx' + (row[0] === v.active ? " act" : "") + '">' + esc(row[1]) + "</div>";
+  if (v.now) h += '<div class="now">' + esc(v.now) + "</div>";
+  return h;
+}
+
+/* ---------- page wiring ---------- */
+let els = null;
+function render() {
+  s.dirty = 0;
+  if (!els) return;
+  const v = buildView();
+  els.svg.innerHTML = drawPanel(v);
+  els.info.innerHTML = drawInfo(v);
+  els.desc.textContent = v.info.desc || "";
+  if (els.shiftBtn) els.shiftBtn.classList.toggle("on", s.physShift);
+  if (els.trkBtn) {
+    els.trkBtn.classList.toggle("on", trk.running);
+    els.trkBtn.setAttribute("aria-pressed", String(trk.running));
+    els.trkBtn.textContent = trk.running ? "Pattern playing" : "Pattern stopped";
+  }
+}
+function changeVolume(n) {
+  if (!els || !els.vol) return;
+  els.vol.value = String(clampInt(Number(els.vol.value) + n * 2, 0, 100));
+  audio.setVol(Number(els.vol.value) / 100);
+}
+function act(k) {
+  actionTime();
+  switch (k) {
+    case "up": move(DIR_UP); break;
+    case "down": move(DIR_DOWN); break;
+    case "left": move(DIR_LEFT); break;
+    case "right": move(DIR_RIGHT); break;
+    case "mid": pressSelected(); break;
+    case "m1": turn(-1); break;
+    case "p1": turn(1); break;
+    case "m10": turn(-10); break;
+    case "p10": turn(10); break;
+    case "play": if (shiftOn()) toggleAllMods(); else toggleAll(); break;
+    case "shift": s.physShift = !s.physShift; break;
+    case "menu": toast("On the Mini, hold Menu to change screen"); break;
+    default: return;
+  }
+  afterAction();
+}
+/* the firmware runs its music update every frame, so a press sounds in the same moment */
+function afterAction() { musicTick(); render(); }
+function boot() {
+  const $ = id => document.getElementById(id);
+  els = { svg: $("panelsvg"), info: $("info"), desc: $("desc"), dev: $("device"), wrap: $("wrap"), screen: $("screen"),
+          shiftBtn: $("shiftbtn"), trkBtn: $("trkbtn"), vol: $("soundvol"), soundBtn: $("soundbtn") };
+  const dev = els.dev, psvg = els.svg;
+
+  const KEYMAP = { ArrowLeft: "left", ArrowRight: "right", ArrowUp: "up", ArrowDown: "down", Enter: "mid", " ": "mid",
+    "-": "m1", "=": "p1", "+": "p1", "[": "m10", "]": "p10", m: "menu", M: "menu", p: "play", P: "play" };
+  dev.addEventListener("keydown", e => {
+    if (e.key === "Shift") { if (!s.physShift) { s.physShift = true; render(); } return; }
+    const m = KEYMAP[e.key];
+    if (!m) return;
+    if (e.target.closest("button,select,input") && (e.key === "Enter" || e.key === " " || e.key.startsWith("Arrow"))) return;
+    e.preventDefault();
+    act(m);
+  });
+  dev.addEventListener("keyup", e => { if (e.key === "Shift") { s.physShift = false; render(); } });
+  document.querySelectorAll("#device button.k[data-k]").forEach(b => b.addEventListener("click", () => act(b.dataset.k)));
+
+  /* the mouse: rolling over a control highlights it, a click presses it, dragging a dial turns it.
+     Touch has no rollover, so a first tap highlights and a second tap presses. */
+  function pick(ev) {
+    const r = psvg.getBoundingClientRect(), k = 800 / r.width, mx = (ev.clientX - r.left) * k, my = (ev.clientY - r.top) * k;
+    let best = -1, bd = 1e9;
+    for (let c = 0; c < C_COUNT; c++) {
+      const g = GEOM[c], x = sx(g[0]), y = sy(g[1]), dx = mx - x, dy = my - y;
+      let hit, d = Math.hypot(dx, dy);
+      if (g[3] === K_SCREEN) hit = Math.abs(dx) <= 51 && Math.abs(dy) <= 44;
+      else if (g[3] === K_RECORD) hit = dx >= -27 && dx <= 23 && Math.abs(dy) <= 12;
+      else hit = d < sr(g[2]) + 8;
+      if (hit && d < bd) { bd = d; best = c; }
+    }
+    return best;
+  }
+  let drag = null, suppressClick = false;
+  psvg.addEventListener("pointermove", ev => {
+    if (drag) {
+      drag.acc += drag.y - ev.clientY; drag.y = ev.clientY;
+      let moved = false;
+      actionTime();
+      while (drag.acc >= 7) { drag.acc -= 7; moved = true; turn(1); }
+      while (drag.acc <= -7) { drag.acc += 7; moved = true; turn(-1); }
+      if (moved) { drag.moved = true; afterAction(); }
+      return;
+    }
+    if (ev.pointerType !== "mouse") return;
+    const b = pick(ev);
+    psvg.style.cursor = b < 0 ? "default" : GEOM[b][3] === K_ENC ? "ns-resize" : "pointer";
+    if (b >= 0 && b !== s.sel) { selectControl(b); render(); }
+  });
+  psvg.addEventListener("click", ev => {
+    if (suppressClick) { suppressClick = false; return; }
+    const b = pick(ev);
+    if (b < 0) return;
+    dev.focus({ preventScroll: true });
+    actionTime();
+    if (b === s.sel) pressSelected(); else selectControl(b);
+    afterAction();
+  });
+  psvg.addEventListener("pointerdown", ev => {
+    suppressClick = false;
+    if (ev.pointerType !== "mouse" || ev.button !== 0) return;
+    const b = pick(ev);
+    if (b < 0 || GEOM[b][3] !== K_ENC) return;
+    selectControl(b); render();
+    drag = { y: ev.clientY, acc: 0, moved: false };
+    try { psvg.setPointerCapture(ev.pointerId); } catch (err) { /* capture is optional */ }
+    dev.focus({ preventScroll: true });
+    ev.preventDefault();
+  });
+  function endDrag(ev) {
+    if (!drag) return;
+    if (drag.moved) suppressClick = true;
+    drag = null;
+    try { psvg.releasePointerCapture(ev.pointerId); } catch (err) { /* capture is optional */ }
+  }
+  psvg.addEventListener("pointerup", endDrag);
+  psvg.addEventListener("pointercancel", endDrag);
+
+  /* sound, the four synths and the Tracker pattern */
+  els.soundBtn.addEventListener("click", () => {
+    const on = !audio.isOn();
+    audio.setOn(on);
+    els.soundBtn.textContent = on ? "Sound on" : "Sound off";
+    els.soundBtn.classList.toggle("on", on);
+    els.soundBtn.setAttribute("aria-pressed", String(on));
+    if (on) { pump(); actionTime(); revoiceAfterSoundOn(); }
+  });
+  els.vol.addEventListener("input", () => audio.setVol(Number(els.vol.value) / 100));
+  for (let part = 0; part < 4; part++) {
+    const sel = $("soundpreset" + (part + 1));
+    if (!sel) continue;
+    for (const name of audio.presetNames()) {
+      const opt = document.createElement("option");
+      opt.value = name; opt.textContent = name;
+      sel.appendChild(opt);
+    }
+    sel.value = audio.presetOf(part);
+    sel.addEventListener("change", () => { audio.setPreset(part, sel.value); synthChanged(part); });
+  }
+  if (els.trkBtn) els.trkBtn.addEventListener("click", () => { setTracker(!trk.running); render(); });
+
+  /* scale the 800 x 480 screen to the space it has */
+  function fit() {
+    const k = els.wrap.clientWidth / 800;
+    els.screen.style.transform = "scale(" + k + ")";
+    els.wrap.style.height = Math.round(480 * k) + "px";
+  }
+  fit();
+  window.addEventListener("resize", fit);
+  if (typeof ResizeObserver !== "undefined") new ResizeObserver(fit).observe(els.wrap);
+
+  ndlrNextT = wallNow();
+  render();
+  setInterval(pump, 25);
+}
+/* switching Sound on mid-jam: sound the Pad and Drone that are already held */
+function revoiceAfterSoundOn() {
+  if (s.partOn[0]) for (let i = 0; i < s.padPlayed; i++) audio.noteOn(1, s.padNotes[i], VEL_PAD, curT);
+  if (s.partOn[1]) for (const n of s.droneNotes) audio.noteOn(2, n, VEL_DRONE, curT);
+}
+
+/* ------------------------------------------------------------------
+   The browser synth: four parts, as on the Tracker (Synth 1 Pad,
+   Synth 2 Drone, Synth 3 Motif 1, Synth 4 Motif 2), plus three drum
+   sounds for the Tracker pattern.
+------------------------------------------------------------------- */
+const audio = (() => {
+  /* a: attack, d: decay time, s: sustain level (0 means the sound dies away while held), r: release */
+  const PRESETS = {
+    "Soft pad": { waves: ["triangle", "sine"], det: 6, a: 0.25, d: 0, s: 1, r: 1.2, cut: 1400 },
+    "Saw pad": { waves: ["sawtooth", "sawtooth"], det: 9, a: 0.12, d: 0, s: 1, r: 0.9, cut: 1900 },
+    "Organ": { waves: ["square", "sine"], det: 2, a: 0.02, d: 0, s: 1, r: 0.25, cut: 2600 },
+    "Glass": { waves: ["sine", "triangle"], det: 3, a: 0.01, d: 1.4, s: 0, r: 0.5, cut: 5200 },
+    "Pluck": { waves: ["sawtooth", "square"], det: 4, a: 0.005, d: 0.4, s: 0, r: 0.15, cut: 2400 },
+    "Chip": { waves: ["square", "square"], det: 0, a: 0.003, d: 0, s: 1, r: 0.03, cut: 6000 }
+  };
+  const GAIN = [0.075, 0.12, 0.13, 0.085];
+  const chosen = ["Soft pad", "Saw pad", "Glass", "Chip"];
+  let ctx = null, master = null, on = false, vol = 0.5, noise = null;
+  const bus = [], held = new Map(), live = new Set();
+
+  function build() {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    ctx = new AC();
+    master = ctx.createGain(); master.gain.value = vol;
+    const comp = ctx.createDynamicsCompressor();
+    master.connect(comp); comp.connect(ctx.destination);
+    for (let p = 0; p < 4; p++) {
+      const f = ctx.createBiquadFilter();
+      f.type = "lowpass"; f.frequency.value = PRESETS[chosen[p]].cut; f.Q.value = 0.6;
+      f.connect(master); bus.push(f);
+    }
+    const len = Math.floor(ctx.sampleRate * 0.4), buf = ctx.createBuffer(1, len, ctx.sampleRate), data = buf.getChannelData(0);
+    for (let i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+    noise = buf;
+  }
+  function release(v, t, time) {
+    if (v.done) return;
+    v.done = true;
+    const r = time === undefined ? v.r : time;
+    v.rel.gain.setValueAtTime(1, t);
+    v.rel.gain.linearRampToValueAtTime(0, t + r);
+    for (const o of v.oscs) o.stop(t + r + 0.05);
+  }
+  function noteOn(channel, note, velocity, t) {
+    if (!on) return;
+    const part = channel - 1, P = PRESETS[chosen[part]], t0 = Math.max(t, ctx.currentTime);
+    const peak = GAIN[part] * clampInt(velocity, 1, 127) / 127;
+    const env = ctx.createGain(), rel = ctx.createGain();
+    env.gain.setValueAtTime(0, t0);
+    env.gain.linearRampToValueAtTime(peak, t0 + P.a);
+    if (P.s < 1) env.gain.setTargetAtTime(peak * P.s, t0 + P.a, P.d / 3);
+    rel.gain.setValueAtTime(1, t0);
+    env.connect(rel); rel.connect(bus[part]);
+    const freq = 440 * Math.pow(2, (note - 69) / 12);
+    const oscs = P.waves.map((w, k) => {
+      const o = ctx.createOscillator();
+      o.type = w; o.frequency.value = freq; o.detune.value = (k ? 1 : -1) * P.det;
+      o.connect(env); o.start(t0);
+      return o;
+    });
+    const v = { rel, oscs, r: P.r, done: false, key: channel * 128 + note };
+    oscs[0].onended = () => { try { rel.disconnect(); } catch (err) { /* already gone */ } live.delete(v); };
+    live.add(v);
+    if (!held.has(v.key)) held.set(v.key, []);
+    held.get(v.key).push(v);
+  }
+  function noteOff(channel, note, t) {
+    if (!ctx) return;
+    const list = held.get(channel * 128 + note);
+    if (!list || !list.length) return;
+    release(list.shift(), Math.max(t, ctx.currentTime));
+  }
+  function silence(part) {
+    if (!ctx) return;
+    for (const v of live) if (part === undefined || (v.key >> 7) === part + 1) release(v, ctx.currentTime, 0.06);
+    if (part === undefined) held.clear();
+    else for (const key of held.keys()) if ((key >> 7) === part + 1) held.delete(key);
+  }
+  function drum(kind, t) {
+    if (!on) return;
+    const t0 = Math.max(t, ctx.currentTime), g = ctx.createGain();
+    g.connect(master);
+    if (kind === "kick") {
+      const o = ctx.createOscillator();
+      o.frequency.setValueAtTime(150, t0); o.frequency.exponentialRampToValueAtTime(45, t0 + 0.12);
+      g.gain.setValueAtTime(0.5, t0); g.gain.exponentialRampToValueAtTime(0.001, t0 + 0.28);
+      o.connect(g); o.start(t0); o.stop(t0 + 0.3);
+      o.onended = () => g.disconnect();
+      return;
+    }
+    const src = ctx.createBufferSource(), f = ctx.createBiquadFilter();
+    src.buffer = noise;
+    f.type = "highpass"; f.frequency.value = kind === "snare" ? 1500 : 7000;
+    const level = kind === "snare" ? 0.22 : 0.07, length = kind === "snare" ? 0.16 : 0.04;
+    g.gain.setValueAtTime(level, t0); g.gain.exponentialRampToValueAtTime(0.001, t0 + length);
+    src.connect(f); f.connect(g); src.start(t0); src.stop(t0 + length + 0.02);
+    src.onended = () => g.disconnect();
   }
   return {
-    get on(){return on;},
-    toggle(){ if(on){ stop(); return false; } return start(); },
-    setVolume(v){ vol=v; if(master) master.gain.setTargetAtTime(v*v*0.8,ctx.currentTime,0.03); },
-    presetOf(s){ return presets[s]; },
-    setPreset(s,p){ if(s===4){ m2Share = (p==='Share Synth 3'); if(m2Share) return; } presets[s]=p; if(bus[s]) bus[s].frequency.setTargetAtTime(AUDIO_PRESETS[p].cut,ctx.currentTime,0.05); if(s===2){ droneKey=''; if(on) setDrone(); } },
-    /* a chord button was pressed: sound it straight away */
-    hit(){ if(!on||!ctx) return; playChord(ctx.currentTime+0.02, 2.2*beat()); setDrone(); },
-    /* ALL was pressed: restart the motifs together */
-    resyncNow(){ if(on&&ctx) resync(ctx.currentTime+0.06); },
-    suspend(){ if(on&&ctx) ctx.suspend(); }, resume(){ if(on&&ctx) ctx.resume(); }
+    ctx: () => (on ? ctx : null),
+    isOn: () => on,
+    setOn(next) {
+      if (next) {
+        if (!ctx) build();
+        if (ctx.state === "suspended") ctx.resume();
+        on = true;
+      } else { silence(); on = false; }
+    },
+    setVol(v) { vol = v; if (master) master.gain.value = v; },
+    presetNames: () => Object.keys(PRESETS),
+    presetOf: part => chosen[part],
+    setPreset(part, name) {
+      if (!PRESETS[name]) return;
+      silence(part);
+      chosen[part] = name;
+      if (bus[part]) bus[part].frequency.value = PRESETS[name].cut;
+    },
+    noteOn, noteOff, drum, silence
   };
 })();
 
-/* wire the controls */
-(function(){
-  const btn=document.getElementById('soundbtn'), vol=document.getElementById('soundvol');
-  if(!btn) return;
-  [1,2,3,4].forEach(s=>{ const sel=document.getElementById('soundpreset'+s); if(!sel) return;
-    Object.keys(AUDIO_PRESETS).forEach(n=>{ const o=document.createElement('option'); o.textContent=n; sel.appendChild(o); });
-    if(s===4){ const o=document.createElement('option'); o.textContent='Share Synth 3'; sel.appendChild(o); }
-    sel.value=audio.presetOf(s); sel.addEventListener('change',()=>audio.setPreset(s,sel.value)); });
-  btn.addEventListener('click',()=>{
-    const ok=audio.toggle();
-    if(ok===false && !audio.on){ btn.setAttribute('aria-pressed','false'); btn.textContent='Sound off'; btn.classList.remove('on'); }
-    else { btn.setAttribute('aria-pressed','true'); btn.textContent='Sound on'; btn.classList.add('on'); }
-  });
-  vol.addEventListener('input',()=>audio.setVolume(vol.value/100));
-  document.addEventListener('visibilitychange',()=>{ document.hidden?audio.suspend():audio.resume(); });
-
-  /* sound the chord when a chord button is pressed; ALL restarts the motifs in sync; the 1/2 button swaps the right-hand values */
-  const _press=press;
-  press=function(){
-    const c=BY[st.sel]; const wasChord=c&&c.k==='chord'&&!shiftOn(), wasAll=c&&c.id==='ALL'&&!shiftOn();
-    _press(); useMotif();
-    if(wasChord) audio.hit();
-    if(wasAll) audio.resyncNow();
-  };
-  /* Physical Shift + the +/- keys change the Mini's master volume, as in the firmware */
-  const _turn=turn;
-  turn=function(n){
-    if(shiftOn()){
-      const step=(Math.abs(n)>1?5:2)*(n>0?1:-1);
-      const v=Math.max(0,Math.min(100,(+vol.value)+step));
-      vol.value=v; audio.setVolume(v/100); toast('Master volume '+Math.round(v)+'%'); return;
-    }
-    _turn(n);
-  };
-})();
+if (typeof window !== "undefined") window.__alpaca = { s, trk, act, pump, turn, setTracker, selectControl, pressSelected, buildView };
+if (typeof document !== "undefined") {
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot); else boot();
+}
 
 </script>
 </body>
