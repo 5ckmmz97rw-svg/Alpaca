@@ -253,7 +253,7 @@ footer a:hover{color:var(--accent)}
     </div>
   </div>
 </div>
-<p class="demo-help">Keyboard, once the panel has focus: <kbd>&larr;</kbd><kbd>&uarr;</kbd><kbd>&darr;</kbd><kbd>&rarr;</kbd> dpad, <kbd>Enter</kbd> Middle, <kbd>-</kbd><kbd>=</kbd> turn by 1, <kbd>[</kbd><kbd>]</kbd> turn by 10, <kbd>M</kbd> Menu, <kbd>P</kbd> Play, hold <kbd>Shift</kbd> for NDLR Shift. On a touch screen, tap once to highlight and again to press. The sound is a simple browser synth that shows the idea, not the Mini's own sound engine.</p>
+<p class="demo-help">Keyboard, once the panel has focus: <kbd>&larr;</kbd><kbd>&uarr;</kbd><kbd>&darr;</kbd><kbd>&rarr;</kbd> dpad, <kbd>Enter</kbd> Middle, <kbd>-</kbd><kbd>=</kbd> turn by 1, <kbd>[</kbd><kbd>]</kbd> turn by 10, <kbd>M</kbd> Menu, <kbd>P</kbd> Play, hold <kbd>Shift</kbd> for NDLR Shift. On a touch screen, tap once to highlight and again to press. Hold <kbd>Shift</kbd> and press the turn keys to change the master volume, as on the Mini. The sound is a simple browser synth that shows the idea, not the Mini's own sound engine.</p>
 </div>
 </div>
 </section>
@@ -503,47 +503,47 @@ const INFO = {
     ['normal','Turn: Pad POSITION / STRUM. Press: switch between the two.'],
     ['menu','Mod Matrix menu 1&2 (slots 1 and 2).'],
     ['editor','Chord Sequencer.']],
-    d:'<em>Position</em> is the centre note of the Pad range (octaves 0-7); moving it inverts the chord. <em>Strum</em> has 7 settings, from none to 1/8-note strums, some playing the first 3 notes before strumming.'},
+    d:'<em>Position</em> sets the octave. <em>Strum</em> spreads each new chord across the beat, from Off to an eighth-note interval.'},
   E2:{n:'Encoder 2 - PAD', rows:[
     ['normal','Turn: Pad RANGE / SPREAD. Press: switch between the two.'],
     ['menu','Mod Matrix menu 3&4.']],
-    d:'<em>Range</em> is how many Pad notes sound (1-22). <em>Spread</em> sets the voicing: stacked thirds, open voicings, root-only bass, random 70% notes, root+5ths or 3rds/7ths above.'},
+    d:'<em>Range</em> sets the note count, limited by available Synth 1 voices. Auto follows the chord. <em>Spread</em> changes the voicing.'},
   E3:{n:'Encoder 3 - DRONE', rows:[
     ['normal','Turn: Drone POSITION / NOTES / TRIGGER. Press: cycle the three.'],
     ['menu','Mod Matrix menu 5&6.']],
-    d:'<em>Position</em> is one of 5 octaves. <em>Notes</em>: root, root+octave, root+5th, or all three. <em>Trigger</em>: Root mode (follows the key) or Chord mode (follows the chord), each with cadence rhythms.'},
+    d:'<em>Position</em> is one of 5 octaves. <em>Notes</em> adds a fifth or octave when voices are available. <em>Trigger</em> follows the chord or holds the key root, with optional repeats.'},
   E4:{n:'Encoder 4 - TEMPO / KEY / MODE', rows:[
     ['normal','Turn: Tempo, Key or Mode. Press: cycle the three.'],
-    ['shift','Hold Shift while turning: the new value only applies when Shift is released.'],
+    ['shift','Physical Shift + +/- controls the Mini\'s master volume.'],
     ['menu','Mod Matrix menu 7&8.'],
     ['editor','MIDI Controller editor.']],
-    d:'<em>Tempo</em> 10-300 BPM (internal clock only, cannot be modulated). <em>Key</em> steps round the circle of fifths. <em>Mode</em>: Major, Dorian, Phrygian, Lydian, Mixolydian, Minor, Locrian, Gypsy Min, Harmonic Min, Min Penta, Whole Tone, Tonic 2nds/3rds/4ths/6ths.'},
+    d:'<em>Tempo</em> 10-300 BPM. <em>Key</em> steps round the circle of fifths. <em>Mode</em>: Major, Dorian, Phrygian, Lydian, Mixolydian, Minor, Locrian, Gypsy Min, Harmonic Min, Min Penta, Whole Tone.'},
   E5:{n:'Encoder 5 - MOTIF', rows:[
     ['normal','Turn: Motif POSITION / PATT-LEN for the selected motif.'],
     ['menu','LFO Config.'],
     ['editor','Pattern Editor.']],
-    d:'<em>Position</em> is the first note of the motif (octaves 0-3 plus note). <em>Patt-Len</em> is how many of the 16 pattern notes are played. The 1/2 button chooses Motif 1 or 2.'},
+    d:'<em>Position</em> sets the octave. <em>Patt-Len</em> sets 1 to 16 notes, or Auto to follow the preset length. The 1/2 button chooses Motif 1 or 2.'},
   E6:{n:'Encoder 6 - MOTIF', rows:[
     ['normal','Turn: Motif VARIATION / PATTERN.'],
     ['menu','Settings 1/3 (mostly MIDI).'],
     ['editor','Rhythm Editor.']],
-    d:'<em>Variation</em>: forward, backward, ping-pong (two kinds), odd-then-even, random. <em>Pattern</em>: 1-20 are presets, 21-40 are user-editable (Chord, Scale or Chromatic note lists).'},
+    d:'<em>Variation</em> changes playback order. <em>Pattern</em> selects one of eight chord or scale patterns.'},
   E7:{n:'Encoder 7 - MOTIF', rows:[
     ['normal','Turn: CLK DIV / RHY-LEN. Centre arrow (*): GATE, not printed on the panel.'],
     ['menu','Settings 2/3 (mostly velocities).'],
     ['editor','Perlin Noise generator (not labelled on older units).']],
-    d:'<em>Clk Div</em>: 1/1, 1/2, 1/4, 1/8 plus triplets 1/3 and 1/6. <em>Rhy-Len</em>: 4-32 beats. <em>Gate</em> sets how soon each note turns off; press the encoder to bring the arrow to the centre position.'},
+    d:'<em>Clk Div</em> sets the step rate. <em>Rhy-Len</em> sets 4 to 32 steps. <em>Gate</em> sets the percentage of each step that a note sounds.'},
   E8:{n:'Encoder 8 - MOTIF', rows:[
     ['normal','Turn: ACCENT / RHYTHM / OFFSET.'],
     ['menu','Settings 3/3 (general).']],
-    d:'<em>Accent</em> picks the velocity source (rhythm, humanized, fixed, or 7 patterns). <em>Rhythm</em>: 1-20 presets, 21-40 user. <em>Offset</em> delays the two motifs against each other by 0 to 3/16 of a beat (one shared setting).'},
+    d:'<em>Accent</em> sets the velocity pattern. <em>Rhythm</em> picks one of eight presets. <em>Offset</em> delays Motif 2 by up to three sixteenth notes.'},
   ALL:{n:'ALL ||/>', rows:[
     ['normal','Play/pause all four parts. Restarts both motifs in sync.'],
     ['shift','MOD: toggle ALL modulations, including Key and Mode.']],
     d:'Use this to lock the two motifs together: it restarts both on their first pattern note and first rhythm beat on the next down beat.'},
   MSEL:{n:'1/2  (Shift: PANIC)', rows:[
     ['normal','Toggle the right-hand encoders between Motif 1 and Motif 2.'],
-    ['shift','PANIC: all notes off on every channel and port.']],
+    ['shift','PANIC: stop all parts and release their notes.']],
     d:'The selected motif is shown in yellow on the NDLR screen (top stripe and the MOTIF 1 / MOTIF 2 indicator). Panic clears stuck notes.'},
   MENU:{n:'MENU  (Shift: Editors)', rows:[
     ['normal','Toggle Menu mode: the eight encoder buttons then select menus.'],
@@ -557,19 +557,19 @@ const INFO = {
   PAD:{n:'PAD ||/>', rows:[
     ['normal','Play / pause the Pad.'],
     ['shift','MOD: toggle modulations that target the Pad (red ring).']],
-    d:'Pad plays every note of the current chord within its Range. Output channel and port are set in Settings 1.'},
+    d:'Pad plays every note of the current chord within its Range. Plays on Tracker synth channel 1.'},
   DRONE:{n:'DRONE ||/>', rows:[
     ['normal','Play / pause the Drone.'],
     ['shift','MOD: toggle modulations that target the Drone (red ring).']],
-    d:'Drone holds a root, 5th and/or octave. Notes stop when the Drone is turned off.'},
+    d:'Drone can hold the chord or key root. Plays on Tracker synth channel 2.'},
   M1:{n:'MOTIF 1 ||/>', rows:[
     ['normal','Play / pause Motif 1.'],
     ['shift','MOD: toggle modulations that target Motif 1 (red ring).']],
-    d:'Motifs are the sequenced arpeggios. Pausing and restarting resumes where the motif stopped, so the two motifs can drift; ALL re-syncs them.'},
+    d:'Defaults to an ascending eighth-note arpeggio. Plays on Tracker synth channel 3.'},
   M2:{n:'MOTIF 2 ||/>', rows:[
     ['normal','Play / pause Motif 2.'],
     ['shift','MOD: toggle modulations that target Motif 2 (red ring).']],
-    d:'Same controls as Motif 1; the 1/2 button chooses which motif the right-hand encoders edit.'},
+    d:'Defaults to a descending quarter-note arpeggio. Shares Tracker synth channel 3 with Motif 1; the 1/2 button chooses which motif the right-hand encoders edit.'},
   SCREEN:{n:'SCREEN', rows:[
     ['view','Top stripes: Motif 1, Pad, Motif 2 (width = notes, height = octave).'],
     ['view','Side arrows: selected encoder and which of its labels.']],
@@ -587,19 +587,23 @@ const MODES = [
   ['Major',[0,2,4,5,7,9,11]],['Dorian',[0,2,3,5,7,9,10]],['Phrygian',[0,1,3,5,7,8,10]],
   ['Lydian',[0,2,4,6,7,9,11]],['Mixolydian',[0,2,4,5,7,9,10]],['Minor',[0,2,3,5,7,8,10]],
   ['Locrian',[0,1,3,5,6,8,10]],['Gypsy Min',null],['Harmonic Min',[0,2,3,5,7,8,11]],
-  ['Min Penta',null],['Whole Tone',null],['Tonic 2nds',null],['Tonic 3rds',null],['Tonic 4ths',null],['Tonic 6ths',null],
+  ['Min Penta',null],['Whole Tone',null],
 ];
+const MODE_IV = {'Gypsy Min':[0,2,3,6,7,8,11],'Min Penta':[0,3,5,7,10],'Whole Tone':[0,2,4,6,8,10]};
+const ALT1=['triad','7th','triad','triad','7th','7th','6th'], ALT2=['7th','7th','triad','7th','7th','6th','7th'];
+function resolvedType(){ return st.type==='alt1'?ALT1[st.deg]: st.type==='alt2'?ALT2[st.deg]: st.type; }
 const ROMAN = ['I','II','III','IV','V','VI','VII'];
 
 
+const nums = (a,b) => Array.from({length:b-a+1},(_,i)=>String(a+i));
 const PARAMS = {
-  E1:[{n:'Position',min:0,max:7,def:3,unit:'octave'},{n:'Strum',list:['None','Strum 2','Strum 3','Strum 4','Strum 5','Strum 6','1/8 note'],def:0}],
-  E2:[{n:'Range',min:1,max:22,def:5,unit:'notes'},{n:'Spread',list:['Stacked 3rds','Open voicing','Root bass only','Random 70%','Root + 5ths','3rds/7ths above'],def:0}],
-  E3:[{n:'Position',min:1,max:5,def:2,unit:'octave'},{n:'Notes',list:['Root','Root + octave','Root + 5th','Root, 5th, octave'],def:0},{n:'Trigger',list:['Root mode','Chord mode'],def:0}],
-  E5:[{n:'Position',min:0,max:3,def:1,unit:'octave'},{n:'Patt-Len',min:1,max:16,def:16,unit:'notes'}],
-  E6:[{n:'Variation',list:['Forward','Backward','Ping-pong 1','Ping-pong 2','Odd, then even','Random'],def:0},{n:'Pattern',min:1,max:40,def:1}],
-  E7:[{n:'Clk Div',list:['1/1','1/2','1/4','1/8','1/3','1/6'],def:2},{n:'Rhy-Len',min:4,max:32,def:16,unit:'beats'},{n:'Gate',min:0,max:99,def:50}],
-  E8:[{n:'Accent',list:['Rhythm','Humanized','Fixed','Pattern 1','Pattern 2','Pattern 3','Pattern 4','Pattern 5','Pattern 6','Pattern 7'],def:0},{n:'Rhythm',min:1,max:40,def:1},{n:'Offset',list:['0','1/16 beat','2/16 beat','3/16 beat'],def:0}],
+  E1:[{n:'Position',min:0,max:7,def:3,unit:'octave'},{n:'Strum',list:['Off','Strum 2','Strum 3','Strum 4','Strum 5','3 + 1/8T','3 + 1/8'],def:0}],
+  E2:[{n:'Range',list:['Auto'].concat(nums(1,22)),def:0},{n:'Spread',list:['Stacked','Open','Low Root','Random 70%','Root + 5ths','3rds / 7ths above'],def:0}],
+  E3:[{n:'Position',min:1,max:5,def:2,unit:'octave'},{n:'Notes',list:['Root','Root + Oct','Root + 5th','Root 5th Oct'],def:0},{n:'Trigger',list:['Chord','Chord 1/4','Chord 1/2','Chord 1/1','Key','Key 1/4','Key 1/2','Key 1/1'],def:0}],
+  E5:[{n:'Position',min:0,max:3,def:1,unit:'octave'},{n:'Patt-Len',list:['Auto'].concat(nums(1,16)),def:0}],
+  E6:[{n:'Variation',list:['Forward','Backward','Ping-Pong','Ping-Pong 2','Odd / Even'],def:0},{n:'Pattern',list:['Arpeggio','Broken','Pendulum','Bass Jump','Scale Up','Scale Skip','Answer','Cascade'],def:0}],
+  E7:[{n:'Clk Div',list:['1/1','1/2','1/4','1/8','1/3','1/6'],def:3},{n:'Rhy-Len',min:4,max:32,def:16,unit:'steps'},{n:'Gate',min:0,max:99,def:50,unit:'%'}],
+  E8:[{n:'Accent',list:['Fixed','Rhythm','Humanize','Downbeat','Alternate'],def:1},{n:'Rhythm',list:['Straight','Offbeat','Syncopate','Tresillo','Gallop','Pulse','Stutter','Sparse'],def:0},{n:'Offset',list:['0/16','1/16','2/16','3/16'],def:0}],
 };
 const st = {
   sel:'E1', shift:false, shiftKey:false, menu:'off',
@@ -611,23 +615,26 @@ const st = {
 st.val = {}; for(const id in PARAMS){ st.val[id] = PARAMS[id].map(p => p.def); }
 function pText(id){ const lab=st.enc[id], p=PARAMS[id][lab], v=st.val[id][lab];
   let t = p.list ? p.list[v] : String(v); if(p.unit && !p.list) t += ' ' + p.unit;
-  if(p.n==='Pattern'||p.n==='Rhythm') t += v<=20 ? ' (preset)' : ' (user)';
   return p.n + ': ' + t; }
 function pStep(id,n){ const lab=st.enc[id], p=PARAMS[id][lab]; let v=st.val[id][lab];
   if(p.list){ const len=p.list.length; v=((v+(n>0?1:-1))%len+len)%len; } else v=Math.max(p.min,Math.min(p.max,v+n));
   st.val[id][lab]=v; }
+st.mval = {1:{},2:{}};
+for(const id of ['E5','E6','E7','E8']){ st.mval[1][id]=st.val[id].slice(); st.mval[2][id]=st.val[id].slice(); }
+st.mval[2].E7[0]=2; st.mval[2].E6[0]=1;   /* defaults: Motif 1 ascending eighths, Motif 2 descending quarters */
+function useMotif(){ for(const id of ['E5','E6','E7','E8']) st.val[id]=st.mval[st.motif][id]; }
+useMotif();
 const shiftOn = () => st.shift || st.shiftKey;
 
 function chordInfo(){
-  const m = MODES[st.mode]; const iv = m[1];
-  const keyName = KEYS[st.key];
-  if(!iv) return {rom:ROMAN[st.deg], name:'-', type:st.type};
-  const d = st.deg, root = (KEY_SEMI[keyName] + iv[d]) % 12;
-  const third = (iv[(d+2)%7]-iv[d]+12)%12, fifth=(iv[(d+4)%7]-iv[d]+12)%12;
+  const m = MODES[st.mode]; const iv = m[1] || MODE_IV[m[0]]; const n = iv.length;
+  const at = k => iv[k%n] + 12*Math.floor(k/n);
+  const d = st.deg, root = (KEY_SEMI[KEYS[st.key]] + at(d)) % 12;
+  const third = (at(d+2)-at(d))%12, fifth = (at(d+4)-at(d))%12;
   let rom = ROMAN[d];
   if(third===3){ rom = rom.toLowerCase(); if(fifth===6) rom += '°'; }
   else if(fifth===8) rom += '+';
-  return {rom, name:NOTE[root], type:st.type};
+  return {rom, name:NOTE[root], type:resolvedType()};
 }
 
 /* ---------- spatial navigation for the dpad ---------- */
@@ -917,59 +924,63 @@ window.__test = {st, BY, CTRL, neighbour, DIRS, act, render};
 
 /* ---------------------------------------------------------------
    Sound for the demo. A small Web Audio synth that follows the panel
-   state: pad (chord), drone, and two arpeggiated motifs, all clocked
-   from the tempo. It is an approximation of the idea, not the Mini's
-   own synth engine. Nothing plays until Sound is switched on.
+   state: pad (chord), drone, and two motifs, all clocked from the tempo.
+   Option names and ranges follow the Alpaca firmware's own text. The
+   notes the named patterns play are the demo's reading of those names,
+   and the synth is not the Mini's own engine. Nothing plays until
+   Sound is switched on.
 ---------------------------------------------------------------- */
-/* alt1 / alt2 resolve to a fixed chord type per degree, as in the firmware (NDLR manual p.13) */
-const ALT1=['triad','7th','triad','triad','7th','7th','6th'], ALT2=['7th','7th','triad','7th','7th','6th','7th'];
-function resolvedType(){ return st.type==='alt1'?ALT1[st.deg]: st.type==='alt2'?ALT2[st.deg]: st.type; }
-const _chordInfo=chordInfo; chordInfo=function(){ const r=_chordInfo(); r.type=resolvedType(); return r; };
-const AUDIO_SCALES = { // modes the panel lists without intervals get a stand-in scale for sound
-  'Gypsy Min':[0,2,3,6,7,8,11], 'Min Penta':[0,3,5,7,10], 'Whole Tone':[0,2,4,6,8,10],
-  'Tonic 2nds':[0,2,4,6,8,10,12], 'Tonic 3rds':[0,4,8,12,16,20,24], 'Tonic 4ths':[0,5,10,15,20,25,30], 'Tonic 6ths':[0,9,18,27,36,45,54]
-};
 const AUDIO_PRESETS = {
   'Soft pad':  {wave:['triangle','sine'],   det:6,  atk:0.25, rel:1.2, cut:1400, drone:'sine'},
   'Saw pad':   {wave:['sawtooth','sawtooth'],det:9, atk:0.12, rel:0.9, cut:1900, drone:'triangle'},
   'Glass':     {wave:['sine','triangle'],   det:3,  atk:0.01, rel:1.6, cut:5200, drone:'sine'},
   'Organ':     {wave:['square','sine'],     det:2,  atk:0.02, rel:0.25,cut:2600, drone:'square'}
 };
+/* rhythm presets: 1 = a note on that step. They repeat across Rhy-Len steps. */
+const RHYTHMS = [[1,1,1,1],[0,1,0,1],[1,0,0,1,0,1,0,0],[1,0,0,1,0,0,1,0],[1,0,1,1],[1,0,0,0],[1,1,0,1,1,0,0,1],[1,0,0,0,0,1,0,0]];
+const CDIV = [4,2,1,0.5,4/3,2/3];                 // Clk Div in beats: 1/1 1/2 1/4 1/8 1/3 1/6
+const DRONE_REPEAT = [0,0.25,0.5,1,0,0.25,0.5,1];  // Trigger: Chord, Chord 1/4, 1/2, 1/1, Key, Key 1/4, 1/2, 1/1 (fraction of a bar)
+
 const audio = (() => {
   let ctx=null, master=null, comp=null, filt=null, on=false, timer=null, vol=0.5, preset='Soft pad';
-  let nextStep=0, stepNo=0, droneOsc=null, droneGain=null, droneKey='';
+  let nextBar=0, barNo=0, droneOsc=null, droneGain=null, droneKey='', droneNext=0;
+  const clk={1:{next:0,k:0},2:{next:0,k:0}};
   const live=new Set();
   const mtof = m => 440*Math.pow(2,(m-69)/12);
   const fold = (m,lo=36,hi=96) => { while(m>hi) m-=12; while(m<lo) m+=12; return m; };   // keep every note audible and safe
   function rng(seed){ let s=(seed*2654435761)>>>0||1; return ()=>{ s^=s<<13; s>>>=0; s^=s>>>17; s^=s<<5; s>>>=0; return s/4294967296; }; }
-  function scale(){ const m=MODES[st.mode]; return m[1] || AUDIO_SCALES[m[0]] || [0,2,4,5,7,9,11]; }
+  function scale(){ const m=MODES[st.mode]; return m[1] || MODE_IV[m[0]] || [0,2,4,5,7,9,11]; }
   function degNote(iv,d){ const n=iv.length, o=Math.floor(d/n), i=((d%n)+n)%n; return iv[i]+12*o; }
   function root(){ return KEY_SEMI[KEYS[st.key]]; }
   const V = id => st.val[id];
-  /* chord as a list of semitones above the key root */
+  const MV = (mi,id) => st.mval[mi][id];
+  function beat(){ return 60/st.tempo; }
+
+  /* chord as semitones above the chord root */
   function chordNotes(){
     const iv=scale(), d=st.deg;
     const shape={triad:[0,2,4],'7th':[0,2,4,6],sus2:[0,1,4],sus4:[0,3,4],'6th':[0,2,4,5]}[resolvedType()]||[0,2,4];
     let degs=shape.slice();
-    const want=Math.max(1,V('E2')[0]);               // Range
+    const rangeSel=V('E2')[0];                          // Range: 0 = Auto (follows the chord), else a note count
+    const want = rangeSel===0 ? shape.length : rangeSel;
     while(degs.length<want) degs.push(degs[degs.length-shape.length]+7);
     degs=degs.slice(0,want);
     let notes=degs.map(k=>degNote(iv,d+k)-degNote(iv,d));
-    const spread=V('E2')[1];                          // Spread
-    if(spread===1 && notes.length>2) notes[1]+=12;    // open voicing
-    if(spread===2) notes=[notes[0]-12].concat(notes.slice(1));
-    if(spread===4) notes=notes.filter((n,i)=>i===0||((n%12)+12)%12===((degNote(iv,d+4)-degNote(iv,d))%12+12)%12);
+    const spread=V('E2')[1];                            // Spread
+    if(spread===1 && notes.length>2) notes[1]+=12;      // Open
+    if(spread===2) notes=[notes[0]-12].concat(notes.slice(1)); // Low Root
+    if(spread===4){ const f=(degNote(iv,d+4)-degNote(iv,d)); notes=notes.filter((n,i)=>i===0||(((n-f)%12)+12)%12===0); }
     if(spread===5) notes=[notes[0]-12].concat(notes.filter((n,i)=>i>0&&i%2===0));
     if(!notes.length) notes=[0];
     return {base:root()+degNote(iv,d), notes:notes.sort((a,b)=>a-b), spread};
   }
-  function out(){ return filt; }
+
   function voice(freqs,t,dur,gain,P,type2){
     const g=ctx.createGain(); g.gain.setValueAtTime(0.0001,t);
     g.gain.exponentialRampToValueAtTime(gain,t+P.atk);
     g.gain.setValueAtTime(gain,t+Math.max(P.atk,dur));
     g.gain.exponentialRampToValueAtTime(0.0001,t+dur+P.rel);
-    g.connect(out());
+    g.connect(filt);
     const oscs=[];
     freqs.forEach(f=>{ for(let k=0;k<2;k++){
       const o=ctx.createOscillator(); o.type=type2||P.wave[k]; o.frequency.value=f; o.detune.value=(k?1:-1)*P.det;
@@ -977,72 +988,110 @@ const audio = (() => {
     }});
     oscs[0].onended=()=>{ try{g.disconnect();}catch(e){} live.delete(g); }; live.add(g);
   }
-  function beat(){ return 60/st.tempo; }
+
+  /* Pad: the chord, with Position (octave), Strum, Range and Spread */
   function playChord(t,dur){
     if(!st.parts.pad) return;
-    const P=AUDIO_PRESETS[preset], c=chordNotes(), oct=12*V('E1')[0]-12; // Position
+    const P=AUDIO_PRESETS[preset], c=chordNotes(), oct=12*V('E1')[0]-12;
     const strum=V('E1')[1];
     let notes=c.notes.slice(); const r=rng(7+st.deg);
     if(c.spread===3){ notes=notes.filter(()=>r()<0.7); if(!notes.length) notes=[c.notes[0]]; }
-    const sd = strum===0 ? 0 : (strum===6 ? beat()/2/notes.length : 0.03*(strum+1));
     const g=0.17/Math.sqrt(notes.length);
-    notes.forEach((n,i)=>voice([mtof(fold(24+oct+c.base+n))],t+i*sd,dur,g,P));
+    notes.forEach((n,i)=>{
+      let off=0;
+      if(strum>=1&&strum<=4) off=i*0.03*(strum+1);                       // short strums
+      else if(strum===5) off=i<3?0:(i-2)*beat()/3/2;                     // first 3 together, then triplet-eighth strum
+      else if(strum===6) off=i<3?0:(i-2)*beat()/2;                       // first 3 together, then eighth-note strum
+      voice([mtof(fold(24+oct+c.base+n))],t+off,dur,g,P);
+    });
   }
+
+  /* Drone: Position (octave), Notes (root, +oct, +5th, both) and Trigger (follow the chord or hold the key root, with optional repeats) */
+  function droneNotes(){ const nm=V('E3')[1]; return [[0],[0,12],[0,7],[0,7,12]][nm]; }
+  function droneRoot(){ const trig=V('E3')[2]; return trig>=4 ? root() : root()+degNote(scale(),st.deg); }
+  function droneMidi(n){ return mtof(fold(12+12*V('E3')[0]+droneRoot()+n,28,60)); }
   function setDrone(){
     if(!ctx) return;
-    const want = on && st.parts.drone;
-    const P=AUDIO_PRESETS[preset], iv=scale(), rn=root()+degNote(iv,st.deg);
-    const nm=V('E3')[1], octv=12*(V('E3')[0]);
-    const notes=[[0],[0,12],[0,7],[0,7,12]][nm];
-    const key=[want,preset,rn,octv,nm].join();
+    const trig=V('E3')[2];
+    const want = on && st.parts.drone && DRONE_REPEAT[trig]===0;      // held drone; repeating triggers are scheduled instead
+    const P=AUDIO_PRESETS[preset];
+    const key=[want,preset,droneRoot(),V('E3')[0],V('E3')[1]].join();
     if(key===droneKey) return;
     droneKey=key;
     if(droneOsc){ const g=droneGain, o=droneOsc; g.gain.cancelScheduledValues(ctx.currentTime); g.gain.setTargetAtTime(0.0001,ctx.currentTime,0.12); o.forEach(x=>x.stop(ctx.currentTime+0.6)); droneOsc=null; }
     if(!want) return;
-    droneGain=ctx.createGain(); droneGain.gain.value=0.0001; droneGain.connect(out());
+    droneGain=ctx.createGain(); droneGain.gain.value=0.0001; droneGain.connect(filt);
     droneGain.gain.setTargetAtTime(0.06,ctx.currentTime,0.2);
-    droneOsc=notes.map(n=>{ const o=ctx.createOscillator(); o.type=P.drone; o.frequency.value=mtof(fold(12+octv+rn+n,28,60)); o.connect(droneGain); o.start(); return o; });
+    droneOsc=droneNotes().map(n=>{ const o=ctx.createOscillator(); o.type=P.drone; o.frequency.value=droneMidi(n); o.connect(droneGain); o.start(); return o; });
   }
-  /* motif: arpeggio over chord tones. Pattern and Rhythm numbers seed the sequence. */
-  function motifStep(mi,t,sn){
+  function droneHit(t,dur){
+    const P=AUDIO_PRESETS[preset];
+    droneNotes().forEach(n=>voice([droneMidi(n)],t,dur,0.07,{wave:[P.drone,P.drone],det:P.det,atk:0.01,rel:0.25},P.drone));
+  }
+
+  /* Motifs: Pattern picks one of eight named patterns, Variation the playback order, Rhythm one of eight presets */
+  function patternNotes(pat,len,c,iv){
+    const pool=c.notes.concat(c.notes.map(n=>n+12));
+    const sc=[]; for(let i=0;i<16;i++) sc.push(degNote(iv,st.deg+i)-degNote(iv,st.deg));
+    const out=[], n=pool.length, m=Math.max(1,2*(n-1));
+    for(let i=0;i<len;i++){
+      let v;
+      switch(pat){
+        case 0: v=pool[i%n]; break;                                             // Arpeggio
+        case 1: v=pool[([0,2,1,3][i%4]+Math.floor(i/4))%n]; break;              // Broken
+        case 2: { const q=i%m; v=pool[q<n?q:m-q]; break; }                       // Pendulum
+        case 3: v=(i%2===0)?pool[0]:pool[1+(Math.floor(i/2)%Math.max(1,n-1))]; break; // Bass Jump
+        case 4: v=sc[i%8]; break;                                               // Scale Up
+        case 5: v=sc[(i*2)%10]; break;                                          // Scale Skip
+        case 6: v=pool[[0,1,2,1,3,2,4,3][i%8]%n]; break;                        // Answer
+        default: v=pool[(n-1)-((i+Math.floor(i/3))%n)];                         // Cascade
+      }
+      out.push(v);
+    }
+    return out;
+  }
+  function motifStep(mi,t,k){
     if(!st.parts['m'+mi]) return;
-    const pat=V('E6')[1], pv=V('E6')[0], len=Math.max(1,V('E5')[1]), rl=V('E7')[1];
-    const cdiv=[4,2,1,0.5,4/3,2/3][V('E7')[0]], gate=V('E7')[2]/100;
-    const rhyI=V('E8')[1]+mi*3, acc=V('E8')[0], off=V('E8')[2]*beat()/4;
-    const k=Math.floor(sn);                                  // this motif's own step counter
-    const pos=k%rl;
-    const rr=rng(rhyI*31+rl), hits=[]; const dens=0.45+((rhyI*7)%5)*0.1;
-    for(let i=0;i<rl;i++) hits.push(i%4===0 || rr()<dens);
-    if(!hits[pos]) return;
-    const c=chordNotes(), pool=[]; for(let o=0;o<2;o++) c.notes.forEach(n=>pool.push(n+12*o));
-    const pr=rng(pat*17+mi*5), seq=[]; for(let i=0;i<len;i++) seq.push(pool[Math.floor(pr()*pool.length)]);
-    const n=seq.length; let idx;
-    if(pv===0) idx=k%n;
-    else if(pv===1) idx=(n-1)-(k%n);
-    else if(pv===2||pv===3){ const m=Math.max(1,2*n-2), q=k%m; idx=q<n?q:m-q; }
-    else if(pv===4){ const odd=[],even=[]; for(let i=0;i<n;i++) (i%2?odd:even).push(i); const order=odd.concat(even); idx=order[k%n]; }
-    else idx=Math.floor(rng(k*13+pat)()*n);
-    const oct=12*(V('E5')[0]+(mi===2?1:0));
+    const pv=MV(mi,'E6')[0], pat=MV(mi,'E6')[1];
+    const lenSel=MV(mi,'E5')[1], len = lenSel===0 ? 8 : lenSel;            // Patt-Len: Auto follows the preset length
+    const rl=MV(mi,'E7')[1], gate=MV(mi,'E7')[2]/100, cd=CDIV[MV(mi,'E7')[0]];
+    const acc=MV(mi,'E8')[0], rhy=MV(mi,'E8')[1], offs=MV(mi,'E8')[2];
+    const R=RHYTHMS[rhy], pos=k%rl;
+    if(!R[pos%R.length]) return;
+    const c=chordNotes(), iv=scale();
+    const seq=patternNotes(pat,len,c,iv), n=seq.length;
+    let idx;
+    if(pv===0) idx=k%n;                                                      // Forward
+    else if(pv===1) idx=(n-1)-(k%n);                                         // Backward
+    else if(pv===2){ const m=Math.max(1,2*n-2), q=k%m; idx=q<n?q:m-q; }       // Ping-Pong
+    else if(pv===3){ const m=2*n, q=k%m; idx=q<n?q:m-1-q; }                  // Ping-Pong 2 (end notes repeat)
+    else { const odd=[],even=[]; for(let i=0;i<n;i++) (i%2?odd:even).push(i); idx=odd.concat(even)[k%n]; } // Odd / Even
+    const oct=12*(MV(mi,'E5')[0]+(mi===2?1:0));
     let vel=0.075;
-    if(acc===1) vel*=0.6+rng(k+7)()*0.8; else if(acc>=3) vel*=((acc*3+pos)%4===0)?1.5:0.7; else if(acc===0) vel*=(pos%4===0)?1.4:0.8;
-    const P=AUDIO_PRESETS[preset]; const dur=Math.max(0.05,gate*cdiv*beat()*0.98);
-    voice([mtof(fold(36+oct+c.base+seq[idx%n],48,96))],t+off,dur,vel,{wave:P.wave,det:P.det,atk:0.005,rel:0.12,cut:P.cut},P.wave[0]);
+    if(acc===1) vel*=(pos%4===0)?1.4:0.85;                                    // Rhythm
+    else if(acc===2) vel*=0.6+rng(k+7)()*0.8;                                 // Humanize
+    else if(acc===3) vel*=(k%4===0)?1.6:0.75;                                 // Downbeat
+    else if(acc===4) vel*=(k%2===0)?1.3:0.7;                                  // Alternate
+    const P=AUDIO_PRESETS[preset];
+    const off = mi===2 ? offs*beat()/4 : 0;                                   // Offset delays Motif 2 by up to three sixteenths
+    const dur=Math.max(0.05,gate*cd*beat()*0.98);
+    voice([mtof(fold(36+oct+c.base+seq[idx%n],48,96))],t+off,dur,vel,{wave:P.wave,det:P.det,atk:0.005,rel:0.12},P.wave[0]);
   }
-  /* scheduler: 1/16-note ticks, with a short look-ahead */
+
+  /* scheduler with a short look-ahead; each motif keeps its own clock so Clk Div can differ */
+  function resync(t){ nextBar=t; barNo=0; droneNext=t; clk[1].next=clk[2].next=t; clk[1].k=clk[2].k=0; }
   function tick(){
     if(!ctx||!on) return;
-    const any=Object.values(st.parts).some(Boolean);
-    while(nextStep<ctx.currentTime+0.14){
-      if(any){
-        const sixteenth=beat()/4;
-        if(stepNo%16===0) playChord(nextStep, 4*beat()*0.97);
-        [1,2].forEach(mi=>{
-          const cdiv=[4,2,1,0.5,4/3,2/3][V('E7')[0]], every=Math.max(1,Math.round(cdiv*4));
-          if(stepNo%every===0) motifStep(mi,nextStep,stepNo/every);
-        });
-        nextStep+=sixteenth; stepNo++;
-      } else { nextStep=ctx.currentTime+0.05; stepNo=0; break; }
-    }
+    const any=Object.values(st.parts).some(Boolean), horizon=ctx.currentTime+0.14;
+    if(!any){ resync(ctx.currentTime+0.05); setDrone(); return; }
+    while(nextBar<horizon){ playChord(nextBar,4*beat()*0.97); nextBar+=4*beat(); barNo++; }
+    [1,2].forEach(mi=>{
+      const cd=CDIV[MV(mi,'E7')[0]]*beat();
+      while(clk[mi].next<horizon){ motifStep(mi,clk[mi].next,clk[mi].k++); clk[mi].next+=cd; }
+    });
+    const rep=DRONE_REPEAT[V('E3')[2]];
+    if(st.parts.drone && rep>0){ const per=rep*4*beat(); while(droneNext<horizon){ droneHit(droneNext,per*0.9); droneNext+=per; } }
+    else droneNext=Math.max(droneNext,ctx.currentTime);
     setDrone();
   }
   function start(){
@@ -1054,7 +1103,7 @@ const audio = (() => {
       filt=ctx.createBiquadFilter(); filt.type='lowpass'; filt.frequency.value=AUDIO_PRESETS[preset].cut; filt.Q.value=0.6;
       filt.connect(comp); comp.connect(master); master.connect(ctx.destination);
     }
-    ctx.resume(); on=true; nextStep=ctx.currentTime+0.06; stepNo=0;
+    ctx.resume(); on=true; resync(ctx.currentTime+0.06);
     clearInterval(timer); timer=setInterval(tick,25); return true;
   }
   function stop(){
@@ -1068,6 +1117,8 @@ const audio = (() => {
     setPreset(p){ preset=p; if(filt) filt.frequency.setTargetAtTime(AUDIO_PRESETS[p].cut,ctx.currentTime,0.05); droneKey=''; if(on) setDrone(); },
     /* a chord button was pressed: sound it straight away */
     hit(){ if(!on||!ctx) return; playChord(ctx.currentTime+0.02, 2.2*beat()); setDrone(); },
+    /* ALL was pressed: restart the motifs together */
+    resyncNow(){ if(on&&ctx) resync(ctx.currentTime+0.06); },
     suspend(){ if(on&&ctx) ctx.suspend(); }, resume(){ if(on&&ctx) ctx.resume(); }
   };
 })();
@@ -1085,9 +1136,25 @@ const audio = (() => {
   vol.addEventListener('input',()=>audio.setVolume(vol.value/100));
   sel.addEventListener('change',()=>audio.setPreset(sel.value));
   document.addEventListener('visibilitychange',()=>{ document.hidden?audio.suspend():audio.resume(); });
-  /* sound the chord when a chord button is pressed */
+
+  /* sound the chord when a chord button is pressed; ALL restarts the motifs in sync; the 1/2 button swaps the right-hand values */
   const _press=press;
-  press=function(){ const c=BY[st.sel]; const wasChord=c&&c.k==='chord'&&!shiftOn(); _press(); if(wasChord) audio.hit(); };
+  press=function(){
+    const c=BY[st.sel]; const wasChord=c&&c.k==='chord'&&!shiftOn(), wasAll=c&&c.id==='ALL'&&!shiftOn();
+    _press(); useMotif();
+    if(wasChord) audio.hit();
+    if(wasAll) audio.resyncNow();
+  };
+  /* Physical Shift + the +/- keys change the Mini's master volume, as in the firmware */
+  const _turn=turn;
+  turn=function(n){
+    if(shiftOn()){
+      const step=(Math.abs(n)>1?5:2)*(n>0?1:-1);
+      const v=Math.max(0,Math.min(100,(+vol.value)+step));
+      vol.value=v; audio.setVolume(v/100); toast('Master volume '+Math.round(v)+'%'); return;
+    }
+    _turn(n);
+  };
 })();
 
 </script>
