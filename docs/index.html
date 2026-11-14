@@ -112,9 +112,9 @@ footer a:hover{color:var(--accent)}
 .scrwrap{width:100%;background:#000;border-radius:6px;overflow:hidden;border:2px solid #1d2431;position:relative}
 #screen{width:800px;height:480px;position:relative;background:var(--d-bg);transform-origin:0 0;overflow:hidden}
 #panelsvg{position:absolute;left:0;top:0;width:800px;height:480px}
-#info{position:absolute;left:614px;top:6px;width:181px;height:391px;background:#151a22;border:1px solid #2f3747;padding:6px 7px;overflow:hidden}
-#info .nm{font-size:16px;font-weight:700;color:var(--d-hi);line-height:1.2;margin-bottom:4px}
-#info .hd{font-size:11px;color:#566074;margin-top:5px;line-height:1.2}
+#info{position:absolute;left:615px;top:126px;width:179px;height:270px;padding:2px 7px 4px;overflow:hidden}
+#info .nm{font-size:15px;font-weight:700;color:var(--d-hi);line-height:1.2;margin-bottom:2px}
+#info .hd{font-size:10px;color:#566074;margin-top:4px;line-height:1.2}
 #info .tx{font-size:11px;line-height:1.3;color:#8d98ad}
 #info .tx.act{color:var(--d-txt)}
 #info .now{font-size:11px;color:var(--d-on);margin-top:6px}
@@ -174,7 +174,8 @@ footer a:hover{color:var(--accent)}
 <section id="try">
 <div class="wrap">
 <h2>Try the panel</h2>
-<p class="sub">This is the screen Alpaca draws on the Mini, and it behaves as the firmware does. Roll the mouse over any control to see what it does, click to press it, and drag a dial up or down to turn it. Press PLAY to start all four parts, press the chord buttons I to VII to change the harmony, and click a dial to step through its settings. Switch Sound on to hear it.</p>
+<p class="sub">This is the screen Alpaca draws on the Mini. Roll the mouse over any control to see what it does, click to press it, and drag a dial up or down to turn it. Press PLAY to start all four parts, press the chord buttons I to VII to change the harmony, and click a dial to step through its settings. The screen at the top right follows the dial you are using. Switch Sound on to hear it.</p>
+<p class="small-note">The demo runs a little ahead of the download. The larger sub screens, the Pattern Editor, Rhythm Editor and Chord Sequencer, rests and ties, the forty pattern and rhythm slots and tap tempo are planned for the firmware and are not in the current build.</p>
 <p class="small-note">The panel is drawn for an 800 by 480 screen, so it reads best on a tablet or computer.</p>
 <div class="demo">
 <div class="device" id="device" tabindex="0" aria-label="Interactive Alpaca panel. Arrow keys move the highlight, Enter presses.">
@@ -220,7 +221,8 @@ footer a:hover{color:var(--accent)}
   </div>
 </div>
 <p class="demo-help">Keyboard, once the panel has focus: <kbd>&larr;</kbd><kbd>&uarr;</kbd><kbd>&darr;</kbd><kbd>&rarr;</kbd> dpad, <kbd>Enter</kbd> Middle, <kbd>-</kbd><kbd>=</kbd> turn by 1, <kbd>[</kbd><kbd>]</kbd> turn by 10, <kbd>P</kbd> Play, hold <kbd>Shift</kbd> for Shift. On a touch screen, tap once to highlight and again to press. Holding Shift while you turn changes the master volume, as on the Mini.</p>
-<p class="demo-help">Things to try: turn the bottom-left dial to QNT and choose Next Bar, then press a chord button and watch it wait, lit blue, for the bar line. Start the Tracker pattern and the panel follows its tempo, with TRK on the screen. Give the Drone the Pluck sound to hear why it needs a sound that sustains. REC lights up as it does on the Mini, but the demo does not save a file.</p>
+<p class="demo-help">Things to try: turn the bottom-left dial to see the notes of the key and mode on the keyboard, with the current chord in green. Turn a right-hand dial to see the motif screen: its pattern, its rhythm and the notes to beats ratio. Set QNT to Next Bar, then press a chord button and watch it wait, lit blue, for the bar line. Start the Tracker pattern and the panel follows its tempo, with TRK on the screen. Tap SHIFT four times in time to set the tempo.</p>
+<p class="demo-help">The editors: latch SHIFT and press MENU for Editor mode. The Pattern Editor opens first; press the top-right dial for it, the dial below for the Rhythm Editor, and the top-left dial for the Chord Sequencer. In an editor each dial has one job, shown beside it. In the Chord Sequencer, turn the third dial on the right to ARM, then press PLAY and the chords change by themselves. REC lights up as it does on the Mini, but the demo does not save a file, and patterns you save last until the page is reloaded.</p>
 <p class="demo-help">The sound here is a simple browser synth, and the drum loop stands in for a Tracker pattern. On the Tracker, Alpaca plays the built-in synths (ACD, FAT, VAP, WTFM, PERC, DIRT and CHIP), so it sounds much better.</p>
 </div>
 </div>
@@ -392,13 +394,17 @@ footer a:hover{color:var(--accent)}
    A browser port of the firmware's NDLR panel: the state, clock,
    quantised launches, Pad, Drone and motif playback follow
    fNdlrPanel.cpp, and the drawing follows ndlrPanelControl.cpp.
+   On top of that it adds parts of the NDLR manual that are planned
+   for the firmware: the Pad, Drone, T-K-M and Motif sub screens,
+   forty pattern and rhythm slots with rests and ties, the Pattern
+   Editor, Rhythm Editor and Chord Sequencer, and tap tempo.
    The sound is a small Web Audio synth standing in for the Tracker's
    own synths. Nothing plays until Sound is switched on.
 ------------------------------------------------------------------- */
 
-/* ---------- tables (from the firmware) ---------- */
+/* ---------- tables ---------- */
 const PPB = 48, PPBAR = 4 * PPB, MAX_PAD = 8, ALL_PARTS = 0x0f;
-const VEL_PAD = 80, VEL_DRONE = 90, VEL_MOTIF = 100;
+const VEL_PAD = 80, VEL_DRONE = 90, VEL_MOTIF = 100, VEL_HIGH = 118, VEL_LOW = 88;   /* low is 75% of high */
 const STRUM_NAMES = ["Off", "1/32", "1/16", "1/8T", "3 + 1/8T", "1/8", "3 + 1/8"];
 const STRUM_PULSES = [0, 6, 12, 16, 16, 24, 24];
 const SPREAD_NAMES = ["Close", "Open", "Low Root", "Root + 5th"];
@@ -407,32 +413,79 @@ const TRIGGER_NAMES = ["Chord", "Chord 1/4", "Chord 1/2", "Chord 1/1", "Key", "K
 const VARIATION_NAMES = ["Forward", "Backward", "Ping-Pong", "Ping-Pong 2", "Odd / Even", "Random"];
 const DIVISION_NAMES = ["1/1", "1/2", "1/3", "1/4", "1/6", "1/8"];
 const DIVISION_PULSES = [192, 96, 64, 48, 32, 24];
-const ACCENT_NAMES = ["Fixed", "Rhythm", "Humanize", "Downbeat", "Alternate"];
+/* Accent: a fixed velocity, the rhythm's own, the rhythm's with some chance, then seven
+   patterns over the eighth notes of the bar, where o is a high velocity and . a low one */
+const ACCENT_NAMES = ["Fixed", "Rhythm", "Humanize", "o...o...", "o.o.o.o.", "o.......", "o..o..o.", "oo..o..o", ".o.o.o.o", "o..o.o.."];
 const QUANTISE_NAMES = ["Off", "Next Beat", "Next Bar"];
 const CLOCK_NAMES = ["Tracker", "Internal"];
 
-/* length 0 follows the current chord across two octaves */
+/* Patterns: sixteen note values each. CHORD values count up the notes of the current chord,
+   SCALE values count up the key's scale and CHROMATIC values count semitones, both from the
+   key root, so those two do not move with the chord. Slots 1-20 are presets, 21-40 are the
+   user's. autoLen is the length used when Pattern Length is Auto (0 means twice the chord size). */
+const PT_CHORD = 0, PT_SCALE = 1, PT_CHROM = 2;
+const PT_NAMES = ["CHORD", "SCALE", "CHROMATIC"], PT_MAX = [20, 40, 60];
+function makePattern(name, type, autoLen, notes) {
+  const full = [];
+  for (let i = 0; i < 16; i++) full.push(notes[i % notes.length]);
+  return { name, type, autoLen, notes: full };
+}
 const PATTERNS = [
-  { name: "Arpeggio", length: 0, scale: false, notes: [] },
-  { name: "Broken", length: 8, scale: false, notes: [0, 2, 1, 3, 2, 4, 3, 1] },
-  { name: "Pendulum", length: 8, scale: false, notes: [0, 2, 4, 2, 1, 3, 5, 3] },
-  { name: "Bass Jump", length: 8, scale: false, notes: [0, 0, 3, 0, 2, 0, 4, 2] },
-  { name: "Scale Up", length: 8, scale: true, notes: [0, 1, 2, 3, 4, 5, 6, 7] },
-  { name: "Scale Skip", length: 8, scale: true, notes: [0, 2, 4, 6, 7, 5, 3, 1] },
-  { name: "Answer", length: 8, scale: false, notes: [0, 1, 2, 4, 3, 2, 1, 0] },
-  { name: "Cascade", length: 16, scale: false, notes: [0, 2, 3, 5, 1, 3, 4, 6, 2, 4, 5, 7, 6, 4, 3, 1] }
+  makePattern("Arpeggio", PT_CHORD, 0, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]),
+  makePattern("Broken", PT_CHORD, 8, [1, 3, 2, 4, 3, 5, 4, 2]),
+  makePattern("Pendulum", PT_CHORD, 8, [1, 3, 5, 3, 2, 4, 6, 4]),
+  makePattern("Bass Jump", PT_CHORD, 8, [1, 1, 4, 1, 3, 1, 5, 3]),
+  makePattern("Scale Up", PT_SCALE, 8, [1, 2, 3, 4, 5, 6, 7, 8]),
+  makePattern("Scale Skip", PT_SCALE, 8, [1, 3, 5, 7, 8, 6, 4, 2]),
+  makePattern("Answer", PT_CHORD, 8, [1, 2, 3, 5, 4, 3, 2, 1]),
+  makePattern("Cascade", PT_CHORD, 16, [1, 3, 4, 6, 2, 4, 5, 7, 3, 5, 6, 8, 7, 5, 4, 2]),
+  makePattern("Up Down", PT_CHORD, 10, [1, 2, 3, 4, 5, 6, 5, 4, 3, 2]),
+  makePattern("Pedal", PT_CHORD, 8, [1, 2, 1, 3, 1, 4, 1, 5]),
+  makePattern("Thirds", PT_SCALE, 8, [1, 3, 2, 4, 3, 5, 4, 6]),
+  makePattern("Scale Down", PT_SCALE, 8, [8, 7, 6, 5, 4, 3, 2, 1]),
+  makePattern("Zigzag", PT_CHORD, 8, [1, 4, 2, 5, 3, 6, 4, 7]),
+  makePattern("Wide", PT_CHORD, 8, [1, 5, 2, 6, 3, 7, 4, 8]),
+  makePattern("Trill", PT_SCALE, 8, [1, 2, 1, 2, 3, 2, 3, 4]),
+  makePattern("Climb", PT_CHORD, 16, [1, 2, 3, 2, 3, 4, 3, 4, 5, 4, 5, 6, 5, 6, 7, 6]),
+  makePattern("Chromatic", PT_CHROM, 12, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]),
+  makePattern("Dim Arp", PT_CHROM, 8, [1, 4, 7, 10, 13, 10, 7, 4]),
+  makePattern("Fifths", PT_SCALE, 8, [1, 5, 2, 6, 3, 7, 4, 8]),
+  makePattern("Oct Jump", PT_CHROM, 8, [1, 13, 1, 13, 8, 20, 8, 20])
 ];
-/* zero is a rest, other values are note velocities */
+for (let i = 21; i <= 40; i++) PATTERNS.push(makePattern("User " + i, PT_CHORD, 8, [1, 2, 3, 4, 5, 6, 7, 8]));
+
+/* Rhythms: thirty-two beats each. A beat is a velocity (1-127), a REST or a TIE, which lets
+   the last note carry on. Slots 1-20 are presets, 21-40 are the user's. */
+const REST = 0, TIE = -1;
+function makeRhythm(name, steps) {
+  const full = [];
+  for (let i = 0; i < 32; i++) full.push(steps[i % steps.length]);
+  return { name, steps: full };
+}
 const RHYTHMS = [
-  { name: "Straight", steps: [100] },
-  { name: "Offbeat", steps: [0, 108, 0, 90] },
-  { name: "Syncopate", steps: [115, 0, 84, 102, 0, 97, 0, 86] },
-  { name: "Tresillo", steps: [114, 0, 0, 94, 0, 0, 103, 0] },
-  { name: "Gallop", steps: [116, 82, 100, 0] },
-  { name: "Pulse", steps: [118, 0, 0, 0, 95, 0, 0, 0] },
-  { name: "Stutter", steps: [112, 84, 92, 0, 0, 103, 92, 0] },
-  { name: "Sparse", steps: [113, 0, 0, 0, 0, 86, 0, 0] }
+  makeRhythm("Straight", [100]),
+  makeRhythm("Offbeat", [0, 108, 0, 90]),
+  makeRhythm("Syncopate", [115, 0, 84, 102, 0, 97, 0, 86]),
+  makeRhythm("Tresillo", [114, 0, 0, 94, 0, 0, 103, 0]),
+  makeRhythm("Gallop", [116, 82, 100, 0]),
+  makeRhythm("Pulse", [118, 0, 0, 0, 95, 0, 0, 0]),
+  makeRhythm("Stutter", [112, 84, 92, 0, 0, 103, 92, 0]),
+  makeRhythm("Sparse", [113, 0, 0, 0, 0, 86, 0, 0]),
+  makeRhythm("Long Short", [110, TIE, 90, 100]),
+  makeRhythm("Dotted", [112, TIE, TIE, 96, TIE, TIE, 104, TIE]),
+  makeRhythm("Halves", [110, TIE, TIE, TIE, 98, TIE, TIE, TIE]),
+  makeRhythm("Push", [0, 100, 112, TIE, 0, 96, 108, TIE]),
+  makeRhythm("Lilt", [112, TIE, 88, 104, TIE, 84, 108, 92]),
+  makeRhythm("Backbeat", [90, 0, 112, 0, 90, 84, 112, 0]),
+  makeRhythm("Clave", [114, 0, 0, 100, 0, 0, 108, 0, 0, 0, 104, 0, 112, 0, 0, 0]),
+  makeRhythm("Bossa", [114, 0, 0, 98, 0, 0, 106, 0, 0, 0, 102, 0, 0, 108, 0, 0]),
+  makeRhythm("Rolling", [112, 90, TIE, 96, 84, TIE, 104, 88]),
+  makeRhythm("Swell", [60, 70, 80, 90, 100, 110, 120, 127]),
+  makeRhythm("Held", [110, TIE, TIE, TIE, TIE, TIE, TIE, TIE]),
+  makeRhythm("Hocket", [108, 0, 0, 96, 0, 104, 0, 0])
 ];
+for (let i = 21; i <= 40; i++) RHYTHMS.push(makeRhythm("User " + i, [100]));
+
 const MODES = [
   { name: "MAJOR", iv: [0, 2, 4, 5, 7, 9, 11] }, { name: "DORIAN", iv: [0, 2, 3, 5, 7, 9, 10] },
   { name: "PHRYGIAN", iv: [0, 1, 3, 5, 7, 8, 10] }, { name: "LYDIAN", iv: [0, 2, 4, 6, 7, 9, 11] },
@@ -453,6 +506,7 @@ const ALT1 = [CT_TRIAD, CT_7TH, CT_TRIAD, CT_TRIAD, CT_7TH, CT_7TH, CT_6TH];
 const ALT2 = [CT_7TH, CT_7TH, CT_TRIAD, CT_7TH, CT_7TH, CT_6TH, CT_7TH];
 /* scale-step offsets stacked on the chord root */
 const SHAPE = [[0, 2, 4], [0, 2, 4, 6], [0, 1, 4], [0, 2, 4, 6], [0, 2, 4], [0, 3, 4], [0, 2, 4, 5]];
+const midiName = n => NOTE_NAME[n % 12] + (Math.floor(n / 12) - 1);
 
 /* ---------- controls, in the order the firmware navigates them ---------- */
 const C_ENC1 = 0, C_ENC8 = 7, C_ALL = 8, C_MOTIFSEL = 9, C_CHORD1 = 10, C_SCREEN = 17, C_MENU = 18,
@@ -478,6 +532,44 @@ const ENC_EDITOR_NAME = ["CHORD SEQ", "", "", "MIDI CTL", "PATT ED", "RHY ED", "
 const PART_LABEL = ["PAD", "DRONE", "1", "2"];
 const sx = v => 6 + Math.trunc(v * 3 / 4), sy = sx, sr = v => Math.trunc(v * 3 / 4);
 
+/* the editors, keyed by the encoder that opens them */
+const ED_CHORDSEQ = 0, ED_PATTERN = 4, ED_RHYTHM = 5;
+const ED_TITLE = { 0: "Chord Sequencer", 4: "Pattern Editor", 5: "Rhythm Editor" };
+/* what each encoder turns in each editor: the short label by the dial, then the help text */
+const ED_ENC = {
+  4: [["LOAD", "Turn to load a pattern, 1 to 40, into the selected motif. Shift + press loads the stored one again."],
+      ["VAR", "Turn to change the order the pattern is played in."],
+      ["RHY", "Turn to change the motif's rhythm."],
+      ["STEP", "Turn to choose a step. Turn back past step 1 to choose the note type instead."],
+      ["SAVE", "Turn to choose a user slot, 21 to 40. Shift + press saves the pattern there."],
+      ["DIV", "Turn to change the clock division."],
+      ["LEN", "Turn to set how many of the sixteen steps are played."],
+      ["VALUE", "Turn to change the chosen step's note, or the note type: Chord, Scale or Chromatic."]],
+  5: [["LOAD", "Turn to load a rhythm, 1 to 40, into the selected motif. Shift + press loads the stored one again."],
+      ["VAR", "Turn to change the order the pattern is played in."],
+      ["PATT", "Turn to change the motif's pattern."],
+      ["BEAT", "Turn to move round the circle and choose a beat."],
+      ["SAVE", "Turn to choose a user slot, 21 to 40. Shift + press saves the rhythm there."],
+      ["DIV", "Turn to change the clock division."],
+      ["LEN", "Turn to set how many of the thirty-two beats are used, 4 to 32."],
+      ["VALUE", "Turn to set the chosen beat: Rest, Tie, or a velocity from 1 to 127."]],
+  0: [["LOAD", "Turn to choose a sequence, 0 to 5 (0 is blank). Shift + press loads it."],
+      ["ATTR", "Turn to choose what to edit on the step: duration, key, mode, degree or type."],
+      ["STEP", "Turn to choose one of the eighteen steps: six in each of sections A, B and C."],
+      ["SLOT", "Turn to choose a song slot's section or its repeats."],
+      ["SAVE", "Turn to choose a slot, 1 to 5. Shift + press saves the sequence there."],
+      ["VALUE", "Turn to change the chosen attribute. A step with no duration is skipped."],
+      ["ARM", "Turn right to arm, left to disarm. An armed sequence starts with the parts, on the downbeat."],
+      ["SONG", "Turn to set the chosen slot's section (A, B or C) or its repeats (0 to 8, 0 clears it)."]]
+};
+const ED_DESC = {
+  4: "The sixteen bars are the pattern's notes. Chord buttons, Shift types and the 1/2 button still work here, so you can hear the pattern as you change it.",
+  5: "Each dot is a beat and its line is the velocity. Red is a rest and green is a tie, which lets the last note carry on. Each sounding beat takes the next note of the pattern.",
+  0: "Each step has a duration, key, mode, degree and type. The song plays its slots in order and loops. Chord buttons set the chosen step's degree, and Shift + chord sets its type and moves on."
+};
+const ED_PRESS = ["Press: Chord Sequencer.", "No editor here in this build.", "No editor here in this build.", "MIDI Controller: not in this build.",
+  "Press: Pattern Editor.", "Press: Rhythm Editor.", "Perlin: not in this build.", "No editor here in this build."];
+
 /* ---------- info text (from the firmware) ---------- */
 const IM_NORMAL = 0, IM_SHIFT = 1, IM_MENU = 2, IM_EDITOR = 3, IM_VIEW = 4, IM_BOOT = 5;
 const MODE_HEADER = ["PRESS / TURN", "+ SHIFT", "IN MENU MODE", "IN EDITOR MODE", "ON SCREEN", "AT BOOT"];
@@ -493,19 +585,19 @@ const INFO = [
     desc: "Notes adds a fifth or octave when voices are available. Trigger follows the chord or holds the key root, with optional repeats." },
   { name: "Enc 4 - TEMPO / KEY",
     rows: [[IM_NORMAL, "Press to cycle Tempo, Key, Mode, Quantise and Clock. Turn to adjust."], [IM_SHIFT, "Physical Shift + +/- controls the Mini’s master volume."], [IM_MENU, "Mod Matrix menu 7&8."], [IM_EDITOR, "MIDI Controller editor."]],
-    desc: "Tracker follows the running pattern. Internal uses NDLR tempo while the pattern keeps playing. Quantise uses the selected clock." },
+    desc: "The keyboard above shows the notes of the key and mode, with the current chord in green. Tracker follows the running pattern. Internal uses NDLR tempo." },
   { name: "Encoder 5 - MOTIF",
     rows: [[IM_NORMAL, "Turn: Motif POSITION / PATT-LEN for the selected motif."], [IM_MENU, "LFO Config."], [IM_EDITOR, "Pattern Editor."]],
     desc: "Position sets the octave. Pattern Length sets 1 to 16 notes, or Auto to follow the preset length." },
   { name: "Encoder 6 - MOTIF",
     rows: [[IM_NORMAL, "Turn: Motif VARIATION / PATTERN."], [IM_MENU, "Settings 1/3 (mostly MIDI)."], [IM_EDITOR, "Rhythm Editor."]],
-    desc: "Variation changes playback order. Pattern selects one of eight chord or scale patterns." },
+    desc: "Variation changes playback order. Pattern picks one of forty: 1 to 20 are presets and 21 to 40 are yours, written in the Pattern Editor." },
   { name: "Encoder 7 - MOTIF",
     rows: [[IM_NORMAL, "Turn: CLK DIV / RHY-LEN. Centre arrow (GATE) is not printed on the panel."], [IM_MENU, "Settings 2/3 (mostly velocities)."], [IM_EDITOR, "Perlin Noise generator."]],
     desc: "Clock Division sets the step rate. Rhythm Length sets 4 to 32 steps. Gate sets the percentage of each step that a note sounds." },
   { name: "Encoder 8 - MOTIF",
     rows: [[IM_NORMAL, "Turn: ACCENT / RHYTHM / OFFSET."], [IM_MENU, "Settings 3/3 (general)."]],
-    desc: "Accent sets the velocity pattern. Rhythm picks one of eight presets. Offset delays Motif 2 by up to three sixteenth notes." },
+    desc: "Accent sets the velocities: fixed, the rhythm's own, humanised, or a pattern of high (o) and low (.) eighth notes. Rhythm picks one of forty. Offset delays Motif 2 by up to three sixteenths." },
   { name: "ALL  ||/>",
     rows: [[IM_NORMAL, "Play/pause all four parts. Restarts both motifs in sync."], [IM_SHIFT, "MOD: toggle ALL modulations (red rings; visual only here)."]],
     desc: "Restarts both motifs on their first pattern note and first rhythm beat so they lock together." },
@@ -514,13 +606,13 @@ const INFO = [
     desc: "The selected motif is highlighted on the NDLR screen. Panic releases the notes played by the panel." },
   null, null, null, null, null, null, null,   /* chords: filled in when drawn */
   { name: "NDLR SCREEN",
-    rows: [[IM_VIEW, "Top stripes: Motif 1, Pad, Motif 2."], [IM_VIEW, "Side markers: selected encoder."]],
-    desc: "Shows key and mode, BPM, chord degree + name + type, and the four play indicators. The centre box changes to Pad / Drone / T-K-M / Motif detail." },
+    rows: [[IM_VIEW, "The tempo blinks blue on the downbeat and red on the other beats."], [IM_VIEW, "Side markers: selected encoder."]],
+    desc: "Shows key and mode, BPM, chord degree + name + type, and the four play indicators. The larger sub screen on the right follows the dial you are using: Pad, Drone, T-K-M or Motif." },
   { name: "MENU (Shift: Editors)",
-    rows: [[IM_NORMAL, "Toggle Menu mode: the eight encoder buttons then open menus."], [IM_SHIFT, "Toggle Editor mode."], [IM_BOOT, "At power-on, Shift+Menu opens the Boot Menu."]],
-    desc: "Left four encoders open the Mod Matrix, top-right opens LFO Config, the others open Settings 1-3. Editors: Chord Seq, MIDI Controller, Pattern, Rhythm, Perlin." },
+    rows: [[IM_NORMAL, "Toggle Menu mode: the eight encoder buttons then open menus."], [IM_SHIFT, "Toggle Editor mode. The last editor used is shown."], [IM_BOOT, "At power-on, Shift+Menu opens the Boot Menu."]],
+    desc: "Editors: Chord Sequencer on dial 1, Pattern Editor on dial 5, Rhythm Editor on dial 6. In Editor mode the dials turn the editor's settings and a press changes editor." },
   { name: "SHIFT",
-    rows: [[IM_NORMAL, "Hold it with another control for the italic label. Middle latches it."], [IM_BOOT, "At power-on: freeze the splash screen."]],
+    rows: [[IM_NORMAL, "Hold it with another control for the italic label. Middle latches it."], [IM_NORMAL, "Tap it four times to set the tempo, 40 to 300 BPM."], [IM_BOOT, "At power-on: freeze the splash screen."]],
     desc: "Shifted functions: chord type on the 7 chord buttons, MOD on part buttons and ALL, PANIC on 1/2, Editors on MENU. The Mini Shift button works as NDLR Shift too." },
   { name: "PAD  ||/>",
     rows: [[IM_NORMAL, "Play / pause the Pad."], [IM_SHIFT, "MOD: toggle modulations that target the Pad (red ring)."]],
@@ -530,42 +622,69 @@ const INFO = [
     desc: "Drone can hold the chord or key root. Plays on Tracker synth channel 2." },
   { name: "MOTIF 1  ||/>",
     rows: [[IM_NORMAL, "Play / pause Motif 1 (up arpeggio)."], [IM_SHIFT, "MOD: toggle modulations that target Motif 1 (red ring)."]],
-    desc: "Defaults to an ascending eighth-note arpeggio. Plays on Tracker synth channel 3." },
+    desc: "Defaults to an ascending eighth-note arpeggio. A paused motif carries on from where it stopped; ALL restarts both. Plays on Tracker synth channel 3." },
   { name: "MOTIF 2  ||/>",
     rows: [[IM_NORMAL, "Play / pause Motif 2 (down arpeggio)."], [IM_SHIFT, "MOD: toggle modulations that target Motif 2 (red ring)."]],
-    desc: "Defaults to a descending quarter-note arpeggio on Tracker Synth 4." },
+    desc: "Defaults to a descending quarter-note arpeggio on Tracker Synth 4. A paused motif carries on from where it stopped; ALL restarts both." },
   { name: "RECORD",
     rows: [[IM_NORMAL, "Press Middle to start or stop recording."]],
     desc: "Saves the stereo mix, including the Tracker pattern, to Recordings on the SD card." }
 ];
 
+/* ---------- chord sequences ---------- */
+function blankSequence() {
+  return {
+    sections: [0, 1, 2].map(() => [0, 1, 2, 3, 4, 5].map(() => ({ dur: 0, key: 0, mode: 0, degree: 0, type: 0 }))),
+    song: [0, 1, 2, 3, 4, 5, 6, 7].map(() => ({ sec: 0, rep: 0 }))
+  };
+}
+/* steps are [duration in eighth notes, key, mode, degree, type] */
+function makeSequence(sections, song) {
+  const q = blankSequence();
+  sections.forEach((steps, sec) => steps.forEach((st, i) => { q.sections[sec][i] = { dur: st[0], key: st[1], mode: st[2], degree: st[3], type: st[4] }; }));
+  song.forEach((slot, i) => { q.song[i] = { sec: slot[0], rep: slot[1] }; });
+  return q;
+}
+const cloneSequence = q => JSON.parse(JSON.stringify(q));
+const SEQUENCES = [
+  blankSequence(),
+  makeSequence([[[8, 0, 0, 0, 0], [8, 0, 0, 4, 0], [8, 0, 0, 5, 0], [8, 0, 0, 3, 0]],
+                [[8, 0, 0, 1, 1], [8, 0, 0, 4, 1], [16, 0, 0, 0, 0]]], [[0, 2], [1, 1]]),
+  makeSequence([[[8, 3, 5, 0, 0], [8, 3, 5, 5, 0], [8, 3, 5, 2, 0], [8, 3, 5, 6, 0]]], [[0, 1]]),
+  blankSequence(), blankSequence(), blankSequence()
+];
+
 /* ---------- state ---------- */
 const s = {};
+function newMotif(octave, variation, division) {
+  return { octave, patternLength: 0, variation, pattern: 0, division, rhythmLength: 8, gate: 100, accent: 0, rhythm: 0,
+           patt: { type: PT_CHORD, autoLen: 0, notes: PATTERNS[0].notes.slice() }, rhy: RHYTHMS[0].steps.slice() };
+}
 function resetSession() {
   const internalClock = !!s.internalClock;
   Object.assign(s, {
-    sel: C_ENC1, shiftLatched: false, physShift: false, menuMode: 0,
+    sel: C_ENC1, shiftLatched: false, physShift: false, menuMode: 0, editor: ED_PATTERN,
     partOn: [0, 0, 0, 0], modRing: [0, 0, 0, 0], motif: 1, activeEnc: 0,
     encLabel: [0, 0, 0, 0, 0, 0, 0, 0],
     degree: 0, type: CT_TRIAD, pendingType: -1, tempo: 90, key: 0, mode: 0,
     padOct: 3, droneOct: 2, padRange: 0, padStrum: 0, padSpread: 0,
     droneNotesMode: 0, droneTrigger: 0, motifOffset: 0, quantise: 0,
-    pendingPartToggles: 0, queuedChord: 0, queuedChordType: 0, launchPulse: 0, barPulse: 0,
+    pendingPartToggles: 0, queuedChord: 0, queuedChordType: 0, launchPulse: 0, barPulse: 0, resync: false,
     trackerRun: -1, internalClock, trackerClock: false, trackerTempo: 0,
-    motifSettings: [
-      { octave: 4, patternLength: 0, variation: 0, pattern: 0, division: 5, rhythmLength: 8, gate: 100, accent: 0, rhythm: 0 },
-      { octave: 5, patternLength: 0, variation: 1, pattern: 0, division: 3, rhythmLength: 8, gate: 100, accent: 0, rhythm: 0 }
-    ],
+    motifSettings: [newMotif(4, 0, 5), newMotif(5, 1, 3)],
     motifPlayback: [
-      { nextStep: 0, noteEnd: 0, patternStep: 0, rhythmStep: 0, note: -1 },
-      { nextStep: 0, noteEnd: 0, patternStep: 0, rhythmStep: 0, note: -1 }
+      { nextStep: 0, noteEnd: 0, patternStep: 0, rhythmStep: 0, note: -1, started: false, pos: -1, beat: -1 },
+      { nextStep: 0, noteEnd: 0, patternStep: 0, rhythmStep: 0, note: -1, started: false, pos: -1, beat: -1 }
     ],
     dirty: 1, toast: "", toastUntil: 0, recordToast: false, pulse: 0,
     random: ((Date.now() & 0x7fffffff) | 1) >>> 0,
     padNext: 0, droneNext: 0, padNotes: [], padPlayed: 0, droneNotes: [],
     /* the demo is not limited by the Mini's eight-voice budget */
     voices: [MAX_PAD, 3, 1, 1],
-    recording: false, take: 0
+    recording: false, take: 0,
+    pe: { step: 1, save: 20 }, re: { beat: 1, save: 20 },
+    seq: { cur: cloneSequence(SEQUENCES[1]), loadSel: 1, saveSel: 1, step: 0, attr: 0, field: 0,
+           armed: false, running: false, idx: -1, next: 0, playing: null }
   });
 }
 resetSession();
@@ -582,11 +701,16 @@ function toast(msg, recordingMessage) {
    The firmware counts 48 pulses per beat. Here every pulse is given a time on
    the audio clock a little ahead of now, so notes land exactly on the grid. */
 const trk = { running: false, run: 0, pulse: 0, startStep: 0, tempo: 120, nextT: 0 };
-let ndlrNextT = 0, lastPulseT = 0, audioOff = 0, curT = 0;
+let ndlrNextT = 0, lastPulseT = 0, audioOff = 0, curT = 0, lastLamp = 0;
 function wallNow() { return performance.now() / 1000; }
 function actionTime() {
   const ctx = audio.ctx();
   curT = ctx ? Math.max(ctx.currentTime, lastPulseT + audioOff) : 0;
+}
+/* the tempo blinks on each beat: 2 on the downbeat, 1 on the other beats, 0 between them */
+function beatLamp() {
+  if (s.barPulse % PPB >= PPB / 2) return 0;
+  return s.barPulse < PPB ? 2 : 1;
 }
 
 /* ---------- sound ---------- */
@@ -633,10 +757,8 @@ function playPadNotes() {
     if (!together) s.padNext += STRUM_PULSES[s.padStrum];
   }
 }
-function voicePad(pulse) {
-  if (pulse === undefined) pulse = s.pulse;
-  releasePad();
-  if (!s.partOn[0]) return;
+/* the Pad's notes for the current chord, range and spread, lowest first */
+function padVoicing() {
   const chord = buildChord(s.padOct), chordSize = chord.length;
   const wanted = s.padRange ? s.padRange : chordSize;
   const count = Math.min(wanted, s.voices[0]);
@@ -656,22 +778,30 @@ function voicePad(pulse) {
     while (notes.includes(note)) note -= 12;                        /* never double a pitch */
     notes.push(note);
   }
-  notes.sort((a, b) => a - b);                                      /* strum from the lowest note up */
-  s.padNotes = notes; s.padPlayed = 0;
+  return notes.sort((a, b) => a - b);                               /* strum from the lowest note up */
+}
+function voicePad(pulse) {
+  if (pulse === undefined) pulse = s.pulse;
+  releasePad();
+  if (!s.partOn[0]) return;
+  s.padNotes = padVoicing(); s.padPlayed = 0;
   s.padNext = pulse;
   playPadNotes();
 }
-function voiceDrone() {
-  releaseDrone();
-  if (!s.partOn[1]) return;
+function droneVoicing() {
   const root = s.droneTrigger < 4 ? s.degree : 0;
   const tonic = noteForStep(root, s.droneOct);
   const notes = [];
   if (s.voices[1] > 0) notes.push(tonic);
   if (s.droneNotesMode >= 2 && notes.length < s.voices[1]) notes.push(noteForStep(root + 4, s.droneOct));
   if ((s.droneNotesMode & 1) && notes.length < s.voices[1]) notes.push(tonic + 12);
-  s.droneNotes = notes;
-  for (const n of notes) synthNote(true, n, VEL_DRONE, 2);
+  return notes;
+}
+function voiceDrone() {
+  releaseDrone();
+  if (!s.partOn[1]) return;
+  s.droneNotes = droneVoicing();
+  for (const n of s.droneNotes) synthNote(true, n, VEL_DRONE, 2);
 }
 function droneInterval() {
   const cadence = s.droneTrigger % 4;
@@ -687,8 +817,13 @@ function resetMotif(index, pulse) {
   if (pulse === undefined) pulse = s.pulse;
   releaseMotif(index);
   const voice = s.motifPlayback[index];
-  voice.patternStep = 0; voice.rhythmStep = 0;
+  voice.patternStep = 0; voice.rhythmStep = 0; voice.pos = -1; voice.beat = -1;
   voice.nextStep = pulse + (index === 1 ? 12 * s.motifOffset : 0);
+}
+/* a motif that was paused carries on from where it stopped */
+function resumeMotif(index, pulse) {
+  releaseMotif(index);
+  s.motifPlayback[index].nextStep = pulse + (index === 1 ? 12 * s.motifOffset : 0);
 }
 function playingParts() {
   let parts = 0;
@@ -708,6 +843,7 @@ function queueTrackerRestart() {
   allNotesOff();
   s.partOn = [0, 0, 0, 0];
   s.pendingPartToggles = requested;
+  s.resync = true;
   if (hasQueuedLaunch()) setLaunchDeadline();
   s.dirty = 1;
 }
@@ -723,7 +859,13 @@ function applyLaunch(pulse) {
   for (let p = 0; p < 4; ++p) s.partOn[p] ^= (changed >> p) & 1;
   if ((changed & 1) && !s.partOn[0]) releasePad();
   if ((changed & 2) && !s.partOn[1]) releaseDrone();
-  for (let index = 0; index < 2; ++index) if (changed & (4 << index)) resetMotif(index, pulse);
+  for (let index = 0; index < 2; ++index) {
+    if (!(changed & (4 << index))) continue;
+    const voice = s.motifPlayback[index];
+    if (s.resync || !voice.started) resetMotif(index, pulse); else resumeMotif(index, pulse);
+    voice.started = true;
+  }
+  s.resync = false;
   if (s.partOn[0] && ((changed & 1) || chordChanged)) voicePad(pulse);
   if (s.partOn[1] && ((changed & 2) || (chordChanged && s.droneTrigger < 4))) restartDrone(pulse);
   s.dirty = 1;
@@ -752,6 +894,39 @@ function randomValue() {
   s.random = r;
   return r;
 }
+
+/* ---------- motifs ---------- */
+function effPatternLength(index) {
+  const m = s.motifSettings[index];
+  if (m.patternLength) return m.patternLength;
+  return m.patt.autoLen ? m.patt.autoLen : SHAPE[resolvedType()].length * 2;
+}
+/* beats in the rhythm that sound a new note: rests and ties do not take one from the pattern */
+function noteBeats(index) {
+  const m = s.motifSettings[index];
+  let n = 0;
+  for (let i = 0; i < m.rhythmLength; i++) if (m.rhy[i] > 0) n++;
+  return n;
+}
+function patternNote(index, value) {
+  const m = s.motifSettings[index], k = value - 1;
+  if (m.patt.type === PT_CHORD) {
+    const chord = buildChord(m.octave), size = chord.length;
+    return chord[k % size] + 12 * Math.floor(k / size);
+  }
+  if (m.patt.type === PT_SCALE) return noteForStep(k, m.octave);
+  return 12 * (m.octave + 1) + KEY_SEMI[s.key] + k;
+}
+function loadPattern(index) {
+  const m = s.motifSettings[index], p = PATTERNS[m.pattern];
+  m.patt = { type: p.type, autoLen: p.autoLen, notes: p.notes.slice() };
+  s.motifPlayback[index].patternStep = 0;
+}
+function loadRhythm(index) {
+  const m = s.motifSettings[index];
+  m.rhy = RHYTHMS[m.rhythm].steps.slice();
+  s.motifPlayback[index].rhythmStep = 0;
+}
 function motifPatternIndex(variation, step, length) {
   const i = step % length;
   switch (variation) {
@@ -770,46 +945,80 @@ function motifPatternIndex(variation, step, length) {
     default: return i;
   }
 }
-function motifVelocity(accent, rhythmVelocity, step) {
-  switch (accent) {
-    case 1: return rhythmVelocity;
-    case 2: return rhythmVelocity + (randomValue() % 17) - 8;
-    case 3: return step % 4 === 0 ? 118 : 82;
-    case 4: return step % 2 === 0 ? 110 : 75;
-    default: return VEL_MOTIF;
-  }
+function motifVelocity(index, rhythmVelocity) {
+  const accent = s.motifSettings[index].accent;
+  if (accent === 0) return VEL_MOTIF;
+  if (accent === 1) return rhythmVelocity;
+  if (accent === 2) return rhythmVelocity + (randomValue() % 17) - 8;
+  return ACCENT_NAMES[accent].charAt(Math.floor(s.barPulse / 24) % 8) === "o" ? VEL_HIGH : VEL_LOW;
 }
 function tickMotif(index) {
   if (!s.partOn[index + 2]) return;
-  const voice = s.motifPlayback[index], settings = s.motifSettings[index];
+  const voice = s.motifPlayback[index], m = s.motifSettings[index];
   if (voice.note >= 0 && due(s.pulse, voice.noteEnd)) releaseMotif(index);
   if (!due(s.pulse, voice.nextStep)) return;
 
-  const interval = DIVISION_PULSES[settings.division];
+  const interval = DIVISION_PULSES[m.division];
   const skipped = Math.floor((s.pulse - voice.nextStep) / interval);
-  voice.nextStep += (skipped + 1) * interval;
-  const rhythm = RHYTHMS[settings.rhythm].steps;
-  const step = (voice.rhythmStep + skipped) % settings.rhythmLength;
-  voice.rhythmStep = (step + 1) % settings.rhythmLength;
-  const velocity = rhythm[step % rhythm.length];
+  const stepStart = voice.nextStep + skipped * interval;
+  voice.nextStep = stepStart + interval;
+  const step = (voice.rhythmStep + skipped) % m.rhythmLength;
+  voice.rhythmStep = (step + 1) % m.rhythmLength;
+  voice.beat = step;
+  s.dirty = 1;
+  const value = m.rhy[step];
+  if (value === TIE) return;                                        /* the held note carries on */
   releaseMotif(index);
-  if (!velocity || s.voices[index + 2] === 0) return;
+  if (value === REST || s.voices[index + 2] === 0) return;
 
-  const chord = buildChord(settings.octave), chordSize = chord.length;
-  const pattern = PATTERNS[settings.pattern];
-  const presetLength = pattern.length ? pattern.length : chordSize * 2;
-  const length = settings.patternLength ? settings.patternLength : presetLength;
-  const position = motifPatternIndex(settings.variation, voice.patternStep++, length);
-  const degree = pattern.length ? pattern.notes[position % presetLength] : position;
-  const note = inMidiRange(pattern.scale ? noteForStep(s.degree + degree, settings.octave)
-                                         : chord[degree % chordSize] + 12 * Math.floor(degree / chordSize));
-  synthNote(true, note, motifVelocity(settings.accent, velocity, step), 3 + index);
+  const length = effPatternLength(index);
+  const position = motifPatternIndex(m.variation, voice.patternStep++, length);
+  voice.pos = position;
+  const note = inMidiRange(patternNote(index, m.patt.notes[position % 16]));
+  synthNote(true, note, motifVelocity(index, value), 3 + index);
   voice.note = note;
-  voice.noteEnd = voice.nextStep - interval + Math.floor((interval * settings.gate + 99) / 100);
+  let ties = 0;                                                     /* hold through the ties that follow */
+  while (ties < m.rhythmLength - 1 && m.rhy[(step + 1 + ties) % m.rhythmLength] === TIE) ties++;
+  voice.noteEnd = stepStart + ties * interval + Math.floor((interval * m.gate + 99) / 100);
   if (due(s.pulse, voice.noteEnd)) voice.noteEnd = s.pulse + 1;
+}
+
+/* ---------- chord sequencer ---------- */
+/* the song as a flat list of the steps it will play, in order */
+function seqPlaylist() {
+  const q = s.seq.cur, list = [];
+  q.song.forEach((slot, slotIndex) => {
+    for (let r = 0; r < slot.rep; r++)
+      q.sections[slot.sec].forEach((st, i) => { if (st.dur > 0) list.push({ slot: slotIndex, sec: slot.sec, step: i }); });
+  });
+  return list;
+}
+function seqAdvance(pulse) {
+  const q = s.seq, list = seqPlaylist();
+  if (!list.length) { q.running = false; q.playing = null; s.dirty = 1; return; }
+  q.idx = (q.idx + 1) % list.length;
+  const item = list[q.idx], st = q.cur.sections[item.sec][item.step];
+  q.playing = item;
+  q.next = pulse + st.dur * (PPB / 2);
+  s.key = st.key; s.mode = st.mode; s.degree = st.degree; s.type = st.type;
+  s.queuedChord = 0;
+  if (s.partOn[0]) voicePad(pulse);
+  if (s.partOn[1]) restartDrone(pulse);
+  s.dirty = 1;
+}
+function seqTick() {
+  const q = s.seq;
+  if (q.running && !playingParts() && !s.pendingPartToggles) { q.running = false; q.playing = null; s.dirty = 1; }
+  if (!q.running) {
+    /* an armed sequence starts with the parts, on the downbeat */
+    if (q.armed && playingParts() && s.barPulse % PPBAR === 0) { q.running = true; q.idx = -1; seqAdvance(s.pulse); }
+    return;
+  }
+  for (let guard = 0; q.running && due(s.pulse, q.next) && guard < 8; guard++) seqAdvance(q.next);
 }
 function musicTick() {
   updateLaunch();
+  seqTick();
   playPadNotes();
   if (s.partOn[1] && s.droneTrigger % 4 !== 0 && due(s.pulse, s.droneNext)) {
     const interval = droneInterval();
@@ -889,6 +1098,8 @@ function pump() {
     }
   }
   if (s.toast && now >= s.toastUntil) { s.toast = ""; s.dirty = 1; }
+  const lamp = beatLamp();
+  if (lamp !== lastLamp) { lastLamp = lamp; s.dirty = 1; }
   if (s.dirty) render();
 }
 
@@ -896,6 +1107,7 @@ function pump() {
 function toggleAll() {
   updateLaunch();
   const playing = playingParts();
+  s.resync = true;                                          /* ALL restarts both motifs together */
   if (s.trackerClock) {
     if (!hasQueuedLaunch()) setLaunchDeadline();
     const requested = playing ^ s.pendingPartToggles;
@@ -916,7 +1128,7 @@ function toggleAll() {
   } else {
     if (!hasQueuedLaunch()) setLaunchDeadline();
     s.pendingPartToggles = s.pendingPartToggles === playing ? 0 : playing;
-    if (!hasQueuedLaunch()) toast("Queued stop cancelled");
+    if (!hasQueuedLaunch()) { s.resync = false; toast("Queued stop cancelled"); }
     s.dirty = 1;
   }
 }
@@ -934,6 +1146,47 @@ function toggleRecording() {
     toast("Recording stereo mix", true);
   }
 }
+/* four taps on Shift set the tempo, 40 to 300 BPM */
+const taps = [];
+function tapShift() {
+  const now = wallNow();
+  if (taps.length && now - taps[taps.length - 1] > 1.6) taps.length = 0;
+  taps.push(now);
+  if (taps.length > 4) taps.shift();
+  if (taps.length < 4) return;
+  const bpm = clampInt(Math.round(60 / ((taps[3] - taps[0]) / 3)), 40, 300);
+  if (s.trackerClock) toast("Following Tracker tempo");
+  else { s.tempo = bpm; toast("Tap tempo " + bpm); }
+}
+function editorLoad() {
+  const index = s.motif - 1, m = s.motifSettings[index];
+  if (s.editor === ED_PATTERN) { loadPattern(index); toast("Pattern " + (m.pattern + 1) + " loaded"); }
+  else if (s.editor === ED_RHYTHM) { loadRhythm(index); toast("Rhythm " + (m.rhythm + 1) + " loaded"); }
+  else {
+    const q = s.seq;
+    q.cur = cloneSequence(SEQUENCES[q.loadSel]);
+    q.idx = -1;
+    toast("Chord Seq " + q.loadSel + " loaded");
+  }
+}
+function editorSave() {
+  const index = s.motif - 1, m = s.motifSettings[index];
+  if (s.editor === ED_PATTERN) {
+    const slot = s.pe.save;
+    PATTERNS[slot] = { name: "User " + (slot + 1), type: m.patt.type, autoLen: effPatternLength(index), notes: m.patt.notes.slice() };
+    m.pattern = slot; m.patt.autoLen = PATTERNS[slot].autoLen;
+    toast("Saved to pattern " + (slot + 1));
+  } else if (s.editor === ED_RHYTHM) {
+    const slot = s.re.save;
+    RHYTHMS[slot] = { name: "User " + (slot + 1), steps: m.rhy.slice() };
+    m.rhythm = slot;
+    toast("Saved to rhythm " + (slot + 1));
+  } else {
+    SEQUENCES[s.seq.saveSel] = cloneSequence(s.seq.cur);
+    toast("Saved Chord Seq " + s.seq.saveSel);
+  }
+}
+const seqStep = () => s.seq.cur.sections[Math.floor(s.seq.step / 6)][s.seq.step % 6];
 function pressSelected() {
   const c = s.sel, kind = GEOM[c][3], sh = shiftOn();
   switch (kind) {
@@ -941,14 +1194,23 @@ function pressSelected() {
       const e = c - C_ENC1;
       s.activeEnc = e;
       if (s.menuMode === 1) toast("Menu screens: not in this build");
-      else if (s.menuMode === 2) toast("Editors: not in this build");
-      else s.encLabel[e] = (s.encLabel[e] + 1) % ENC_LABEL_COUNT[e];
+      else if (s.menuMode === 2) {
+        if (sh && e === 0) editorLoad();
+        else if (sh && e === 4) editorSave();
+        else if (e === ED_CHORDSEQ || e === ED_PATTERN || e === ED_RHYTHM) s.editor = e;
+        else toast(e === 3 ? "MIDI Controller: not in this build" : e === 6 ? "Perlin: not in this build" : "No editor on this dial");
+      } else s.encLabel[e] = (s.encLabel[e] + 1) % ENC_LABEL_COUNT[e];
       break;
     }
     case K_CHORD: {
-      const d = c - C_CHORD1;
-      if (sh) { s.pendingType = d; toast("Chord type set for next chord"); }
-      else selectChord(d);
+      const d = c - C_CHORD1, inSeq = s.menuMode === 2 && s.editor === ED_CHORDSEQ;
+      if (sh) {
+        if (inSeq) { seqStep().type = d; s.seq.step = (s.seq.step + 1) % 18; }
+        else { s.pendingType = d; toast("Chord type set for next chord"); }
+      } else {
+        if (inSeq) seqStep().degree = d;
+        selectChord(d);
+      }
       break;
     }
     case K_PART: {
@@ -956,7 +1218,7 @@ function pressSelected() {
       if (sh) s.modRing[p] = s.modRing[p] ? 0 : 1; else togglePart(p);
       break;
     }
-    case K_SHIFT: s.shiftLatched = !s.shiftLatched; break;
+    case K_SHIFT: s.shiftLatched = !s.shiftLatched; tapShift(); break;
     case K_RECORD: toggleRecording(); break;
     case K_BTN:
       if (c === C_ALL) { if (sh) toggleAllMods(); else toggleAll(); }
@@ -988,14 +1250,96 @@ function cycle(obj, key, direction, count) {
   obj[key] = next;
   return changed;
 }
+/* motif settings shared by the main panel and the editors */
+function turnVariation(index, dir) {
+  if (cycle(s.motifSettings[index], "variation", dir, VARIATION_NAMES.length)) s.motifPlayback[index].patternStep = 0;
+}
+function turnDivision(index, dir) {
+  const m = s.motifSettings[index];
+  if (cycle(m, "division", dir, DIVISION_NAMES.length)) s.motifPlayback[index].nextStep = s.pulse + DIVISION_PULSES[m.division];
+}
+function turnPatternLength(index, dir) {
+  const m = s.motifSettings[index];
+  if (m.patternLength === 0) m.patternLength = effPatternLength(index);
+  if (adjust(m, "patternLength", dir, 0, 16)) s.motifPlayback[index].patternStep = 0;
+}
+function turnRhythmLength(index, n) {
+  const m = s.motifSettings[index];
+  if (adjust(m, "rhythmLength", n, 4, 32)) s.motifPlayback[index].rhythmStep %= m.rhythmLength;
+}
+function turnPattern(index, dir) { if (adjust(s.motifSettings[index], "pattern", dir, 0, PATTERNS.length - 1)) loadPattern(index); }
+function turnRhythm(index, dir) { if (adjust(s.motifSettings[index], "rhythm", dir, 0, RHYTHMS.length - 1)) loadRhythm(index); }
+/* a rhythm beat as a position on the Value dial: Rest, Tie, then 1 to 127 */
+const beatOrd = v => (v === REST ? 0 : v === TIE ? 1 : v + 1);
+const ordBeat = o => (o === 0 ? REST : o === 1 ? TIE : o - 1);
+const beatText = v => (v === REST ? "Rst" : v === TIE ? "Tie" : String(v));
+
+function editorTurn(e, n) {
+  const dir = n > 0 ? 1 : -1, index = s.motif - 1, m = s.motifSettings[index];
+  if (s.editor === ED_PATTERN) {
+    switch (e) {
+      case 0: turnPattern(index, dir); break;
+      case 1: turnVariation(index, dir); break;
+      case 2: turnRhythm(index, dir); break;
+      case 3: adjust(s.pe, "step", dir, 0, effPatternLength(index)); break;
+      case 4: adjust(s.pe, "save", dir, 20, 39); break;
+      case 5: turnDivision(index, dir); break;
+      case 6: turnPatternLength(index, dir); break;
+      case 7:
+        if (s.pe.step === 0) {
+          if (adjust(m.patt, "type", dir, 0, 2)) m.patt.notes = m.patt.notes.map(v => Math.min(v, PT_MAX[m.patt.type]));
+        } else adjust(m.patt.notes, s.pe.step - 1, n, 1, PT_MAX[m.patt.type]);
+        break;
+    }
+    s.pe.step = Math.min(s.pe.step, effPatternLength(index));
+  } else if (s.editor === ED_RHYTHM) {
+    switch (e) {
+      case 0: turnRhythm(index, dir); break;
+      case 1: turnVariation(index, dir); break;
+      case 2: turnPattern(index, dir); break;
+      case 3: adjust(s.re, "beat", dir, 1, m.rhythmLength); break;
+      case 4: adjust(s.re, "save", dir, 20, 39); break;
+      case 5: turnDivision(index, dir); break;
+      case 6: turnRhythmLength(index, n); break;
+      case 7: m.rhy[s.re.beat - 1] = ordBeat(clampInt(beatOrd(m.rhy[s.re.beat - 1]) + n, 0, 128)); break;
+    }
+    s.re.beat = Math.min(s.re.beat, m.rhythmLength);
+  } else {
+    const q = s.seq, st = seqStep();
+    switch (e) {
+      case 0: adjust(q, "loadSel", dir, 0, 5); break;
+      case 1: adjust(q, "attr", dir, 0, 4); break;
+      case 2: adjust(q, "step", dir, 0, 17); break;
+      case 3: adjust(q, "field", dir, 0, 15); break;
+      case 4: adjust(q, "saveSel", dir, 1, 5); break;
+      case 5:
+        if (q.attr === 0) adjust(st, "dur", n, 0, 63);
+        else if (q.attr === 1) cycle(st, "key", dir, 12);
+        else if (q.attr === 2) cycle(st, "mode", dir, MODES.length);
+        else if (q.attr === 3) adjust(st, "degree", dir, 0, 6);
+        else adjust(st, "type", dir, 0, 6);
+        break;
+      case 6:
+        if (dir > 0) { q.armed = true; q.running = false; q.playing = null; toast(seqPlaylist().length ? "Chord Seq armed" : "Armed, but the song is empty"); }
+        else { q.armed = false; toast(q.running ? "Disarmed: it plays on until the parts stop" : "Chord Seq disarmed"); }
+        break;
+      case 7: {
+        const slot = q.cur.song[q.field >> 1];
+        if (q.field & 1) adjust(slot, "rep", dir, 0, 8); else cycle(slot, "sec", dir, 3);
+        break;
+      }
+    }
+  }
+}
 function turn(n) {
   if (s.physShift) { changeVolume(n); return; }             /* physical Shift + turn is master volume */
   if (GEOM[s.sel][3] !== K_ENC) { toast("Select an encoder to turn it"); return; }
-  if (s.menuMode !== 0) { toast("Leave Menu / Editor mode"); return; }
+  if (s.menuMode === 1) { toast("Leave Menu mode"); return; }
   updateLaunch();
   const e = s.sel - C_ENC1, label = s.encLabel[e], dir = n > 0 ? 1 : -1;
-  const index = s.motif - 1, motif = s.motifSettings[index], play = s.motifPlayback[index];
+  const index = s.motif - 1, motif = s.motifSettings[index];
   s.activeEnc = e;
+  if (s.menuMode === 2) { editorTurn(e, n); s.dirty = 1; return; }
   switch (e) {
     case 0:
       if (label === 0 ? adjust(s, "padOct", dir, 1, 6) : cycle(s, "padStrum", dir, STRUM_NAMES.length)) voicePad();
@@ -1030,27 +1374,19 @@ function turn(n) {
       }
       break;
     case 4:
-      if (label === 0) adjust(motif, "octave", dir, 2, 6);
-      else {
-        if (motif.patternLength === 0) {
-          const pattern = PATTERNS[motif.pattern];
-          motif.patternLength = pattern.length ? pattern.length : 2 * SHAPE[resolvedType()].length;
-        }
-        if (adjust(motif, "patternLength", dir, 0, 16)) play.patternStep = 0;
-      }
+      if (label === 0) adjust(motif, "octave", dir, 2, 6); else turnPatternLength(index, dir);
       break;
     case 5:
-      if (label === 0 ? cycle(motif, "variation", dir, VARIATION_NAMES.length)
-                      : adjust(motif, "pattern", dir, 0, PATTERNS.length - 1)) play.patternStep = 0;
+      if (label === 0) turnVariation(index, dir); else turnPattern(index, dir);
       break;
     case 6:
-      if (label === 0) { if (cycle(motif, "division", dir, DIVISION_NAMES.length)) play.nextStep = s.pulse + DIVISION_PULSES[motif.division]; }
-      else if (label === 1) { if (adjust(motif, "rhythmLength", n, 4, 32)) play.rhythmStep %= motif.rhythmLength; }
+      if (label === 0) turnDivision(index, dir);
+      else if (label === 1) turnRhythmLength(index, n);
       else adjust(motif, "gate", n, 5, 100);
       break;
     case 7:
       if (label === 0) cycle(motif, "accent", dir, ACCENT_NAMES.length);
-      else if (label === 1) { if (adjust(motif, "rhythm", dir, 0, RHYTHMS.length - 1)) play.rhythmStep = 0; }
+      else if (label === 1) turnRhythm(index, dir);
       else if (adjust(s, "motifOffset", dir, 0, 3)) { resetMotif(0); resetMotif(1); }
       break;
   }
@@ -1098,15 +1434,16 @@ function selectControl(c) {
 function move(dir) { selectControl(neighbour(s.sel, dir)); }
 
 /* ---------- view (the firmware's rebuildView) ---------- */
-function chordLabels() {
-  const iv = MODES[s.mode].iv, d = s.degree;
-  const name = NOTE_NAME[(KEY_SEMI[s.key] + iv[d % iv.length]) % 12];
+function chordLabelsFor(key, mode, d) {
+  const iv = MODES[mode].iv;
+  const name = NOTE_NAME[(KEY_SEMI[key] + iv[d % iv.length]) % 12];
   if (iv.length === 7) {
     const third = (iv[(d + 2) % 7] - iv[d] + 12) % 12, fifth = (iv[(d + 4) % 7] - iv[d] + 12) % 12;
     if (third === 3) return { roman: ROMAN_LOWER[d] + (fifth === 6 ? "o" : ""), name };
   }
   return { roman: ROMAN_UPPER[d], name };
 }
+const chordLabels = () => chordLabelsFor(s.key, s.mode, s.degree);
 /* dials sweep clockwise from 7:30 to 4:30, in degrees */
 const dialAngle = (value, minimum, maximum) => -135 + (value - minimum) * 270 / (maximum - minimum);
 const optionAngle = (index, count) => dialAngle(index, 0, count - 1);
@@ -1159,17 +1496,35 @@ function encoderValue(enc) {
     case 4:
       if (label === 0) return "M" + s.motif + " Oct " + motif.octave;
       return motif.patternLength ? motif.patternLength + " notes" : "Length Auto";
-    case 5: return label === 0 ? VARIATION_NAMES[motif.variation] : PATTERNS[motif.pattern].name;
+    case 5: return label === 0 ? VARIATION_NAMES[motif.variation] : (motif.pattern + 1) + " " + PATTERNS[motif.pattern].name;
     case 6:
       if (label === 0) return "Div " + DIVISION_NAMES[motif.division];
       if (label === 1) return motif.rhythmLength + " steps";
       return "Gate " + motif.gate + "%";
     case 7:
       if (label === 0) return ACCENT_NAMES[motif.accent];
-      if (label === 1) return RHYTHMS[motif.rhythm].name;
+      if (label === 1) return (motif.rhythm + 1) + " " + RHYTHMS[motif.rhythm].name;
       return s.motifOffset + "/16";
     default: return "";
   }
+}
+/* the value an encoder holds in the open editor, for the live readout */
+function editorValue(e) {
+  const index = s.motif - 1, m = s.motifSettings[index], q = s.seq;
+  if (s.editor === ED_CHORDSEQ) {
+    const st = seqStep(), slot = q.cur.song[q.field >> 1];
+    return ["Load " + q.loadSel, ["Duration", "Key", "Mode", "Degree", "Type"][q.attr],
+      "Step " + "ABC"[Math.floor(q.step / 6)] + (q.step % 6 + 1), "Slot " + ((q.field >> 1) + 1) + ((q.field & 1) ? " repeats" : " section"),
+      "Save " + q.saveSel, [(st.dur / 2).toFixed(1) + " beats", KEY_NAME[st.key], MODES[st.mode].name, ROMAN_UPPER[st.degree], TYPE_NAME[st.type]][q.attr],
+      q.armed ? "ARMED" : "Not armed", (q.field & 1) ? "x" + slot.rep : "Section " + "ABC"[slot.sec]][e];
+  }
+  const pattern = (m.pattern + 1) + " " + PATTERNS[m.pattern].name, rhythm = (m.rhythm + 1) + " " + RHYTHMS[m.rhythm].name;
+  const len = m.patternLength ? String(m.patternLength) : "Auto (" + effPatternLength(index) + ")";
+  if (s.editor === ED_PATTERN)
+    return [pattern, VARIATION_NAMES[m.variation], rhythm, s.pe.step ? "Step " + s.pe.step : "Note type", "Slot " + (s.pe.save + 1),
+      DIVISION_NAMES[m.division], "Length " + len, s.pe.step ? "Value " + m.patt.notes[s.pe.step - 1] : PT_NAMES[m.patt.type]][e];
+  return [rhythm, VARIATION_NAMES[m.variation], pattern, "Beat " + s.re.beat, "Slot " + (s.re.save + 1),
+    DIVISION_NAMES[m.division], m.rhythmLength + " beats", "Value " + beatText(m.rhy[s.re.beat - 1])][e];
 }
 function buildView() {
   const cl = chordLabels(), kind = GEOM[s.sel][3], sh = shiftOn();
@@ -1187,7 +1542,7 @@ function buildView() {
   }
   const want = s.menuMode === 2 ? IM_EDITOR : s.menuMode === 1 ? IM_MENU : sh ? IM_SHIFT : IM_NORMAL;
   const hasWant = inf.rows.some(r => r[0] === want), hasView = inf.rows.some(r => r[0] === IM_VIEW);
-  const active = hasView ? IM_VIEW : hasWant ? want : IM_NORMAL;
+  let active = hasView ? IM_VIEW : hasWant ? want : IM_NORMAL;
 
   let now = "";
   if (kind === K_PART) now = "Now: " + (s.partOn[s.sel - C_PAD] ? "PLAYING" : "paused");
@@ -1195,13 +1550,23 @@ function buildView() {
   else if (kind === K_CHORD || kind === K_SCREEN) now = "Now: " + cl.roman + " " + cl.name + " " + TYPE_NAME[resolvedType()];
   else if (s.sel === C_MOTIFSEL) now = "Now: Motif " + s.motif;
 
+  /* in an editor each dial has its own job */
+  if (kind === K_ENC && s.menuMode === 2) {
+    const e = s.sel - C_ENC1, help = ED_ENC[s.editor][e];
+    const press = e === 0 ? "Shift + press loads. " : e === 4 ? "Shift + press saves. " : "";
+    inf = { name: ED_TITLE[s.editor], rows: [["DIAL " + (e + 1) + " - " + help[0], help[1], true], ["PRESS", press + ED_PRESS[e]]], desc: ED_DESC[s.editor] };
+    active = -1;
+    now = editorValue(e);
+  }
+
   return {
     shift: sh, toast: toastText, info: inf, active, now,
     keyMode: KEY_NAME[s.key] + " " + MODES[s.mode].name,
-    detailText: encoderValue(s.activeEnc),
+    detailText: s.menuMode === 2 ? ED_TITLE[s.editor].replace("Sequencer", "Seq") : encoderValue(s.activeEnc),
     chordText: cl.roman + " " + cl.name,
     typeText: s.pendingType >= 0 ? TYPE_NAME[s.pendingType] : TYPE_NAME[resolvedType()],
-    bpmText: s.trackerClock ? s.trackerTempo + " BPM TRK" : s.tempo + " BPM"
+    bpmText: s.trackerClock ? s.trackerTempo + " BPM TRK" : s.tempo + " BPM",
+    lamp: beatLamp()
   };
 }
 
@@ -1209,34 +1574,264 @@ function buildView() {
 const COL = { body: "#15191f", bodyEdge: "#2f3747", ringEdge: "#3b4456", knob: "#111419", knobEdge: "#3b4458",
   notch: "#aeb7c9", text: "#d5dcea", dim: "#8d98ad", faint: "#566074", hi: "#ffd23f", on: "#3ddc84",
   blue: "#2f6bff", blueLight: "#6fa0ff", red: "#ff4d4d", cream: "#e9e2cf", black: "#000", infoBg: "#151a22" };
-const FONT_SMALL = 11, FONT_NORMAL = 13, FONT_BOLD = 16;
+const FONT_TINY = 9, FONT_SMALL = 11, FONT_NORMAL = 13, FONT_BOLD = 16;
 const esc = t => String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 const disc = (x, y, r, c) => '<circle cx="' + x + '" cy="' + y + '" r="' + r + '" fill="' + c + '"/>';
 const fillRect = (x0, y0, x1, y1, c) => '<rect x="' + x0 + '" y="' + y0 + '" width="' + (x1 - x0) + '" height="' + (y1 - y0) + '" fill="' + c + '"/>';
 const frameRect = (x0, y0, x1, y1, c) => '<rect x="' + (x0 + 0.5) + '" y="' + (y0 + 0.5) + '" width="' + (x1 - x0) + '" height="' + (y1 - y0) + '" fill="none" stroke="' + c + '"/>';
-/* text is centred vertically on y; anchor is start, middle or end */
-function drawText(x, y, size, anchor, color, str, bold) {
+const line = (x0, y0, x1, y1, c, w) => '<line x1="' + x0.toFixed(1) + '" y1="' + y0.toFixed(1) + '" x2="' + x1.toFixed(1) + '" y2="' + y1.toFixed(1) + '" stroke="' + c + '" stroke-width="' + (w || 1) + '" stroke-linecap="round"/>';
+/* text is centred vertically on y; anchor is start, middle or end; fit squeezes long text into a width */
+function drawText(x, y, size, anchor, color, str, bold, fit) {
+  let extra = bold ? ' font-weight="700"' : "";
+  if (fit && String(str).length * size * 0.61 > fit) extra += ' textLength="' + fit + '" lengthAdjust="spacingAndGlyphs"';
   return '<text x="' + x + '" y="' + y + '" font-size="' + size + '" text-anchor="' + anchor + '" dominant-baseline="central" fill="' + color + '"' +
-    (bold ? ' font-weight="700"' : "") + ">" + esc(str) + "</text>";
+    extra + ">" + esc(str) + "</text>";
 }
+
+/* ----- the sub screen: a larger view of what the active dial controls, at the top of the right column ----- */
+const SUB_X0 = 618, SUB_X1 = 790, SUB_Y0 = 10, SUB_H = 112, ED_H = 222;
+const hiIf = (cond, other) => (cond ? COL.hi : other || COL.text);
+const editing = (enc, label) => s.menuMode === 0 && s.activeEnc === enc && s.encLabel[enc] === label;
+function drawPadSub(o) {
+  const x0 = SUB_X0, x1 = SUB_X1, y0 = SUB_Y0;
+  const notes = s.partOn[0] && s.padNotes.length ? s.padNotes : padVoicing();
+  o.push(drawText(x0 + 6, y0 + 10, FONT_SMALL, "start", COL.text, "PAD", true), drawText(x1 - 6, y0 + 10, FONT_TINY, "end", COL.dim, "SYNTH 1"));
+  o.push(line(x0 + 8, y0 + 40.5, x1 - 8, y0 + 40.5, COL.faint));
+  notes.forEach((n, i) => {                                         /* one bar per note, placed by pitch */
+    const bx = x0 + 8 + Math.round((clampInt(n, 24, 108) - 24) * 154 / 84);
+    const sounding = s.partOn[0] && i < s.padPlayed;
+    o.push(fillRect(bx, y0 + 22, bx + 3, y0 + 40, sounding ? COL.on : COL.text));
+  });
+  const posCol = hiIf(editing(0, 0));
+  o.push(drawText(x0 + 8, y0 + 52, FONT_SMALL, "start", posCol, midiName(notes[0])));
+  o.push(drawText((x0 + x1) / 2, y0 + 52, FONT_SMALL, "middle", posCol, midiName(notes[notes.length >> 1])));
+  o.push(drawText(x1 - 8, y0 + 52, FONT_SMALL, "end", posCol, midiName(notes[notes.length - 1])));
+  o.push(drawText((x0 + x1) / 2, y0 + 68, FONT_SMALL, "middle", hiIf(editing(1, 0)), notes.length + (notes.length === 1 ? " Note" : " Notes") + (s.padRange ? "" : " (Auto)")));
+  o.push(drawText(x0 + 8, y0 + 84, FONT_SMALL, "start", hiIf(editing(1, 1)), "SPD: " + SPREAD_NAMES[s.padSpread]));
+  o.push(drawText(x0 + 8, y0 + 100, FONT_SMALL, "start", hiIf(editing(0, 1)), "SRM: " + STRUM_NAMES[s.padStrum]));
+}
+function drawDroneSub(o) {
+  const x0 = SUB_X0, x1 = SUB_X1, y0 = SUB_Y0;
+  o.push(drawText(x0 + 6, y0 + 10, FONT_SMALL, "start", COL.text, "DRONE", true), drawText(x1 - 6, y0 + 10, FONT_TINY, "end", COL.dim, "SYNTH 2"));
+  for (let i = 0; i < 4; i++) {                                     /* octave position */
+    const bx = x0 + 8 + i * 40, onBox = s.droneOct === i + 1;
+    o.push(fillRect(bx, y0 + 20, bx + 34, y0 + 32, onBox ? (editing(2, 0) ? COL.hi : COL.text) : COL.bodyEdge));
+    o.push(drawText(bx + 17, y0 + 26, FONT_TINY, "middle", onBox ? COL.black : COL.dim, "OCT " + (i + 1)));
+  }
+  const has = [true, s.droneNotesMode >= 2, (s.droneNotesMode & 1) === 1];
+  ["ROOT", "5TH", "OCT"].forEach((name, i) => {                     /* which notes sound */
+    const bx = x0 + 8 + i * 53;
+    if (has[i]) o.push(fillRect(bx, y0 + 38, bx + 48, y0 + 50, editing(2, 1) ? COL.hi : COL.text));
+    else o.push(frameRect(bx, y0 + 38, bx + 48, y0 + 50, COL.faint));
+    o.push(drawText(bx + 24, y0 + 44, FONT_TINY, "middle", has[i] ? COL.black : COL.faint, name));
+  });
+  const trigCol = hiIf(editing(2, 2));
+  if (s.droneTrigger >= 4) o.push('<path d="M' + (x0 + 12) + " " + (y0 + 58) + "l12 7l-12 7z" + '" fill="' + trigCol + '"/>');   /* key root */
+  else for (let i = 0; i < 3; i++) o.push(disc(x0 + 13 + i * 9, y0 + 65, 3, trigCol));                                          /* chord root */
+  const cadence = s.droneTrigger % 4, filled = cadence === 1 ? [1, 1, 1, 1] : cadence === 2 ? [1, 0, 1, 0] : cadence === 3 ? [1, 0, 0, 0] : [0, 0, 0, 0];
+  for (let i = 0; i < 4; i++) {                                     /* the beats it retriggers on */
+    const bx = x0 + 50 + i * 16;
+    if (filled[i]) o.push(fillRect(bx, y0 + 59, bx + 12, y0 + 71, trigCol)); else o.push(frameRect(bx, y0 + 59, bx + 12, y0 + 71, trigCol));
+  }
+  o.push(drawText(x1 - 8, y0 + 65, FONT_TINY, "end", COL.dim, TRIGGER_NAMES[s.droneTrigger]));
+  o.push(drawText(x0 + 8, y0 + 84, FONT_TINY, "start", COL.dim, s.droneTrigger >= 4 ? "HOLDS THE KEY ROOT" : "FOLLOWS THE CHORD"));
+  o.push(drawText(x0 + 8, y0 + 100, FONT_SMALL, "start", s.partOn[1] ? COL.on : COL.text, droneVoicing().map(midiName).join("  ")));
+}
+function drawTkmSub(o) {
+  const x0 = SUB_X0, x1 = SUB_X1, y0 = SUB_Y0;
+  o.push(drawText(x0 + 6, y0 + 10, FONT_SMALL, "start", COL.text, "T-K-M", true));
+  o.push(drawText(x1 - 6, y0 + 10, FONT_SMALL, "end", hiIf(editing(3, 2)), MODES[s.mode].name));
+  o.push(drawText(x0 + 8, y0 + 27, FONT_BOLD, "start", hiIf(editing(3, 1)), KEY_NAME[s.key], true));
+  o.push(drawText(x1 - 8, y0 + 27, FONT_BOLD, "end", hiIf(editing(3, 0)), String(s.trackerClock ? s.trackerTempo : s.tempo), true));
+  /* one octave of keyboard, with a dot on every note of the key and mode */
+  const scale = MODES[s.mode].iv.map(v => (KEY_SEMI[s.key] + v) % 12), root = KEY_SEMI[s.key];
+  const chord = buildChord(3).map(n => n % 12);
+  const kx = x0 + 9, ky = y0 + 38, kw = 22, kh = 34;
+  const WHITE = [0, 2, 4, 5, 7, 9, 11], BLACK = [[1, 0], [3, 1], [6, 3], [8, 4], [10, 5]];
+  const dotCol = pc => (pc === root ? COL.hi : chord.includes(pc) ? COL.on : null);
+  WHITE.forEach((pc, i) => {
+    o.push(fillRect(kx + i * kw, ky, kx + i * kw + kw - 1, ky + kh, COL.cream));
+    if (scale.includes(pc)) o.push(disc(kx + i * kw + 10.5, ky + kh - 7, 4, COL.black), disc(kx + i * kw + 10.5, ky + kh - 7, 2.5, dotCol(pc) || COL.black));
+  });
+  BLACK.forEach(([pc, after]) => {
+    const bx = kx + (after + 1) * kw - 7;
+    o.push(fillRect(bx, ky, bx + 13, ky + 20, COL.black));
+    if (scale.includes(pc)) o.push(disc(bx + 6.5, ky + 13, 3.5, dotCol(pc) || COL.cream));
+  });
+  o.push(drawText((x0 + x1) / 2, y0 + 84, FONT_SMALL, "middle", COL.text, MODES[s.mode].iv.map(v => NOTE_NAME[(root + v) % 12]).join(" "), false, 160));
+  o.push(drawText(x0 + 8, y0 + 101, FONT_TINY, "start", hiIf(editing(3, 3), COL.dim), "QNT " + QUANTISE_NAMES[quantiseMode()]));
+  o.push(drawText(x1 - 8, y0 + 101, FONT_TINY, "end", hiIf(editing(3, 4), COL.dim), "CLK " + CLOCK_NAMES[s.internalClock ? 1 : 0]));
+}
+/* a row of sixteen bars for a pattern */
+function patternBars(o, index, bx, base, barW, gap, maxH, selStep) {
+  const m = s.motifSettings[index], len = effPatternLength(index), voice = s.motifPlayback[index];
+  const playing = s.partOn[index + 2] ? voice.pos : -1;
+  for (let i = 0; i < 16; i++) {
+    const h = 3 + Math.round((maxH - 3) * (m.patt.notes[i] - 1) / (PT_MAX[m.patt.type] - 1));
+    const col = i + 1 === selStep ? COL.hi : i >= len ? COL.faint : i === playing ? COL.on : COL.blueLight;
+    o.push(fillRect(bx + i * (barW + gap), base - h, bx + i * (barW + gap) + barW, base, col));
+  }
+}
+function drawMotifSub(o) {
+  const x0 = SUB_X0, x1 = SUB_X1, y0 = SUB_Y0, index = s.motif - 1, m = s.motifSettings[index], voice = s.motifPlayback[index];
+  const on = s.partOn[index + 2];
+  o.push(drawText(x0 + 6, y0 + 10, FONT_SMALL, "start", COL.hi, "MOTIF-" + s.motif, true), drawText(x1 - 6, y0 + 10, FONT_TINY, "end", COL.dim, "SYNTH " + (index + 3)));
+  /* pattern number, its notes as bars, then clock divide and offset */
+  o.push(drawText(x0 + 20, y0 + 31, FONT_SMALL, "end", hiIf(editing(5, 1)), String(m.pattern + 1)));
+  patternBars(o, index, x0 + 25, y0 + 42, 4, 1, 20, -1);
+  o.push(drawText(x1 - 6, y0 + 26, FONT_SMALL, "end", hiIf(editing(6, 0)), "÷" + DIVISION_NAMES[m.division].slice(2)));
+  o.push(drawText(x1 - 6, y0 + 38, FONT_TINY, "end", hiIf(editing(7, 2), COL.dim), "OFS " + s.motifOffset + "/16"));
+  /* rhythm number and its beats: bar height is velocity, red is a rest, green is a tie */
+  o.push(drawText(x0 + 20, y0 + 57, FONT_SMALL, "end", hiIf(editing(7, 1)), String(m.rhythm + 1)));
+  for (let i = 0; i < 32; i++) {
+    const bx = x0 + 25 + i * 4, v = m.rhy[i], dimmed = i >= m.rhythmLength, playing = on && i === voice.beat;
+    if (v === REST) o.push(fillRect(bx, y0 + 66, bx + 3, y0 + 68, dimmed ? COL.faint : COL.red));
+    else if (v === TIE) o.push(fillRect(bx - 1, y0 + 60, bx + 3, y0 + 62, dimmed ? COL.faint : COL.on));
+    else o.push(fillRect(bx, y0 + 68 - (2 + Math.round(16 * v / 127)), bx + 3, y0 + 68, dimmed ? COL.faint : playing ? COL.on : COL.text));
+  }
+  o.push(drawText(x0 + 8, y0 + 81, FONT_SMALL, "start", hiIf(editing(7, 0)), ACCENT_NAMES[m.accent]));
+  o.push(drawText(x1 - 6, y0 + 81, FONT_SMALL, "end", hiIf(editing(4, 1) || editing(6, 1)), effPatternLength(index) + ":" + noteBeats(index)));
+  o.push(drawText(x0 + 8, y0 + 100, FONT_TINY, "start", hiIf(editing(4, 0), COL.dim), "OCT " + m.octave));
+  o.push(drawText((x0 + x1) / 2, y0 + 100, FONT_TINY, "middle", hiIf(editing(5, 0), COL.dim), VARIATION_NAMES[m.variation].toUpperCase()));
+  o.push(drawText(x1 - 6, y0 + 100, FONT_TINY, "end", hiIf(editing(6, 2), COL.dim), "GATE " + m.gate + "%"));
+}
+
+/* ----- the editors: eight cells laid out like the eight dials, round a graph ----- */
+const ED_ROWS = [[16, 48], [50, 66], [168, 184], [186, 216]];
+function edCell(o, e, label, value, big) {
+  const x0 = e < 4 ? SUB_X0 + 2 : SUB_X0 + 87, x1 = e < 4 ? SUB_X0 + 85 : SUB_X1 - 2, row = ED_ROWS[e % 4];
+  const y0 = SUB_Y0 + row[0], y1 = SUB_Y0 + row[1], sel = s.sel === e;
+  o.push(frameRect(x0, y0, x1, y1, sel ? COL.hi : COL.bodyEdge));
+  if (big) {
+    o.push(drawText(x0 + 4, y0 + 8, FONT_TINY, "start", COL.dim, label));
+    o.push(drawText((x0 + x1) / 2, y0 + 21, FONT_BOLD, "middle", COL.hi, value, true, 76));
+  } else {
+    o.push(drawText(x0 + 4, (y0 + y1) / 2, FONT_TINY, "start", COL.dim, label));
+    o.push(drawText(x1 - 4, (y0 + y1) / 2, FONT_SMALL, "end", COL.hi, value, false, 52));
+  }
+}
+function edHeader(o, title, right) {
+  o.push(drawText(SUB_X0 + 5, SUB_Y0 + 8, FONT_SMALL, "start", COL.on, title, true, 120), drawText(SUB_X1 - 5, SUB_Y0 + 8, FONT_SMALL, "end", COL.text, right));
+}
+function drawPatternEditor(o) {
+  const y0 = SUB_Y0, index = s.motif - 1, m = s.motifSettings[index], len = effPatternLength(index);
+  edHeader(o, "PATTERN EDITOR", "Mot" + s.motif);
+  edCell(o, 0, "PATT LOAD", String(m.pattern + 1), true);
+  edCell(o, 4, "PATT SAVE", String(s.pe.save + 1), true);
+  edCell(o, 1, "VAR", VARIATION_NAMES[m.variation]);
+  edCell(o, 5, "DIV", DIVISION_NAMES[m.division]);
+  o.push(frameRect(SUB_X0 + 2, y0 + 68, SUB_X1 - 2, y0 + 166, COL.bodyEdge));
+  o.push(drawText(SUB_X0 + 7, y0 + 77, FONT_SMALL, "start", s.pe.step === 0 ? COL.hi : COL.text, PT_NAMES[m.patt.type]));
+  o.push(drawText(SUB_X1 - 7, y0 + 77, FONT_SMALL, "end", COL.text, len + ":" + noteBeats(index)));
+  patternBars(o, index, SUB_X0 + 8, y0 + 162, 7, 3, 74, s.pe.step);
+  edCell(o, 2, "RHY", String(m.rhythm + 1));
+  edCell(o, 6, "LEN", m.patternLength ? String(m.patternLength) : "Auto");
+  edCell(o, 3, "STEP", s.pe.step ? s.pe.step + "/" + len : "TYPE", true);
+  edCell(o, 7, "VALUE", s.pe.step ? String(m.patt.notes[s.pe.step - 1]) : PT_NAMES[m.patt.type].slice(0, 6), true);
+}
+function drawRhythmEditor(o) {
+  const y0 = SUB_Y0, index = s.motif - 1, m = s.motifSettings[index], voice = s.motifPlayback[index], len = m.rhythmLength;
+  edHeader(o, "RHYTHM EDITOR", "Mot" + s.motif);
+  edCell(o, 0, "RHY LOAD", String(m.rhythm + 1), true);
+  edCell(o, 4, "RHY SAVE", String(s.re.save + 1), true);
+  edCell(o, 1, "VAR", VARIATION_NAMES[m.variation]);
+  edCell(o, 5, "DIV", DIVISION_NAMES[m.division]);
+  o.push(frameRect(SUB_X0 + 2, y0 + 68, SUB_X1 - 2, y0 + 166, COL.bodyEdge));
+  o.push(drawText(SUB_X1 - 7, y0 + 77, FONT_SMALL, "end", COL.text, effPatternLength(index) + ":" + noteBeats(index)));
+  /* a circle of beats: each line points at the centre and its length is the velocity */
+  const cx = (SUB_X0 + SUB_X1) / 2, cy = y0 + 118, R = 42;
+  const at = i => { const a = (-90 + i * 360 / len) * Math.PI / 180; return [cx + R * Math.cos(a), cy + R * Math.sin(a), Math.cos(a), Math.sin(a)]; };
+  for (let i = 0; i < len; i++) {
+    const [px, py, ux, uy] = at(i), v = m.rhy[i], sel = i + 1 === s.re.beat, playing = s.partOn[index + 2] && i === voice.beat;
+    const col = sel ? COL.hi : v === REST ? COL.red : v === TIE ? COL.on : playing ? COL.text : COL.blueLight;
+    if (v > 0) { const l = 6 + 28 * v / 127; o.push(line(px, py, px - ux * l, py - uy * l, col, 2)); }
+    else if (v === TIE && i > 0) { const [qx, qy] = at(i - 1); o.push(line(px, py, qx, qy, col, 2)); }
+    o.push(disc(px.toFixed(1), py.toFixed(1), sel || playing ? 4 : 3, col));
+  }
+  edCell(o, 2, "PATT", String(m.pattern + 1));
+  edCell(o, 6, "LEN", String(len));
+  edCell(o, 3, "BEAT", s.re.beat + "/" + len, true);
+  edCell(o, 7, "VALUE", beatText(m.rhy[s.re.beat - 1]), true);
+}
+function drawChordSeq(o) {
+  const x0 = SUB_X0, x1 = SUB_X1, y0 = SUB_Y0, q = s.seq, st = seqStep(), cl = chordLabelsFor(st.key, st.mode, st.degree);
+  const frame = (ya, yb, e1, e2) => o.push(frameRect(x0 + 2, y0 + ya, x1 - 2, y0 + yb, s.sel === e1 || s.sel === e2 ? COL.hi : COL.bodyEdge));
+  edHeader(o, "CHORD SEQUENCER", "");
+  edCell(o, 0, "LOAD (SHIFT)", String(q.loadSel), true);
+  edCell(o, 4, "SAVE (SHIFT)", String(q.saveSel), true);
+  /* the chosen step's five attributes */
+  frame(50, 98, 1, 5);
+  const mid = (x0 + x1) / 2, a = q.attr;
+  o.push(drawText(mid, y0 + 59, FONT_SMALL, "middle", a === 0 ? COL.hi : COL.text, (st.dur / 2).toFixed(1) + " 1/4 Notes"));
+  o.push(drawText(mid - 4, y0 + 74, FONT_SMALL, "end", a === 1 ? COL.hi : COL.text, KEY_NAME[st.key] + " -"));
+  o.push(drawText(mid, y0 + 74, FONT_SMALL, "start", a === 2 ? COL.hi : COL.text, MODES[st.mode].name));
+  o.push(drawText(mid - 4, y0 + 89, FONT_SMALL, "end", a === 3 ? COL.hi : COL.text, cl.roman + " " + cl.name));
+  o.push(drawText(mid + 4, y0 + 89, FONT_SMALL, "start", a === 4 ? COL.hi : COL.text, TYPE_NAME[st.type]));
+  /* three sections of six steps */
+  frame(100, 158, 2, 6);
+  o.push(drawText(x0 + 62, y0 + 108, FONT_TINY, "middle", COL.dim, "SECTIONS"));
+  for (let sec = 0; sec < 3; sec++) {
+    const ry = y0 + 115 + sec * 14;
+    o.push(drawText(x0 + 10, ry + 5, FONT_SMALL, "middle", COL.text, "ABC"[sec]));
+    for (let i = 0; i < 6; i++) {
+      const bx = x0 + 20 + i * 17, step = q.cur.sections[sec][i];
+      const sel = q.step === sec * 6 + i, playing = q.running && q.playing && q.playing.sec === sec && q.playing.step === i;
+      if (playing) o.push(fillRect(bx, ry, bx + 11, ry + 10, COL.on));
+      else if (sel) o.push(fillRect(bx, ry, bx + 11, ry + 10, COL.hi));
+      o.push(frameRect(bx, ry, bx + 11, ry + 10, sel ? COL.hi : step.dur > 0 ? COL.text : COL.blue));
+    }
+  }
+  o.push(drawText(x1 - 7, y0 + 122, FONT_TINY, "end", q.armed ? COL.on : COL.faint, q.armed ? "ARMED" : "NOT"));
+  o.push(drawText(x1 - 7, y0 + 134, FONT_TINY, "end", q.armed ? COL.on : COL.faint, q.armed ? "" : "ARMED"));
+  o.push(drawText(x1 - 7, y0 + 148, FONT_TINY, "end", q.running ? COL.on : COL.faint, q.running ? "PLAYING" : ""));
+  /* the song: eight slots, each a section and a number of repeats */
+  frame(160, 216, 3, 7);
+  o.push(drawText(mid, y0 + 168, FONT_TINY, "middle", COL.dim, "SONG"));
+  for (let i = 0; i < 8; i++) {
+    const slot = q.cur.song[i], tx = x0 + 24 + (i % 4) * 41, ty = y0 + 183 + (i >> 2) * 17;
+    const playing = q.running && q.playing && q.playing.slot === i;
+    if (playing) o.push(line(tx - 12, ty + 8, tx + 12, ty + 8, COL.on, 2));
+    const secCol = q.field === i * 2 ? COL.hi : slot.rep ? COL.on : COL.faint, repCol = q.field === i * 2 + 1 ? COL.hi : slot.rep ? COL.text : COL.faint;
+    o.push(drawText(tx - 3, ty, FONT_NORMAL, "end", secCol, "ABC"[slot.sec], true));
+    o.push(drawText(tx - 2, ty, FONT_SMALL, "start", repCol, "x" + slot.rep));
+  }
+}
+function drawSubScreen(o) {
+  const h = s.menuMode === 2 ? ED_H : SUB_H;
+  o.push(fillRect(SUB_X0, SUB_Y0, SUB_X1, SUB_Y0 + h, COL.black), frameRect(SUB_X0, SUB_Y0, SUB_X1, SUB_Y0 + h, COL.bodyEdge));
+  if (s.menuMode === 2) {
+    if (s.editor === ED_PATTERN) drawPatternEditor(o); else if (s.editor === ED_RHYTHM) drawRhythmEditor(o); else drawChordSeq(o);
+  } else if (s.activeEnc <= 1) drawPadSub(o);
+  else if (s.activeEnc === 2) drawDroneSub(o);
+  else if (s.activeEnc === 3) drawTkmSub(o);
+  else drawMotifSub(o);
+}
+
 function drawPanel(v) {
   const o = [];
   o.push(fillRect(6, 6, 606, 396, COL.body), frameRect(6, 6, 606, 396, COL.bodyEdge));
+  o.push(fillRect(614, 6, 794, 396, COL.infoBg), frameRect(614, 6, 794, 396, COL.bodyEdge));
   o.push(drawText(308, 41, FONT_BOLD, "middle", COL.dim, "NDLR PANEL", true));
   const rcx = sx(403), rcy = sy(255);
   o.push(disc(rcx, rcy, sr(130) + 4, COL.ringEdge), disc(rcx, rcy, sr(130) - 3, COL.body));
 
   /* encoder labels, between each encoder and the chord ring */
   for (let i = 0; i < 8; i++) {
-    const g = GEOM[i], ex = sx(g[0]), ey = sy(g[1]), er = sr(g[2]), left = i < 4, n = ENC_LABEL_COUNT[i];
+    const g = GEOM[i], ex = sx(g[0]), ey = sy(g[1]), er = sr(g[2]), left = i < 4;
     const lx = left ? ex + er + 8 : ex - er - 8;
-    for (let j = 0; j < n; j++) {
-      const activeLabel = s.menuMode === 0 && s.activeEnc === i && s.encLabel[i] === j;
-      o.push(drawText(lx, ey - (n - 1) * 6 + j * 12, FONT_SMALL, left ? "start" : "end", activeLabel ? COL.hi : COL.dim, ENC_LABEL[i][j]));
+    if (s.menuMode === 2) {                                         /* in an editor each dial has one job */
+      o.push(drawText(lx, ey, FONT_SMALL, left ? "start" : "end", s.sel === i ? COL.hi : COL.text, ED_ENC[s.editor][i][0]));
+    } else {
+      const n = ENC_LABEL_COUNT[i];
+      for (let j = 0; j < n; j++) {
+        const activeLabel = s.menuMode === 0 && s.activeEnc === i && s.encLabel[i] === j;
+        o.push(drawText(lx, ey - (n - 1) * 6 + j * 12, FONT_SMALL, left ? "start" : "end", activeLabel ? COL.hi : COL.dim, ENC_LABEL[i][j]));
+      }
     }
     if (s.menuMode !== 0) {
       const outer = s.menuMode === 1 ? ENC_MENU_NAME[i] : ENC_EDITOR_NAME[i];
-      o.push(drawText(left ? ex - er - 10 : ex + er + 10, ey, FONT_SMALL, left ? "end" : "start", outer ? COL.hi : COL.faint, outer || "-"));
+      const open = s.menuMode === 2 && s.editor === i;
+      o.push(drawText(left ? ex - er - 10 : ex + er + 10, ey, FONT_SMALL, left ? "end" : "start", open ? COL.on : outer ? COL.hi : COL.faint, outer || "-"));
     }
   }
 
@@ -1254,10 +1849,9 @@ function drawPanel(v) {
     const g = GEOM[c], x = sx(g[0]), y = sy(g[1]), r = sr(g[2]);
     switch (g[3]) {
       case K_ENC: {
-        const a = encoderAngle(c - C_ENC1) * Math.PI / 180, dx = Math.sin(a), dy = -Math.cos(a);
+        const a = (s.menuMode === 2 ? 0 : encoderAngle(c - C_ENC1)) * Math.PI / 180, dx = Math.sin(a), dy = -Math.cos(a);
         o.push(disc(x, y, r + 1, COL.knobEdge), disc(x, y, r - 1, COL.knob));
-        o.push('<line x1="' + (x + dx * 3).toFixed(2) + '" y1="' + (y + dy * 3).toFixed(2) + '" x2="' + (x + dx * (r - 4)).toFixed(2) +
-          '" y2="' + (y + dy * (r - 4)).toFixed(2) + '" stroke="' + COL.notch + '" stroke-width="4" stroke-linecap="round"/>');
+        o.push(line(x + dx * 3, y + dy * 3, x + dx * (r - 4), y + dy * (r - 4), COL.notch, 4));
         break;
       }
       case K_CHORD: {
@@ -1302,15 +1896,16 @@ function drawPanel(v) {
       case K_SCREEN: {                                              /* the NDLR's own display, drawn small */
         const x0 = x - 51, y0 = y - 44, x1 = x + 51, y1 = y + 44;
         o.push(fillRect(x0, y0, x1, y1, COL.black), frameRect(x0, y0, x1, y1, COL.bodyEdge));
-        o.push(drawText(x, y0 + 9, FONT_SMALL, "middle", COL.text, v.keyMode));
+        o.push(drawText(x, y0 + 9, FONT_SMALL, "middle", COL.text, v.keyMode, false, 96));
         for (let i = 0; i < 8; i++) {                               /* which encoder the box describes */
           const mx = i < 4 ? x0 + 4 : x1 - 4, my = y0 + 24 + (i % 4) * 9;
           o.push(disc(mx, my, 3, COL.text));
           if (s.activeEnc !== i) o.push(disc(mx, my, 2, COL.black));
         }
         o.push(frameRect(x0 + 11, y0 + 18, x1 - 11, y0 + 57, COL.text));
-        o.push(drawText(x, y0 + 29, FONT_SMALL, "middle", COL.dim, v.detailText));
-        o.push(drawText(x, y0 + 46, FONT_SMALL, "middle", COL.text, v.bpmText));
+        o.push(drawText(x, y0 + 29, FONT_SMALL, "middle", COL.dim, v.detailText, false, 76));
+        /* the tempo blinks blue on the downbeat and red on the other beats */
+        o.push(drawText(x, y0 + 46, FONT_SMALL, "middle", v.lamp === 2 ? COL.blueLight : v.lamp === 1 ? COL.red : COL.text, v.bpmText, false, 76));
         o.push(drawText(x0 + 4, y0 + 69, FONT_NORMAL, "start", COL.text, v.chordText));
         o.push(drawText(x1 - 4, y0 + 69, FONT_SMALL, "end", s.pendingType >= 0 ? COL.blueLight : COL.text, v.typeText));
         for (let p = 0; p < 4; p++) {                               /* play indicators: pad, drone, motif 1, motif 2 */
@@ -1323,6 +1918,7 @@ function drawPanel(v) {
       default: break;
     }
   }
+  drawSubScreen(o);
   if (v.toast) {
     o.push(fillRect(156, 14, 456, 36, COL.black), frameRect(156, 14, 456, 36, COL.hi));
     o.push(drawText(306, 25, FONT_SMALL, "middle", COL.hi, v.toast));
@@ -1331,8 +1927,11 @@ function drawPanel(v) {
 }
 function drawInfo(v) {
   let h = '<div class="nm">' + esc(v.info.name) + "</div>";
-  for (const row of v.info.rows)
-    h += '<div class="hd">' + esc(MODE_HEADER[row[0]]) + '</div><div class="tx' + (row[0] === v.active ? " act" : "") + '">' + esc(row[1]) + "</div>";
+  for (const row of v.info.rows) {
+    const header = typeof row[0] === "string" ? row[0] : MODE_HEADER[row[0]];
+    const act = row[2] || row[0] === v.active;
+    h += '<div class="hd">' + esc(header) + '</div><div class="tx' + (act ? " act" : "") + '">' + esc(row[1]) + "</div>";
+  }
   if (v.now) h += '<div class="now">' + esc(v.now) + "</div>";
   return h;
 }
@@ -1345,6 +1944,9 @@ function render() {
   const v = buildView();
   els.svg.innerHTML = drawPanel(v);
   els.info.innerHTML = drawInfo(v);
+  const top = SUB_Y0 + (s.menuMode === 2 ? ED_H : SUB_H) + 4;        /* the text sits under the sub screen */
+  els.info.style.top = top + "px";
+  els.info.style.height = (396 - top) + "px";
   els.desc.textContent = v.info.desc || "";
   if (els.shiftBtn) els.shiftBtn.classList.toggle("on", s.physShift);
   if (els.trkBtn) {
@@ -1371,7 +1973,7 @@ function act(k) {
     case "m10": turn(-10); break;
     case "p10": turn(10); break;
     case "play": if (shiftOn()) toggleAllMods(); else toggleAll(); break;
-    case "shift": s.physShift = !s.physShift; break;
+    case "shift": s.physShift = !s.physShift; if (s.physShift) tapShift(); break;
     case "menu": toast("On the Mini, hold Menu to change screen"); break;
     default: return;
   }
@@ -1388,7 +1990,7 @@ function boot() {
   const KEYMAP = { ArrowLeft: "left", ArrowRight: "right", ArrowUp: "up", ArrowDown: "down", Enter: "mid", " ": "mid",
     "-": "m1", "=": "p1", "+": "p1", "[": "m10", "]": "p10", m: "menu", M: "menu", p: "play", P: "play" };
   dev.addEventListener("keydown", e => {
-    if (e.key === "Shift") { if (!s.physShift) { s.physShift = true; render(); } return; }
+    if (e.key === "Shift") { if (!s.physShift) { s.physShift = true; tapShift(); render(); } return; }
     const m = KEYMAP[e.key];
     if (!m) return;
     if (e.target.closest("button,select,input") && (e.key === "Enter" || e.key === " " || e.key.startsWith("Arrow"))) return;
@@ -1622,7 +2224,7 @@ const audio = (() => {
   };
 })();
 
-if (typeof window !== "undefined") window.__alpaca = { s, trk, act, pump, turn, setTracker, selectControl, pressSelected, buildView };
+if (typeof window !== "undefined") window.__alpaca = { s, trk, act, pump, turn, setTracker, selectControl, pressSelected, buildView, PATTERNS, RHYTHMS, SEQUENCES };
 if (typeof document !== "undefined") {
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot); else boot();
 }
