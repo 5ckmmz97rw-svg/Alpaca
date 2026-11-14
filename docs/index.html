@@ -216,7 +216,7 @@ footer a:hover{color:var(--accent)}
 <section id="try">
 <div class="wrap">
 <h2>Try the panel</h2>
-<p class="sub">This is the screen Alpaca draws on the Mini. Roll the mouse over any control to see what it does, click to press it, and use the buttons underneath as the Mini's dpad and keys. Switch Sound on to hear it: chords, drone and motifs play through your browser, and the encoders, tempo, key and mode change what you hear.</p>
+<p class="sub">This is the screen Alpaca draws on the Mini. Roll the mouse over any control to see what it does, click to press it, and use the buttons underneath as the Mini's dpad and keys. Switch Sound on to hear it: the Pad plays on Synth 1, the Drone on Synth 2 and both Motifs share Synth 3, as on the Tracker, and each synth has its own preset menu. and the encoders, tempo, key and mode change what you hear.</p>
 <p class="small-note">The panel is drawn for an 800 by 480 screen, so it reads best on a tablet or computer.</p>
 <div class="demo">
 <div class="device" id="device" tabindex="0" aria-label="Interactive Alpaca panel. Arrow keys move the highlight, Enter presses.">
@@ -249,7 +249,11 @@ footer a:hover{color:var(--accent)}
     <div class="grp"><small>SOUND</small>
       <button type="button" class="k" id="soundbtn" aria-pressed="false">Sound off</button>
       <label class="snd"><span>Vol</span><input type="range" id="soundvol" min="0" max="100" value="50" aria-label="Volume"></label>
-      <label class="snd"><span>Preset</span><select id="soundpreset" aria-label="Synth preset"></select></label>
+    </div>
+    <div class="grp"><small>SYNTHS</small>
+      <label class="snd"><span>1 Pad</span><select id="soundpreset1" aria-label="Synth 1 preset, plays the Pad"></select></label>
+      <label class="snd"><span>2 Drone</span><select id="soundpreset2" aria-label="Synth 2 preset, plays the Drone"></select></label>
+      <label class="snd"><span>3 Motifs</span><select id="soundpreset3" aria-label="Synth 3 preset, plays Motif 1 and Motif 2"></select></label>
     </div>
   </div>
 </div>
@@ -942,7 +946,9 @@ const CDIV = [4,2,1,0.5,4/3,2/3];                 // Clk Div in beats: 1/1 1/2 1
 const DRONE_REPEAT = [0,0.25,0.5,1,0,0.25,0.5,1];  // Trigger: Chord, Chord 1/4, 1/2, 1/1, Key, Key 1/4, 1/2, 1/1 (fraction of a bar)
 
 const audio = (() => {
-  let ctx=null, master=null, comp=null, filt=null, on=false, timer=null, vol=0.5, preset='Soft pad';
+  let ctx=null, master=null, comp=null, on=false, timer=null, vol=0.5;
+  /* three synths, as on the Tracker: Synth 1 = Pad, Synth 2 = Drone, Synth 3 = Motifs 1 and 2 (shared) */
+  const presets={1:'Soft pad',2:'Soft pad',3:'Glass'}, bus={};
   let nextBar=0, barNo=0, droneOsc=null, droneGain=null, droneKey='', droneNext=0;
   const clk={1:{next:0,k:0},2:{next:0,k:0}};
   const live=new Set();
@@ -975,12 +981,12 @@ const audio = (() => {
     return {base:root()+degNote(iv,d), notes:notes.sort((a,b)=>a-b), spread};
   }
 
-  function voice(freqs,t,dur,gain,P,type2){
+  function voice(freqs,t,dur,gain,P,type2,syn){
     const g=ctx.createGain(); g.gain.setValueAtTime(0.0001,t);
     g.gain.exponentialRampToValueAtTime(gain,t+P.atk);
     g.gain.setValueAtTime(gain,t+Math.max(P.atk,dur));
     g.gain.exponentialRampToValueAtTime(0.0001,t+dur+P.rel);
-    g.connect(filt);
+    g.connect(bus[syn||1]);
     const oscs=[];
     freqs.forEach(f=>{ for(let k=0;k<2;k++){
       const o=ctx.createOscillator(); o.type=type2||P.wave[k]; o.frequency.value=f; o.detune.value=(k?1:-1)*P.det;
@@ -992,7 +998,7 @@ const audio = (() => {
   /* Pad: the chord, with Position (octave), Strum, Range and Spread */
   function playChord(t,dur){
     if(!st.parts.pad) return;
-    const P=AUDIO_PRESETS[preset], c=chordNotes(), oct=12*V('E1')[0]-12;
+    const P=AUDIO_PRESETS[presets[1]], c=chordNotes(), oct=12*V('E1')[0]-12;
     const strum=V('E1')[1];
     let notes=c.notes.slice(); const r=rng(7+st.deg);
     if(c.spread===3){ notes=notes.filter(()=>r()<0.7); if(!notes.length) notes=[c.notes[0]]; }
@@ -1002,7 +1008,7 @@ const audio = (() => {
       if(strum>=1&&strum<=4) off=i*0.03*(strum+1);                       // short strums
       else if(strum===5) off=i<3?0:(i-2)*beat()/3/2;                     // first 3 together, then triplet-eighth strum
       else if(strum===6) off=i<3?0:(i-2)*beat()/2;                       // first 3 together, then eighth-note strum
-      voice([mtof(fold(24+oct+c.base+n))],t+off,dur,g,P);
+      voice([mtof(fold(24+oct+c.base+n))],t+off,dur,g,P,undefined,1);
     });
   }
 
@@ -1014,19 +1020,19 @@ const audio = (() => {
     if(!ctx) return;
     const trig=V('E3')[2];
     const want = on && st.parts.drone && DRONE_REPEAT[trig]===0;      // held drone; repeating triggers are scheduled instead
-    const P=AUDIO_PRESETS[preset];
-    const key=[want,preset,droneRoot(),V('E3')[0],V('E3')[1]].join();
+    const P=AUDIO_PRESETS[presets[2]];
+    const key=[want,presets[2],droneRoot(),V('E3')[0],V('E3')[1]].join();
     if(key===droneKey) return;
     droneKey=key;
     if(droneOsc){ const g=droneGain, o=droneOsc; g.gain.cancelScheduledValues(ctx.currentTime); g.gain.setTargetAtTime(0.0001,ctx.currentTime,0.12); o.forEach(x=>x.stop(ctx.currentTime+0.6)); droneOsc=null; }
     if(!want) return;
-    droneGain=ctx.createGain(); droneGain.gain.value=0.0001; droneGain.connect(filt);
+    droneGain=ctx.createGain(); droneGain.gain.value=0.0001; droneGain.connect(bus[2]);
     droneGain.gain.setTargetAtTime(0.06,ctx.currentTime,0.2);
     droneOsc=droneNotes().map(n=>{ const o=ctx.createOscillator(); o.type=P.drone; o.frequency.value=droneMidi(n); o.connect(droneGain); o.start(); return o; });
   }
   function droneHit(t,dur){
-    const P=AUDIO_PRESETS[preset];
-    droneNotes().forEach(n=>voice([droneMidi(n)],t,dur,0.07,{wave:[P.drone,P.drone],det:P.det,atk:0.01,rel:0.25},P.drone));
+    const P=AUDIO_PRESETS[presets[2]];
+    droneNotes().forEach(n=>voice([droneMidi(n)],t,dur,0.07,{wave:[P.drone,P.drone],det:P.det,atk:0.01,rel:0.25},P.drone,2));
   }
 
   /* Motifs: Pattern picks one of eight named patterns, Variation the playback order, Rhythm one of eight presets */
@@ -1072,10 +1078,10 @@ const audio = (() => {
     else if(acc===2) vel*=0.6+rng(k+7)()*0.8;                                 // Humanize
     else if(acc===3) vel*=(k%4===0)?1.6:0.75;                                 // Downbeat
     else if(acc===4) vel*=(k%2===0)?1.3:0.7;                                  // Alternate
-    const P=AUDIO_PRESETS[preset];
+    const P=AUDIO_PRESETS[presets[3]];
     const off = mi===2 ? offs*beat()/4 : 0;                                   // Offset delays Motif 2 by up to three sixteenths
     const dur=Math.max(0.05,gate*cd*beat()*0.98);
-    voice([mtof(fold(36+oct+c.base+seq[idx%n],48,96))],t+off,dur,vel,{wave:P.wave,det:P.det,atk:0.005,rel:0.12},P.wave[0]);
+    voice([mtof(fold(36+oct+c.base+seq[idx%n],48,96))],t+off,dur,vel,{wave:P.wave,det:P.det,atk:0.005,rel:0.12},P.wave[0],3);
   }
 
   /* scheduler with a short look-ahead; each motif keeps its own clock so Clk Div can differ */
@@ -1100,8 +1106,8 @@ const audio = (() => {
       ctx=new AC();
       master=ctx.createGain(); master.gain.value=vol*vol*0.8;
       comp=ctx.createDynamicsCompressor(); comp.threshold.value=-18; comp.ratio.value=6;
-      filt=ctx.createBiquadFilter(); filt.type='lowpass'; filt.frequency.value=AUDIO_PRESETS[preset].cut; filt.Q.value=0.6;
-      filt.connect(comp); comp.connect(master); master.connect(ctx.destination);
+      [1,2,3].forEach(s=>{ const f=ctx.createBiquadFilter(); f.type='lowpass'; f.frequency.value=AUDIO_PRESETS[presets[s]].cut; f.Q.value=0.6; f.connect(comp); bus[s]=f; });
+      comp.connect(master); master.connect(ctx.destination);
     }
     ctx.resume(); on=true; resync(ctx.currentTime+0.06);
     clearInterval(timer); timer=setInterval(tick,25); return true;
@@ -1114,7 +1120,8 @@ const audio = (() => {
     get on(){return on;},
     toggle(){ if(on){ stop(); return false; } return start(); },
     setVolume(v){ vol=v; if(master) master.gain.setTargetAtTime(v*v*0.8,ctx.currentTime,0.03); },
-    setPreset(p){ preset=p; if(filt) filt.frequency.setTargetAtTime(AUDIO_PRESETS[p].cut,ctx.currentTime,0.05); droneKey=''; if(on) setDrone(); },
+    presetOf(s){ return presets[s]; },
+    setPreset(s,p){ presets[s]=p; if(bus[s]) bus[s].frequency.setTargetAtTime(AUDIO_PRESETS[p].cut,ctx.currentTime,0.05); if(s===2){ droneKey=''; if(on) setDrone(); } },
     /* a chord button was pressed: sound it straight away */
     hit(){ if(!on||!ctx) return; playChord(ctx.currentTime+0.02, 2.2*beat()); setDrone(); },
     /* ALL was pressed: restart the motifs together */
@@ -1125,16 +1132,17 @@ const audio = (() => {
 
 /* wire the controls */
 (function(){
-  const btn=document.getElementById('soundbtn'), vol=document.getElementById('soundvol'), sel=document.getElementById('soundpreset');
+  const btn=document.getElementById('soundbtn'), vol=document.getElementById('soundvol');
   if(!btn) return;
-  Object.keys(AUDIO_PRESETS).forEach(n=>{ const o=document.createElement('option'); o.textContent=n; sel.appendChild(o); });
+  [1,2,3].forEach(s=>{ const sel=document.getElementById('soundpreset'+s); if(!sel) return;
+    Object.keys(AUDIO_PRESETS).forEach(n=>{ const o=document.createElement('option'); o.textContent=n; sel.appendChild(o); });
+    sel.value=audio.presetOf(s); sel.addEventListener('change',()=>audio.setPreset(s,sel.value)); });
   btn.addEventListener('click',()=>{
     const ok=audio.toggle();
     if(ok===false && !audio.on){ btn.setAttribute('aria-pressed','false'); btn.textContent='Sound off'; btn.classList.remove('on'); }
     else { btn.setAttribute('aria-pressed','true'); btn.textContent='Sound on'; btn.classList.add('on'); }
   });
   vol.addEventListener('input',()=>audio.setVolume(vol.value/100));
-  sel.addEventListener('change',()=>audio.setPreset(sel.value));
   document.addEventListener('visibilitychange',()=>{ document.hidden?audio.suspend():audio.resume(); });
 
   /* sound the chord when a chord button is pressed; ALL restarts the motifs in sync; the 1/2 button swaps the right-hand values */
