@@ -349,8 +349,8 @@ footer a:hover{color:var(--accent)}
 <h3>Build it yourself</h3>
 <p class="card-lead">For people who want to change the code. You need the Tracker CE source and the ARM toolchain it asks for.</p>
 <ol class="steps">
-<li>Get the <code>tracker-ce</code> source from Polyend's GitHub.</li>
-<li>Copy the <code>firmware</code> folder from the Alpaca repo over the root of that checkout.</li>
+<li>Get the <code>tracker-ce</code> source from Polyend's GitHub and check out the tag <code>v1.0.0</code>.</li>
+<li>Copy the <code>core</code> folder from <code>firmware/source</code> in the Alpaca repo over the <code>core</code> folder of that checkout.</li>
 <li>Build for the Mini: <code>make mini TOOLCHAIN=arm-none-eabi- BUILD_TAG=alpaca</code></li>
 <li>Copy the new <code>.ptf</code> to <code>/Firmware</code> on the SD card and run Firmware update, as in "Just install it".</li>
 </ol>
