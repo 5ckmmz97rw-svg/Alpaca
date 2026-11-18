@@ -132,6 +132,10 @@ footer a:hover{color:var(--accent)}
 .pad .r{grid-column:3;grid-row:2}.pad .d{grid-column:2;grid-row:3}
 .demo svg text{font-family:var(--d-mono)}
 #panelsvg{touch-action:manipulation;user-select:none;-webkit-user-select:none}
+/* The panel is redrawn many times a second while music plays. Its shapes ignore the pointer, so a
+   press and its release always land on the same, never-replaced <svg>; the code works out which
+   control was hit from the coordinates. Without this, a redraw between press and release loses the click. */
+#panelsvg *{pointer-events:none}
 .snd{display:flex;align-items:center;gap:6px;color:var(--d-dim);font-size:11px}
 .snd input[type=range]{width:86px;accent-color:var(--d-hi)}
 .snd select{background:#1a212d;color:var(--d-txt);border:1px solid #2c3648;border-radius:8px;height:36px;padding:0 6px;font-family:var(--d-mono);font-size:12px}
